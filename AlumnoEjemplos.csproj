@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PabloTGC\Obstaculo.cs" />
+    <Compile Include="PabloTGC\Personaje.cs" />
     <Compile Include="PabloTGC\Suvirval_Craft.cs" />
     <Compile Include="PabloTGC\Terreno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
