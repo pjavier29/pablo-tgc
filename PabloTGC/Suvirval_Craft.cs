@@ -82,11 +82,11 @@ namespace AlumnoEjemplos.MiGrupo
 
             // ------------------------------------------------------------
             // Creo el Heightmap para el terreno:
-            /*terreno = new Terreno();
+            terreno = new Terreno();
             terreno.loadHeightmap(alumnoMediaFolder
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "HeightmapHawaii.jpg", 100f, 1f, new Vector3(0, 0, 0));
             terreno.loadTexture(alumnoMediaFolder
-                    + "Shaders\\WorkshopShaders\\Heighmaps\\" + "TerrainTextureHawaii.jpg");*/
+                    + "Shaders\\WorkshopShaders\\Heighmaps\\" + "TerrainTextureHawaii.jpg");
 
             // ------------------------------------------------------------
 
@@ -140,7 +140,7 @@ namespace AlumnoEjemplos.MiGrupo
                     palmeraNueva.Scale = new Vector3(0.5f, 1.5f, 0.5f);
                     float x = r[i] * (float)Math.Cos(Geometry.DegreeToRadian(100 + 10.0f * j));
                     float z = r[i] * (float)Math.Sin(Geometry.DegreeToRadian(100 + 10.0f * j));
-                    palmeraNueva.Position = new Vector3(x, 0, z);
+                    palmeraNueva.Position = new Vector3(x, terreno.CalcularAltura(x,z), z);
                     obstaculos.Add(new Obstaculo(1000, 140, palmeraNueva));
                 }
             }
@@ -153,7 +153,7 @@ namespace AlumnoEjemplos.MiGrupo
                 arbolBanana.Scale = new Vector3(1.5f, 3.5f, 1.5f);
                 float x = r[i] - 100;
                 float z = r[i] -123;
-                arbolBanana.Position = new Vector3(x, 0, z);
+                arbolBanana.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 bananaMesh = banana.createMeshInstance(banana.Name);
                 bananaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                 obstaculos.Add(new Obstaculo(1000, 130, arbolBanana, new Obstaculo(1000, 1000, bananaMesh)));
@@ -167,7 +167,7 @@ namespace AlumnoEjemplos.MiGrupo
                 pinoNuevo.Scale = new Vector3(0.5f, 1.5f, 0.5f);
                 float x = r[i] - 100;
                 float z = -(r[i] - 123 );
-                pinoNuevo.Position = new Vector3(x, 0, z);
+                pinoNuevo.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 fuegoMesh = fuego.createMeshInstance(/*fuego.Name*/"fuego");
                 leniaMesh = lenia.createMeshInstance(/*lenia.Name*/"lenia");
                 fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -234,7 +234,7 @@ namespace AlumnoEjemplos.MiGrupo
             //Configurar animacion inicial
             personaje.mesh.playAnimation("Parado", true);
             //Escalarlo porque es muy grande
-            personaje.mesh.Position = new Vector3(0, 0, 0);
+            personaje.mesh.Position = new Vector3(0, terreno.CalcularAltura(0, 0), 0);
             //Rotarlo 180° porque esta mirando para el otro lado
             personaje.mesh.rotateY(Geometry.DegreeToRadian(180f));
 
@@ -298,15 +298,15 @@ namespace AlumnoEjemplos.MiGrupo
             //.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 100);
 
 
-           /* 
-            ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
-            //Camara en primera persona, tipo videojuego FPS
-            //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
-            //Por default la camara FPS viene desactivada
-            GuiController.Instance.FpsCamera.Enable = true;
-            //Configurar posicion y hacia donde se mira
-            GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
-            */
+            /* 
+             ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
+             //Camara en primera persona, tipo videojuego FPS
+             //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
+             //Por default la camara FPS viene desactivada
+             GuiController.Instance.FpsCamera.Enable = true;
+             //Configurar posicion y hacia donde se mira
+             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
+             */
 
             tiempo = 0;
             puedeGolpear = true;
@@ -416,9 +416,13 @@ namespace AlumnoEjemplos.MiGrupo
                 //Aplicar movimiento hacia adelante o atras segun la orientacion actual del Mesh
                 Vector3 lastPos = personaje.mesh.Position;
 
-                //La velocidad de movimiento tiene que multiplicarse por el elapsedTime para hacerse independiente de la velocida de CPU
-                //Ver Unidad 2: Ciclo acoplado vs ciclo desacoplado
-                personaje.mesh.moveOrientedY(moveForward * elapsedTime);
+                //Aplicamos el movimiento
+                //TODO Ver si es correcta la forma que aplico para representar que se esta a la altura del terreno.
+                float xm = FastMath.Sin(personaje.mesh.Rotation.Y) * moveForward;
+                float zm = FastMath.Cos(personaje.mesh.Rotation.Y) * moveForward;
+                Vector3 movementVector = new Vector3(xm, 0, zm);
+                personaje.mesh.move(movementVector * elapsedTime);
+                personaje.mesh.Position = new Vector3(personaje.mesh.Position.X, terreno.CalcularAltura(personaje.mesh.Position.X, personaje.mesh.Position.Z), personaje.mesh.Position.Z);
 
                 //Detectar colisiones
                 bool collide = false;
@@ -475,9 +479,13 @@ namespace AlumnoEjemplos.MiGrupo
                                 obstaculoColiciono.liberar();
                                 obstaculos.Remove(obstaculoColiciono);
                                 //Movemos el personaje hacia atrás para evitar que se queme con el fuego
-                                float z = (float)Math.Cos((float)personaje.mesh.Rotation.Y) * 30;
-                                float x = (float)Math.Sin((float)personaje.mesh.Rotation.Y) * 30;
-                                personaje.mesh.Position = new Vector3(x, 0, z);
+                                //float z = (float)Math.Cos((float)personaje.mesh.Rotation.Y) * 30;
+                                //float x = (float)Math.Sin((float)personaje.mesh.Rotation.Y) * 30;
+                                //personaje.mesh.Position = new Vector3(x, 0, z);
+
+                                float x = movementVector.X * 30;
+                                float z = movementVector.Z * 30;
+                                personaje.mesh.Position = new Vector3(x, terreno.CalcularAltura(x,z), z);
                             }
                         }
 
@@ -491,12 +499,12 @@ namespace AlumnoEjemplos.MiGrupo
                             }
                             else {
                                 if (moveForward < 0)
-                                {
+                                {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
                                     if (obstaculoColiciono.seMueveConUnaFuerza(personaje.fuerza))
                                     {
-                                        //Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
-                                        Vector3 direccionMovimiento = new Vector3((personaje.mesh.Position.X - lastPos.X),
-                                            (personaje.mesh.Position.Y - lastPos.Y), (personaje.mesh.Position.Z - lastPos.Z));
+                                        /*Vector3 direccionMovimiento = new Vector3((personaje.mesh.Position.X - lastPos.X),
+                                            (personaje.mesh.Position.Y - lastPos.Y), (personaje.mesh.Position.Z - lastPos.Z));*/
+                                        Vector3 direccionMovimiento = movementVector;
                                         direccionMovimiento.Normalize();
                                         direccionMovimiento.Multiply(moveForward * elapsedTime * -0.1f);
                                         obstaculoColiciono.mover(direccionMovimiento);
@@ -543,13 +551,14 @@ namespace AlumnoEjemplos.MiGrupo
                         fuerzaGolpe = 33;
                     }
 
+                    //TODO. Tener en cuenta que la direccion se esta calculando mas arriba, aunque aqui se calcula la direccion si el perosnaje esta quieto. Analizar!!!
                     //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
                     float z = -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * alcance;
                     float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * alcance;
-
                     //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
                     //el vector salga del personaje.
-                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, 50, z);
+                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, terreno.CalcularAltura(x, z) + 50, z);
+
 
                     //TODO. sacar esta flecha que esta al pedo.
                     directionArrow.PStart = personaje.mesh.Position;
@@ -597,7 +606,7 @@ namespace AlumnoEjemplos.MiGrupo
                     float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 150;
                     //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
                     //el vector salga del personaje.
-                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, 0, z);
+                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, terreno.CalcularAltura(x,z), z);
 
                     Obstaculo elementoATirar = personaje.elementosEnMochila()[0];
                     elementoATirar.posicion(direccion);
@@ -651,7 +660,7 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
             //Render Terreno
-            //terreno.render();
+            terreno.render();
 
             directionArrow.render();
 
@@ -712,7 +721,7 @@ namespace AlumnoEjemplos.MiGrupo
         {
             piso.dispose();
             personaje.mesh.dispose();
-            // terreno.dispose();
+            terreno.dispose();
             skyBox.dispose();
             foreach (Obstaculo obstaculo in obstaculos)
             {
