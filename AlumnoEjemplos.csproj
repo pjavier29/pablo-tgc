@@ -79,6 +79,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PabloTGC\Animal.cs" />
+    <Compile Include="PabloTGC\MovimientoParabolico.cs" />
     <Compile Include="PabloTGC\Obstaculo.cs" />
     <Compile Include="PabloTGC\Personaje.cs" />
     <Compile Include="PabloTGC\Suvirval_Craft.cs" />

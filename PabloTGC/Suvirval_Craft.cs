@@ -29,6 +29,7 @@ namespace AlumnoEjemplos.MiGrupo
         List<Obstaculo> obstaculos;
         Personaje personaje;
         bool jumping;
+        bool jumpingAdelante;
         TgcArrow directionArrow;
         float tiempo;
         bool puedeGolpear;
@@ -36,6 +37,12 @@ namespace AlumnoEjemplos.MiGrupo
         TgcScene scene, scene2, scene3, scene4, scene5, scene6;
         TgcMesh palmera, pino, arbol, banana, fuego, lenia;
         TgcText2d textGameOver;
+        Animal oveja;
+
+        Obstaculo puebaFisica;
+        MovimientoParabolico movimiento;
+        MovimientoParabolico movimientoPersonaje = new MovimientoParabolico();
+
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -79,6 +86,30 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Crear loader
             TgcSceneLoader loader = new TgcSceneLoader();
+
+
+            ///////////////USER VARS//////////////////
+
+            //Crear una UserVar
+            GuiController.Instance.UserVars.addVar("salud");
+            GuiController.Instance.UserVars.addVar("fuerza");
+            GuiController.Instance.UserVars.addVar("velocidad");
+            GuiController.Instance.UserVars.addVar("tiempocorriendo");
+            GuiController.Instance.UserVars.addVar("x");
+            GuiController.Instance.UserVars.addVar("y");
+            GuiController.Instance.UserVars.addVar("z");
+
+            GuiController.Instance.UserVars.addVar("dirx");
+            GuiController.Instance.UserVars.addVar("diry");
+            GuiController.Instance.UserVars.addVar("dirz");
+
+            GuiController.Instance.UserVars.addVar("largoxz");
+            GuiController.Instance.UserVars.addVar("anguloxz");
+            GuiController.Instance.UserVars.addVar("difx");
+            GuiController.Instance.UserVars.addVar("difz");
+            GuiController.Instance.UserVars.addVar("porx");
+            GuiController.Instance.UserVars.addVar("porz");
+
 
             // ------------------------------------------------------------
             // Creo el Heightmap para el terreno:
@@ -181,12 +212,13 @@ namespace AlumnoEjemplos.MiGrupo
             //Cargar obstaculos y posicionarlos. Los obstáculos se crean con TgcBox en lugar de cargar un modelo.
             TgcBox caja;
 
-            //Obstaculo 1
+            //Caja para tirar
             caja = TgcBox.fromSize(
-                new Vector3(-100, 0, 0),
-                new Vector3(80, 150, 80),
+                new Vector3(0, 0, 0),
+                new Vector3(20, 20, 20),
                 TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\baldosaFacultad.jpg"));
-            obstaculos.Add(new Obstaculo(100, 300, caja));
+            puebaFisica = new Obstaculo(100, 300, caja);
+            movimiento = new MovimientoParabolico(caja.Position, new Vector3(0,5,0), 50, puebaFisica.mesh);
 
             //Obstaculo 2
             caja = TgcBox.fromSize(
@@ -203,9 +235,18 @@ namespace AlumnoEjemplos.MiGrupo
             obstaculos.Add(new Obstaculo(233, 300, caja));
 
 
+            //Creamos al animal
+            caja = TgcBox.fromSize(
+                new Vector3(0, 0, 0),
+                new Vector3(80, 150, 80),
+                TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\baldosaFacultad.jpg"));
+            oveja = new Animal(5000, 20, caja.toMesh("oveja"));
+            caja.Position = new Vector3(200, terreno.CalcularAltura(200,200), 200);
+            obstaculos.Add(oveja);
+
             //Crear piso
-            TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\pasto.jpg");
-            piso = TgcBox.fromExtremes(new Vector3(-3000, -2, -3000), new Vector3(3000, 0, 3000), pisoTexture);
+            TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\Agua.jpg");
+            piso = TgcBox.fromExtremes(new Vector3(-3000, -2, -3000), new Vector3(3000, 5, 3000), pisoTexture);
 
 
             //Creamos el personaje
@@ -227,6 +268,15 @@ namespace AlumnoEjemplos.MiGrupo
                     alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Patear-TgcSkeletalAnim.xml",
                     alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Pegar-TgcSkeletalAnim.xml",
                 });
+
+            //Agregamos el arma al personaje
+            TgcSkeletalBoneAttach attachment = new TgcSkeletalBoneAttach();
+            TgcBox attachmentBox = TgcBox.fromSize(new Vector3(3, 60, 3), Color.Green);
+            attachment.Mesh = attachmentBox.toMesh("attachment");
+            attachment.Bone = personaje.mesh.getBoneByName("Bip01 R Hand");
+            attachment.Offset = Matrix.Translation(10, 40, 0);
+            attachment.updateValues();
+            personaje.mesh.Attachments.Add(attachment);
 
             //Le cambiamos la textura para diferenciarlo un poco
             personaje.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "SkeletalAnimations\\Robot\\Textures\\" + "uvwGreen.jpg") });
@@ -254,15 +304,6 @@ namespace AlumnoEjemplos.MiGrupo
             //Configurar camara en Tercer Persona
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(personaje.mesh.Position, 200, -300);
-
-            ///////////////USER VARS//////////////////
-
-            //Crear una UserVar
-            GuiController.Instance.UserVars.addVar("salud");
-            GuiController.Instance.UserVars.addVar("fuerza");
-            GuiController.Instance.UserVars.addVar("velocidad");
-            GuiController.Instance.UserVars.addVar("tiempocorriendo");
-
 
             //Texto de Game Over
             textGameOver = new TgcText2d();
@@ -324,8 +365,8 @@ namespace AlumnoEjemplos.MiGrupo
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
-            //Hacer que la camara siga al personaje en su nueva posicion
-            GuiController.Instance.ThirdPersonCamera.Target = personaje.mesh.Position;
+            //Hacer que la camara siga al personaje en su nueva posicion. Sumamos 100 en el posición de Y porque queremos que la cámara este un poco más alta.
+            GuiController.Instance.ThirdPersonCamera.Target = personaje.mesh.Position + new Vector3(0,100,0);
 
             //Calcular proxima posicion de personaje segun Input
             float moveForward = 0f;
@@ -337,6 +378,9 @@ namespace AlumnoEjemplos.MiGrupo
             bool patear = false;
             bool pegar = false;
             bool tirar = false;
+            bool lanzar = false;
+            jumping = false;
+            jumpingAdelante = false;
 
             float dirC = 1f;
             float dirR = 1f;
@@ -396,6 +440,24 @@ namespace AlumnoEjemplos.MiGrupo
                 tirar = true;
             }
 
+            //Lanza un elemento con fuerza
+            if (d3dInput.keyDown(Key.C))
+            {
+                lanzar = true;
+            }
+
+            //Saltar
+            if (d3dInput.keyDown(Key.Space))
+            {
+                jumping = true;
+            }
+
+            //Saltar
+            if (d3dInput.keyDown(Key.Space) && d3dInput.keyDown(Key.R))
+            {
+                jumpingAdelante = true;
+            }
+
             //Si hubo rotacion
             if (rotating)
             {
@@ -423,6 +485,7 @@ namespace AlumnoEjemplos.MiGrupo
                 Vector3 movementVector = new Vector3(xm, 0, zm);
                 personaje.mesh.move(movementVector * elapsedTime);
                 personaje.mesh.Position = new Vector3(personaje.mesh.Position.X, terreno.CalcularAltura(personaje.mesh.Position.X, personaje.mesh.Position.Z), personaje.mesh.Position.Z);
+
 
                 //Detectar colisiones
                 bool collide = false;
@@ -557,7 +620,7 @@ namespace AlumnoEjemplos.MiGrupo
                     float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * alcance;
                     //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
                     //el vector salga del personaje.
-                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, terreno.CalcularAltura(x, z) + 50, z);
+                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, /*terreno.CalcularAltura(x, z) + */50, z);
 
 
                     //TODO. sacar esta flecha que esta al pedo.
@@ -615,10 +678,58 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
+            if (lanzar)
+            {
+                //TODO. Tener en cuenta que la direccion se esta calculando mas arriba, aunque aqui se calcula la direccion si el perosnaje esta quieto. Analizar!!!
+                //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
+                float z = -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * 50;
+                float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 50;
+                //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
+                //el vector salga del personaje.
+                Vector3 direccion = personaje.mesh.Position + new Vector3(x, /*terreno.CalcularAltura(x, z) + */1, z);
+
+
+                directionArrow.PStart = personaje.mesh.Position;
+                directionArrow.PEnd = direccion;
+                directionArrow.updateValues();
+
+                puebaFisica.mesh.Position = personaje.mesh.Position + new Vector3(0,50,0);
+
+                movimiento = new MovimientoParabolico(personaje.mesh.Position, direccion, 30, puebaFisica.mesh);
+
+            }
+
+            if (jumping)
+            {
+                movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, personaje.mesh.Position + new Vector3(0,1,0), 4, personaje.mesh);
+            }
+
+            if (jumpingAdelante)
+            {
+                //TODO. Agregar para que no tome al mismo tiempo la tecla de avance W con la barra
+                //TODO. Tener en cuenta que la direccion se esta calculando mas arriba, aunque aqui se calcula la direccion si el perosnaje esta quieto. Analizar!!!
+                //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
+                float z = -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * 50;
+                float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 50;
+                //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
+                //el vector salga del personaje.
+                Vector3 direccion = personaje.mesh.Position + new Vector3(x, /*terreno.CalcularAltura(x, z) + */1, z);
+
+                movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, direccion, 40, personaje.mesh);
+            }
+
+            movimientoPersonaje.update(elapsedTime, terreno);
+            movimientoPersonaje.render();
+
             GuiController.Instance.UserVars.setValue("salud", personaje.salud);
             GuiController.Instance.UserVars.setValue("fuerza", personaje.fuerza);
             GuiController.Instance.UserVars.setValue("velocidad", personaje.velocidadCaminar);
             GuiController.Instance.UserVars.setValue("tiempocorriendo", personaje.tiempoCorriendo);
+
+            GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
+            GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
+            GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
+
 
             if (tiempo >= 1)
             {
@@ -658,6 +769,13 @@ namespace AlumnoEjemplos.MiGrupo
                 offsetForward = GuiController.Instance.ThirdPersonCamera.OffsetForward;
                 GuiController.Instance.ThirdPersonCamera.OffsetForward = offsetForward - 1;
             }
+
+            //Actualizamos el objeto Fisico y lo renderizo
+            movimiento.update(elapsedTime, terreno);
+            movimiento.render();
+
+            //actualizamos la posición de la oveja
+            oveja.update(elapsedTime, terreno);
 
             //Render Terreno
             terreno.render();
