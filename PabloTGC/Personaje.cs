@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlumnoEjemplos.PabloTGC.Instrumentos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,28 +11,37 @@ namespace AlumnoEjemplos.PabloTGC
     {
         #region Propiedades
         public float fuerza { get; set; }
-        public float golpe { get; set; }
+        public float golpe { get; set; }//TODO este atributo esta al pedo, creo
         public TgcSkeletalMesh mesh { get; set; }
         public float velocidadCaminar { get; set; }
         public float velocidadRotacion { get; set; }
         public float salud { get; set; }
         public float tiempoCorriendo { get; set; }
         public float resistenciaFisica { get; set; }
-        private List<Obstaculo> mochila { get; set; }
+        private List<Elemento> mochila { get; set; }
+
+        private Arma instrumentoManoDerecha { get; set; }//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
+        private List<Arma> instrumentos { get; set; }//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
         #endregion
 
         #region Constructores
 
         public Personaje()
         {
-            this.mochila = new List<Obstaculo>();
+            this.mochila = new List<Elemento>();
+            this.instrumentos = new List<Arma>();
             this.tiempoCorriendo = 0;
         }
         #endregion
 
         #region Comportamientos
 
-        public void juntar(Obstaculo obstaculo)
+        public void agregarInstrumento(Arma instrumento)
+        {
+            this.instrumentos.Add(instrumento);
+        }
+
+        public void juntar(Elemento obstaculo)
         {
             this.mochila.Add(obstaculo);
         }
@@ -107,9 +117,42 @@ namespace AlumnoEjemplos.PabloTGC
             this.salud = 0;
         }
 
-        public List<Obstaculo> elementosEnMochila()
+        public List<Elemento> elementosEnMochila()
         {
             return this.mochila;
+        }
+
+        /// <summary>
+        /// El orden en el cual fueron cargados los instrumentos es el orden que se utilizará para seleccionar el instrumento
+        /// </summary>
+        /// <param name="numeroInstrumento"></param>
+        public void seleccionarInstrumentoManoDerecha(int numeroInstrumento)
+        {
+            //Por el momento sabemos que el Attachment 0 es el que esta en la mano derecha
+            this.instrumentoManoDerecha = this.instrumentos[numeroInstrumento];
+            this.mesh.Attachments[0].Mesh = this.instrumentoManoDerecha.mesh;
+            this.mesh.Attachments[0].Offset = this.instrumentoManoDerecha.translacion;
+            this.mesh.Attachments[0].updateValues();
+        }
+
+        public float alcancePatada()
+        {
+            return 60;
+        }
+
+        public float fuerzaPatada()
+        {
+            return 66;
+        }
+
+        public float alcanceGolpe()
+        {
+            return this.instrumentoManoDerecha.alcance;
+        }
+
+        public float fuerzaGolpe()
+        {
+            return this.instrumentoManoDerecha.potenciaGolpe * this.fuerza;
         }
 
         #endregion

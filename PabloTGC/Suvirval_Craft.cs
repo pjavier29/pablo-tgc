@@ -15,6 +15,9 @@ using Microsoft.DirectX.DirectInput;
 using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils._2D;
+using TgcViewer.Utils.TgcKeyFrameLoader;
+using AlumnoEjemplos.PabloTGC.ElementosJuego;
+using AlumnoEjemplos.PabloTGC.Instrumentos;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -26,23 +29,25 @@ namespace AlumnoEjemplos.MiGrupo
         Terreno terreno;
         TgcSkyBox skyBox;
         TgcBox piso;
-        List<Obstaculo> obstaculos;
+        List<Elemento> obstaculos;
         Personaje personaje;
         bool jumping;
         bool jumpingAdelante;
         TgcArrow directionArrow;
         float tiempo;
         bool puedeGolpear;
-        bool puedeIncrementarSaludConFuego = false;
+        //bool puedeIncrementarSaludConFuego = false;
         TgcScene scene, scene2, scene3, scene4, scene5, scene6;
         TgcMesh palmera, pino, arbol, banana, fuego, lenia;
         TgcText2d textGameOver;
         Animal oveja;
+        Animal gallo;
+        TgcMesh hachaMesh;
+        TgcMesh palo;
 
-        Obstaculo puebaFisica;
+        Elemento puebaFisica;
         MovimientoParabolico movimiento;
         MovimientoParabolico movimientoPersonaje = new MovimientoParabolico();
-
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -99,16 +104,7 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.UserVars.addVar("y");
             GuiController.Instance.UserVars.addVar("z");
 
-            GuiController.Instance.UserVars.addVar("dirx");
-            GuiController.Instance.UserVars.addVar("diry");
-            GuiController.Instance.UserVars.addVar("dirz");
-
-            GuiController.Instance.UserVars.addVar("largoxz");
-            GuiController.Instance.UserVars.addVar("anguloxz");
-            GuiController.Instance.UserVars.addVar("difx");
-            GuiController.Instance.UserVars.addVar("difz");
-            GuiController.Instance.UserVars.addVar("porx");
-            GuiController.Instance.UserVars.addVar("porz");
+            GuiController.Instance.UserVars.addVar("fuerzaGolpe");
 
 
             // ------------------------------------------------------------
@@ -124,7 +120,7 @@ namespace AlumnoEjemplos.MiGrupo
             // Crear SkyBox:
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
-            skyBox.Size = new Vector3(8000, 8000, 8000);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
             string texturesPath = alumnoMediaFolder + "Texturas\\Quake\\SkyBox1\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
@@ -132,7 +128,7 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
-            skyBox.SkyEpsilon = 50f;
+            skyBox.SkyEpsilon = 10f;
             skyBox.updateValues();
 
             //Creamos el ambiente selvático
@@ -160,7 +156,7 @@ namespace AlumnoEjemplos.MiGrupo
                  + "MeshCreator\\Meshes\\Leña\\lenia-TgcScene.xml");
             lenia = scene6.Meshes[0];
 
-            obstaculos = new List<Obstaculo>();
+            obstaculos = new List<Elemento>();
 
             float[] r = { 1850f, 2100f, 2300f, 1800f };
             for (int i = 0; i < 4; i++)
@@ -171,8 +167,8 @@ namespace AlumnoEjemplos.MiGrupo
                     palmeraNueva.Scale = new Vector3(0.5f, 1.5f, 0.5f);
                     float x = r[i] * (float)Math.Cos(Geometry.DegreeToRadian(100 + 10.0f * j));
                     float z = r[i] * (float)Math.Sin(Geometry.DegreeToRadian(100 + 10.0f * j));
-                    palmeraNueva.Position = new Vector3(x, terreno.CalcularAltura(x,z), z);
-                    obstaculos.Add(new Obstaculo(1000, 140, palmeraNueva));
+                    palmeraNueva.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
+                    obstaculos.Add(new Elemento(1000, 140, palmeraNueva));
                 }
             }
 
@@ -183,11 +179,11 @@ namespace AlumnoEjemplos.MiGrupo
                 TgcMesh arbolBanana = arbol.createMeshInstance(arbol.Name + i);
                 arbolBanana.Scale = new Vector3(1.5f, 3.5f, 1.5f);
                 float x = r[i] - 100;
-                float z = r[i] -123;
+                float z = r[i] - 123;
                 arbolBanana.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 bananaMesh = banana.createMeshInstance(banana.Name);
                 bananaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                obstaculos.Add(new Obstaculo(1000, 130, arbolBanana, new Obstaculo(1000, 1000, bananaMesh)));
+                obstaculos.Add(new Elemento(1000, 130, arbolBanana, new Alimento(1000, 1000, bananaMesh)));
             }
 
             TgcMesh fuegoMesh;
@@ -197,15 +193,15 @@ namespace AlumnoEjemplos.MiGrupo
                 TgcMesh pinoNuevo = pino.createMeshInstance(pino.Name + i);
                 pinoNuevo.Scale = new Vector3(0.5f, 1.5f, 0.5f);
                 float x = r[i] - 100;
-                float z = -(r[i] - 123 );
+                float z = -(r[i] - 123);
                 pinoNuevo.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 fuegoMesh = fuego.createMeshInstance(/*fuego.Name*/"fuego");
                 leniaMesh = lenia.createMeshInstance(/*lenia.Name*/"lenia");
                 fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                 leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                obstaculos.Add(new Obstaculo(1000, 233, pinoNuevo, 
-                                (new Obstaculo(1000, 233, leniaMesh, 
-                                    new Obstaculo(1000, 233, fuegoMesh)))));
+                obstaculos.Add(new Elemento(1000, 233, pinoNuevo,
+                                (new Madera(1000, 233, leniaMesh,
+                                    new Fuego(1000, 233, fuegoMesh)))));
             }
 
 
@@ -217,36 +213,44 @@ namespace AlumnoEjemplos.MiGrupo
                 new Vector3(0, 0, 0),
                 new Vector3(20, 20, 20),
                 TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\baldosaFacultad.jpg"));
-            puebaFisica = new Obstaculo(100, 300, caja);
-            movimiento = new MovimientoParabolico(caja.Position, new Vector3(0,5,0), 50, puebaFisica.mesh);
+            puebaFisica = new Elemento(100, 300, caja);
+            movimiento = new MovimientoParabolico(caja.Position, new Vector3(0, 5, 0), 50, puebaFisica.mesh);
 
             //Obstaculo 2
             caja = TgcBox.fromSize(
                 new Vector3(50, 0, 200),
                 new Vector3(80, 300, 80),
                 TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\madera.jpg"));
-            obstaculos.Add(new Obstaculo(100, 300, caja));
+            obstaculos.Add(new Elemento(100, 300, caja));
 
             //Obstaculo 3
             caja = TgcBox.fromSize(
                 new Vector3(300, 0, 100),
                 new Vector3(80, 100, 150),
                 TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\granito.jpg"));
-            obstaculos.Add(new Obstaculo(233, 300, caja));
+            obstaculos.Add(new Elemento(233, 300, caja));
 
 
-            //Creamos al animal
-            caja = TgcBox.fromSize(
-                new Vector3(0, 0, 0),
-                new Vector3(80, 150, 80),
-                TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\baldosaFacultad.jpg"));
-            oveja = new Animal(5000, 20, caja.toMesh("oveja"));
-            caja.Position = new Vector3(200, terreno.CalcularAltura(200,200), 200);
+            //Creamos los animales
+            //Creamos la oveja
+            scene = loader.loadSceneFromFile(alumnoMediaFolder
+                + "MeshCreator\\Meshes\\Oveja\\Ovelha-TgcScene.xml");
+            TgcMesh ovejaMesh = scene.Meshes[0];
+            oveja = new Animal(5000, 20, ovejaMesh.createMeshInstance("Oveja"));
+            ovejaMesh.Position = new Vector3(200, terreno.CalcularAltura(200, 200), 200);
             obstaculos.Add(oveja);
+
+            //Creamos el gallo
+            scene = loader.loadSceneFromFile(alumnoMediaFolder
+                + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
+            TgcMesh galloMesh = scene.Meshes[0];
+            gallo = new Animal(5000, 20, galloMesh.createMeshInstance("Gallo"));
+            galloMesh.Position = new Vector3(0, terreno.CalcularAltura(0, 0), 0);
+            obstaculos.Add(gallo);
 
             //Crear piso
             TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\Agua.jpg");
-            piso = TgcBox.fromExtremes(new Vector3(-3000, -2, -3000), new Vector3(3000, 5, 3000), pisoTexture);
+            piso = TgcBox.fromExtremes(new Vector3(-5000, -50, -5000), new Vector3(10000, 10, 10000), pisoTexture);
 
 
             //Creamos el personaje
@@ -254,32 +258,62 @@ namespace AlumnoEjemplos.MiGrupo
             personaje = new Personaje();
             personaje.velocidadCaminar = 150f;
             personaje.velocidadRotacion = 50f;
-            personaje.fuerza = 200f;
+            personaje.fuerza = 1f;
             personaje.salud = 100f;
             personaje.resistenciaFisica = 30f;
+
+            //Creamos las animaciones del mesh del personaje******
+            //Paths para archivo XML de la malla
+            string pathMesh = alumnoMediaFolder + "SkeletalAnimations\\Robot\\Robot-TgcSkeletalMesh.xml";
+
+            //Path para carpeta de texturas de la malla
+            string mediaPath = alumnoMediaFolder + "SkeletalAnimations\\Robot\\";
+
+            //Lista de animaciones disponibles
+            string[] animationList = new string[]{
+                "Parado",
+                "Caminando",
+                "Correr",
+                "PasoDerecho",
+                "PasoIzquierdo",
+                "Empujar",
+                "Patear",
+                "Pegar",
+                "Arrojar",
+            };
+
+            //Crear rutas con cada animacion
+            string[] animationsPath = new string[animationList.Length];
+            for (int i = 0; i < animationList.Length; i++)
+            {
+                animationsPath[i] = mediaPath + animationList[i] + "-TgcSkeletalAnim.xml";
+            }
+
+            //Cargar mesh y animaciones
             TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
-            personaje.mesh = skeletalLoader.loadMeshAndAnimationsFromFile(
-                alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Robot-TgcSkeletalMesh.xml",
-                alumnoMediaFolder + "SkeletalAnimations\\Robot\\",
-                new string[] {
-                    alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Caminando-TgcSkeletalAnim.xml",
-                    alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Parado-TgcSkeletalAnim.xml",
-                    alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Empujar-TgcSkeletalAnim.xml",
-                    alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Patear-TgcSkeletalAnim.xml",
-                    alumnoMediaFolder + "SkeletalAnimations\\Robot\\" + "Pegar-TgcSkeletalAnim.xml",
-                });
-
-            //Agregamos el arma al personaje
-            TgcSkeletalBoneAttach attachment = new TgcSkeletalBoneAttach();
-            TgcBox attachmentBox = TgcBox.fromSize(new Vector3(3, 60, 3), Color.Green);
-            attachment.Mesh = attachmentBox.toMesh("attachment");
-            attachment.Bone = personaje.mesh.getBoneByName("Bip01 R Hand");
-            attachment.Offset = Matrix.Translation(10, 40, 0);
-            attachment.updateValues();
-            personaje.mesh.Attachments.Add(attachment);
-
+            personaje.mesh = skeletalLoader.loadMeshAndAnimationsFromFile(pathMesh, mediaPath, animationsPath);
             //Le cambiamos la textura para diferenciarlo un poco
             personaje.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "SkeletalAnimations\\Robot\\Textures\\" + "uvwGreen.jpg") });
+            //****************************************************
+
+            //Agregamos el arma al personaje
+            //Hacha
+            scene = loader.loadSceneFromFile(alumnoMediaFolder
+                + "MeshCreator\\Meshes\\Armas\\Hacha\\Hacha-TgcScene.xml");
+            hachaMesh = scene.Meshes[0];
+            //Palo
+            palo = TgcBox.fromSize(new Vector3(3, 60, 3), Color.Green).toMesh("Palo");
+
+            //Carmamos las armas
+            personaje.agregarInstrumento(new Arma(100, 50, Matrix.Translation(10, 40, 0), palo));
+            personaje.agregarInstrumento(new Arma(1000, 75, Matrix.Translation(10, 20, -20), hachaMesh));
+
+            TgcSkeletalBoneAttach attachment = new TgcSkeletalBoneAttach();
+            attachment.Bone = personaje.mesh.getBoneByName("Bip01 R Hand");
+            personaje.mesh.Attachments.Add(attachment);
+
+            //por defecto inicia con el hacha
+            personaje.seleccionarInstrumentoManoDerecha(1);
 
             //Configurar animacion inicial
             personaje.mesh.playAnimation("Parado", true);
@@ -379,6 +413,7 @@ namespace AlumnoEjemplos.MiGrupo
             bool pegar = false;
             bool tirar = false;
             bool lanzar = false;
+            bool correr = false;
             jumping = false;
             jumpingAdelante = false;
 
@@ -420,6 +455,7 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 moveForward = dirC * personaje.correr(elapsedTime);
                 rotate = dirR * personaje.rotarRapido();
+                correr = true;
             }
 
             //Pegar una piña
@@ -458,6 +494,18 @@ namespace AlumnoEjemplos.MiGrupo
                 jumpingAdelante = true;
             }
 
+            //Seleccion de Arma palo
+            if (d3dInput.keyDown(Key.D1))
+            {
+                personaje.seleccionarInstrumentoManoDerecha(0);
+            }
+
+            //Seleccion de Arma Hacha
+            if (d3dInput.keyDown(Key.D2))
+            {
+                personaje.seleccionarInstrumentoManoDerecha(1);
+            }
+
             //Si hubo rotacion
             if (rotating)
             {
@@ -470,10 +518,7 @@ namespace AlumnoEjemplos.MiGrupo
             //Si hubo desplazamiento
             if (moving)
             {
-                puedeIncrementarSaludConFuego = false;
-
-                //Activar animacion de caminando
-                personaje.mesh.playAnimation("Caminando", true);
+                //puedeIncrementarSaludConFuego = false;
 
                 //Aplicar movimiento hacia adelante o atras segun la orientacion actual del Mesh
                 Vector3 lastPos = personaje.mesh.Position;
@@ -489,8 +534,8 @@ namespace AlumnoEjemplos.MiGrupo
 
                 //Detectar colisiones
                 bool collide = false;
-                Obstaculo obstaculoColiciono = new Obstaculo();//TODO. Mejorar esta creacion!!!
-                foreach (Obstaculo obstaculo in obstaculos)
+                Elemento obstaculoColiciono = new Elemento();//TODO. Mejorar esta creacion!!!
+                foreach (Elemento obstaculo in obstaculos)
                 {
                     TgcCollisionUtils.BoxBoxResult result = TgcCollisionUtils.classifyBoxBox(personaje.mesh.BoundingBox, obstaculo.BoundingBox());
                     if (result == TgcCollisionUtils.BoxBoxResult.Adentro || result == TgcCollisionUtils.BoxBoxResult.Atravesando)
@@ -504,9 +549,15 @@ namespace AlumnoEjemplos.MiGrupo
                 //Si hubo colision, restaurar la posicion anterior
                 if (collide)
                 {
+                    //TODO. LAS ACCIONES DEBERIAN ESTAR CONFIGURADAS EN EL PERSONAJE
                     string accionElegida = (string)GuiController.Instance.Modifiers["Acción"];
 
-                    if (obstaculoColiciono.nombre().Equals("fuego"))
+                    //TODO. Cuidado que esto se ejecuta una sola vez a menos que el personaje se mueva continuemente. Cuando aparece un fuego en la partida
+                    //este deberia realizar sus propias colisiones
+                    //TODO. Tener en cuenta que la direccion del movimiento y si esta yendo para adelante o para atrás deberían ser atributos del personaje
+                    obstaculoColiciono.procesarColision(personaje, elapsedTime, accionElegida, obstaculos, moveForward, movementVector);
+
+                   /* if (obstaculoColiciono.nombre().Equals("fuego"))
                     {
                         //TODO. sacar esta flecha que esta al pedo.
                         directionArrow.PStart = personaje.mesh.Position;
@@ -521,19 +572,19 @@ namespace AlumnoEjemplos.MiGrupo
                         {
                             personaje.morir();
                         }
-                    }
+                    }*/
 
-                    else {
-                        if (obstaculoColiciono.nombre().Equals("lenia"))
-                        {
-                            if (accionElegida.Equals("Juntar"))
+                    // else {
+                    //if (obstaculoColiciono.nombre().Equals("lenia"))
+                        //{
+                       /*     if (accionElegida.Equals("Juntar"))
                             {
                                 personaje.juntar(obstaculoColiciono);
                                 obstaculos.Remove(obstaculoColiciono);
                             }
                             if (accionElegida.Equals("Encender"))
                             {
-                                foreach (Obstaculo obs in obstaculoColiciono.obstaculosQueContiene())
+                                foreach (Elemento obs in obstaculoColiciono.elementosQueContiene())
                                 {
                                     obs.posicion(obstaculoColiciono.posicion());
                                     obs.mesh.BoundingBox.scaleTranslate(obstaculoColiciono.posicion(), new Vector3(2f,2f,2f));
@@ -549,39 +600,56 @@ namespace AlumnoEjemplos.MiGrupo
                                 float x = movementVector.X * 30;
                                 float z = movementVector.Z * 30;
                                 personaje.mesh.Position = new Vector3(x, terreno.CalcularAltura(x,z), z);
-                            }
-                        }
+                            }*/
+                        //}
 
-                        else {
+                       // else {
 
-                            if (obstaculoColiciono.nombre().Equals("Banana"))
+                            /*if (obstaculoColiciono.nombre().Equals("Banana"))
                             {
                                 personaje.consumirAlimento();
                                 obstaculoColiciono.liberar();
                                 obstaculos.Remove(obstaculoColiciono);
-                            }
-                            else {
-                                if (moveForward < 0)
-                                {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
-                                    if (obstaculoColiciono.seMueveConUnaFuerza(personaje.fuerza))
-                                    {
+                            }*/
+                            //else {
+                              //  if (moveForward < 0)
+                               // {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
+                                  //  if (obstaculoColiciono.seMueveConUnaFuerza(personaje.fuerza))
+                                  //  {
                                         /*Vector3 direccionMovimiento = new Vector3((personaje.mesh.Position.X - lastPos.X),
                                             (personaje.mesh.Position.Y - lastPos.Y), (personaje.mesh.Position.Z - lastPos.Z));*/
-                                        Vector3 direccionMovimiento = movementVector;
-                                        direccionMovimiento.Normalize();
-                                        direccionMovimiento.Multiply(moveForward * elapsedTime * -0.1f);
-                                        obstaculoColiciono.mover(direccionMovimiento);
-                                    }
-                                    personaje.mesh.playAnimation("Empujar", true);
-                                }
-                            }
-                        }
+                                    //    Vector3 direccionMovimiento = movementVector;
+                                    //    direccionMovimiento.Normalize();
+                                    //    direccionMovimiento.Multiply(moveForward * elapsedTime * -0.1f);
+                                   //     obstaculoColiciono.mover(direccionMovimiento);
+                                  //  }
+                                  //  personaje.mesh.playAnimation("Empujar", true);
+                              //  }
+                            //}
+                        //}
                         personaje.mesh.Position = lastPos;
-                    }
+                    //}
                 }
                 else
                 {
+                    if (correr)
+                    {
+                        //Activar animacion de corriendo
+                        personaje.mesh.playAnimation("Correr", true);
+                    }
+                    else
+                    {
+                        //Activar animacion de caminando
+                        personaje.mesh.playAnimation("Caminando", true);
+                    }
+                }
 
+                //Si hubo mivimiento actualizamos el centro del SkyBox para simular que es infinito
+                if (!personaje.mesh.Position.Equals(lastPos))
+                {
+                    //Si no hubo colisiones y el personaje se movio finalmente
+                    skyBox.Center += new Vector3((personaje.mesh.Position.X - lastPos.X), 0, (personaje.mesh.Position.Z - lastPos.Z));
+                    skyBox.updateValues();
                 }
             }
 
@@ -589,30 +657,30 @@ namespace AlumnoEjemplos.MiGrupo
             else
             {
                 //TODO. Mejorar esta lógica de estados.
-                personaje.mesh.playAnimation("Parado", true);
 
                 //Simulamos el descanso del personaje
                 personaje.incrementoResistenciaFisica(elapsedTime);
 
                 if ((pegar || patear))
                 {
-                    //TODO. Por ahora dejamos estos valores aca ya que dependen del personaje y de la herramienta que este usando
-                    int alcance = 0;
+                    float alcance = 0;
                     float fuerzaGolpe = 0;
 
                     if (patear)
                     {
                         personaje.mesh.playAnimation("Patear", true);
-                        alcance = 70;
-                        fuerzaGolpe = 66;
+                        alcance = this.personaje.alcancePatada();
+                        fuerzaGolpe = this.personaje.fuerzaPatada();
                     }
 
                     if (pegar)
                     {
                         personaje.mesh.playAnimation("Pegar", true);
-                        alcance = 50;
-                        fuerzaGolpe = 33;
+                        alcance = this.personaje.alcanceGolpe();
+                        fuerzaGolpe = this.personaje.fuerzaGolpe();
                     }
+
+                    GuiController.Instance.UserVars.setValue("fuerzaGolpe", fuerzaGolpe);
 
                     //TODO. Tener en cuenta que la direccion se esta calculando mas arriba, aunque aqui se calcula la direccion si el perosnaje esta quieto. Analizar!!!
                     //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
@@ -629,7 +697,7 @@ namespace AlumnoEjemplos.MiGrupo
                     directionArrow.updateValues();
 
                     //Buscamos si esta al alcance alguno de los obstáculos
-                    foreach (Obstaculo obstaculo in obstaculos)
+                    foreach (Elemento obstaculo in obstaculos)
                     {
                         if (this.isPointInsideAABB(direccion, obstaculo.BoundingBox()))
                         {
@@ -641,7 +709,7 @@ namespace AlumnoEjemplos.MiGrupo
                                 {
                                     if (!obstaculo.destruccionTotal())
                                     {
-                                        foreach (Obstaculo obs in obstaculo.obstaculosQueContiene())
+                                        foreach (Elemento obs in obstaculo.elementosQueContiene())
                                         {
                                             //TODO. Aplicar algun algoritmo de dispersion copado
                                             obs.posicion(obstaculo.posicion());
@@ -658,6 +726,10 @@ namespace AlumnoEjemplos.MiGrupo
                         }
                     }
                 }
+                else
+                {
+                    personaje.mesh.playAnimation("Parado", true);
+                }
             }
 
             if (tirar)
@@ -671,7 +743,7 @@ namespace AlumnoEjemplos.MiGrupo
                     //el vector salga del personaje.
                     Vector3 direccion = personaje.mesh.Position + new Vector3(x, terreno.CalcularAltura(x,z), z);
 
-                    Obstaculo elementoATirar = personaje.elementosEnMochila()[0];
+                    Elemento elementoATirar = personaje.elementosEnMochila()[0];
                     elementoATirar.posicion(direccion);
                     obstaculos.Add(elementoATirar);
                     personaje.elementosEnMochila().Remove(elementoATirar);
@@ -695,8 +767,9 @@ namespace AlumnoEjemplos.MiGrupo
 
                 puebaFisica.mesh.Position = personaje.mesh.Position + new Vector3(0,50,0);
 
-                movimiento = new MovimientoParabolico(personaje.mesh.Position, direccion, 30, puebaFisica.mesh);
+                movimiento = new MovimientoParabolico(personaje.mesh.Position, direccion, 20, puebaFisica.mesh);
 
+                personaje.mesh.playAnimation("Arrojar", true);
             }
 
             if (jumping)
@@ -742,10 +815,10 @@ namespace AlumnoEjemplos.MiGrupo
             tiempo += elapsedTime;
 
             //Analisis de posibilidad de incrementar o no salud por fuego
-            if (puedeIncrementarSaludConFuego)
+            /*if (puedeIncrementarSaludConFuego)
             {
                 personaje.incrementarSaludPorTiempo(elapsedTime);
-            }
+            }*/
 
             float offsetHeight;
             if (d3dInput.keyDown(Key.O))
@@ -774,8 +847,9 @@ namespace AlumnoEjemplos.MiGrupo
             movimiento.update(elapsedTime, terreno);
             movimiento.render();
 
-            //actualizamos la posición de la oveja
+            //actualizamos la posición de los animales
             oveja.update(elapsedTime, terreno);
+            gallo.update(elapsedTime, terreno);
 
             //Render Terreno
             terreno.render();
@@ -789,7 +863,7 @@ namespace AlumnoEjemplos.MiGrupo
             personaje.mesh.animateAndRender();
 
             //Render obstaculos
-            foreach (Obstaculo obstaculo in obstaculos)
+            foreach (Elemento obstaculo in obstaculos)
             {
                 obstaculo.renderizar();
                 //obstaculo.BoundingBox.render();
@@ -841,7 +915,7 @@ namespace AlumnoEjemplos.MiGrupo
             personaje.mesh.dispose();
             terreno.dispose();
             skyBox.dispose();
-            foreach (Obstaculo obstaculo in obstaculos)
+            foreach (Elemento obstaculo in obstaculos)
             {
                 obstaculo.destruir();
             }

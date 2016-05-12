@@ -9,51 +9,70 @@ using TgcViewer.Utils.TgcSceneLoader;
 namespace AlumnoEjemplos.PabloTGC
 {
     /// <summary>
-    /// TODO. Ver si esta clase debe transformarse en una un poco mas genérica
+    ///
     /// </summary>
-    public class Obstaculo
+    public class Elemento
     {
         #region Atributos
         public float peso { get; set; }
         public float resistencia { get; set; }
-        private List<Obstaculo> obstaculosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
+        private List<Elemento> elementosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
         public TgcMesh mesh { get; set; }
         #endregion
 
         #region Contructores
-        public Obstaculo()
+        public Elemento()
         {
 
         }
 
-        public Obstaculo(float peso, float resistencia, TgcBox caja)
-        {
-            this.peso = peso;
-            this.resistencia = resistencia;
-            this.mesh = caja.toMesh("CAJA");//Pasar el nombre por parámetro
-            this.obstaculosComposicion = new List<Obstaculo>();
-        }
-
-        public Obstaculo(float peso, float resistencia, TgcMesh mesh)
+        public Elemento(float peso, float resistencia, TgcBox caja)
         {
             this.peso = peso;
             this.resistencia = resistencia;
-            this.mesh = mesh;
-            this.obstaculosComposicion = new List<Obstaculo>();
+            this.mesh = caja.toMesh("CAJA");//TODO. Pasar el nombre por parámetro
+            this.elementosComposicion = new List<Elemento>();
         }
 
-        public Obstaculo(float peso, float resistencia, TgcMesh mesh, Obstaculo obstaculo)
+        public Elemento(float peso, float resistencia, TgcMesh mesh)
         {
             this.peso = peso;
             this.resistencia = resistencia;
             this.mesh = mesh;
-            this.obstaculosComposicion = new List<Obstaculo>();
-            this.agregarObstaculo(obstaculo);
+            this.elementosComposicion = new List<Elemento>();
+        }
+
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento)
+        {
+            this.peso = peso;
+            this.resistencia = resistencia;
+            this.mesh = mesh;
+            this.elementosComposicion = new List<Elemento>();
+            this.agregarElemento(elemento);
         }
 
         #endregion
 
         #region Comportamientos
+
+        /// <summary>
+        /// TODO. Ver si no aplica poner una interfaz colisionable
+        /// Procesa una colisión cuando la misma es en contra del personaje
+        /// </summary>
+        public virtual void procesarColision(Personaje personaje, float elapsedTime, String accion, List<Elemento> elementos, float moveForward, Vector3 movementVector)
+        {
+            if (moveForward < 0)
+            {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
+                if (this.seMueveConUnaFuerza(personaje.fuerza))
+                {
+                    Vector3 direccionMovimiento = movementVector;
+                    direccionMovimiento.Normalize();
+                    direccionMovimiento.Multiply(moveForward * elapsedTime * -0.1f);
+                    this.mover(direccionMovimiento);
+                }
+                personaje.mesh.playAnimation("Empujar", true);
+            }
+        }
 
         /// <summary>
         /// Aplica el daño que se recibe por parametro y retorna verdadero si el objeto sigue en pie o false si se destruyo
@@ -70,9 +89,9 @@ namespace AlumnoEjemplos.PabloTGC
         /// </summary>
         public void destruir()
         {
-            foreach (Obstaculo obstaculo in this.obstaculosComposicion)
+            foreach (Elemento elemento in this.elementosComposicion)
             {
-                obstaculo.destruir();
+                elemento.destruir();
             }
             this.mesh.dispose();
         }
@@ -115,7 +134,6 @@ namespace AlumnoEjemplos.PabloTGC
             this.mesh.dispose();
         }
 
-
         /// <summary>
         /// TODO. Aplicar de ser posible ecuaciones fisicas de rosamiento y demás de modo tal que sea más real el movimiento.
         /// </summary>
@@ -125,14 +143,14 @@ namespace AlumnoEjemplos.PabloTGC
             return this.peso < fuerza;
         }
 
-        public void agregarObstaculo(Obstaculo obstaculo)
+        public void agregarElemento(Elemento elemento)
         {
-            this.obstaculosComposicion.Add(obstaculo);
+            this.elementosComposicion.Add(elemento);
         }
 
-        public List<Obstaculo> obstaculosQueContiene()
+        public List<Elemento> elementosQueContiene()
         {
-            return this.obstaculosComposicion;
+            return this.elementosComposicion;
         }
 
         /// <summary>
@@ -143,7 +161,7 @@ namespace AlumnoEjemplos.PabloTGC
         {
             if (this.resistencia < 0)
             {
-                if (this.resistencia < -100)
+                if (this.resistencia < -1000)
                 {
                     return true;
                 }
@@ -155,13 +173,14 @@ namespace AlumnoEjemplos.PabloTGC
 
         public string nombre()
         {
+            //TODO. Refactorizar esto
             return this.mesh.Name;
         }
 
-        public float distanciaA(Obstaculo unObstaculo)
+        public float distanciaA(Elemento unElemento)
         {
-            Vector3 aux = new Vector3(unObstaculo.posicion().X - this.posicion().X, 
-                unObstaculo.posicion().Y - this.posicion().Y, unObstaculo.posicion().Z - this.posicion().Z);
+            Vector3 aux = new Vector3(unElemento.posicion().X - this.posicion().X,
+                unElemento.posicion().Y - this.posicion().Y, unElemento.posicion().Z - this.posicion().Z);
             return aux.Length();
         }
 

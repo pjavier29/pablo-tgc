@@ -49,15 +49,6 @@ namespace AlumnoEjemplos.PabloTGC
             float angulo;
             float anguloxz;
 
-            GuiController.Instance.UserVars.setValue("dirx", direccion.X);
-            GuiController.Instance.UserVars.setValue("diry", direccion.Y);
-            GuiController.Instance.UserVars.setValue("dirz", direccion.Z);
-
-            GuiController.Instance.UserVars.setValue("largoxz", componenteXZ);
-
-            GuiController.Instance.UserVars.setValue("difx", direccion.X - posicionInicial.X);
-            GuiController.Instance.UserVars.setValue("difz", direccion.Z - posicionInicial.Z);
-
             if (componenteXZ == 0)
             {
                 anguloxz = 0;
@@ -102,12 +93,6 @@ namespace AlumnoEjemplos.PabloTGC
                 }
             }
 
-            GuiController.Instance.UserVars.setValue("anguloxz", anguloxz);
-
-            GuiController.Instance.UserVars.setValue("porx", proporcionalX);
-
-            GuiController.Instance.UserVars.setValue("porz", proporcionalZ);
-
             float largoVector = FastMath.Sqrt(FastMath.Pow2(direccion.X - posicionInicial.X) + FastMath.Pow2(direccion.Y - posicionInicial.Y)+ FastMath.Pow2(direccion.Z - posicionInicial.Z));
             angulo = FastMath.Asin((direccion.Y - posicionInicial.Y) / largoVector);
 
@@ -120,26 +105,27 @@ namespace AlumnoEjemplos.PabloTGC
             if (this.mesh != null) { 
                 ITransformObject objeto = (ITransformObject)this.mesh;
 
-            tiempo += elapsedTime;
+                tiempo += elapsedTime;
 
                 Vector3 posicionUltima = objeto.Position;
 
-            float distanciaRecorridaXZ = this.velocidadInicialXZ * tiempo /** elapsedTime*/;
-            float distanciaRecorridaY = ((FastMath.Pow2(tiempo) * -0.5f * Gravedad) + this.velocidadInicialY * tiempo)/* * elapsedTime*/;
+                float distanciaRecorridaXZ = this.velocidadInicialXZ * tiempo /** elapsedTime*/;
+                float distanciaRecorridaY = ((FastMath.Pow2(tiempo) * -0.5f * Gravedad) + this.velocidadInicialY * tiempo) /** elapsedTime*/;
 
-            float x = objeto.Position.X + proporcionalX * distanciaRecorridaXZ;
-            float z = objeto.Position.Z + proporcionalZ * distanciaRecorridaXZ;
+                float x = objeto.Position.X + proporcionalX * distanciaRecorridaXZ;
+                float z = objeto.Position.Z + proporcionalZ * distanciaRecorridaXZ;
 
-            //TODO. Por el momentos nos manejamos con Y siempre positivas
-            objeto.Position = new Vector3(x, objeto.Position.Y + distanciaRecorridaY, z);
+                //TODO. Por el momentos nos manejamos con Y siempre positivas
+                objeto.Position = new Vector3(x, objeto.Position.Y + distanciaRecorridaY, z);
 
-            if (objeto.Position.Y < terreno.CalcularAltura(objeto.Position.X, objeto.Position.Z))
-            {
-                //Esto debe ser cuando colosiona con el terreno.
-                objeto.Position = posicionUltima;
-                    this.mesh = null;
-                tiempo = 0;
-            }
+                //TODO necesitamos el tamaño del elemento para poder saber cuando choca contra en terreno
+                if ((objeto.Position.Y - 10) < terreno.CalcularAltura(objeto.Position.X, objeto.Position.Z))
+                {
+                    //Esto debe ser cuando colosiona con el terreno.
+                    objeto.Position = posicionUltima;
+                    //this.mesh = null;
+                    tiempo = 0;
+                }
             }
         }
 

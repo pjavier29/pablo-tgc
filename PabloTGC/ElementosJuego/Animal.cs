@@ -9,8 +9,9 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.PabloTGC
 {
-    public class Animal : Obstaculo
+    public class Animal : Elemento
     {
+        #region Atributos
         private float tiempoEnActividad;
         private float tiempoInactivo;
         private float tiempo;
@@ -18,7 +19,9 @@ namespace AlumnoEjemplos.PabloTGC
         private float velocidadRotar;
         private String movimientoActual;
         private Random aleatorio;
+        #endregion
 
+        #region Contructores
         public Animal(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
         {
             this.tiempoEnActividad = 7;
@@ -29,7 +32,9 @@ namespace AlumnoEjemplos.PabloTGC
             this.velocidadRotar = 10F;
             this.movimientoActual = "Caminar";
         }
+        #endregion
 
+        #region Comportamientos
         public void update(float elapsedTime, Terreno terreno)
         {
             tiempo += elapsedTime;
@@ -100,5 +105,6 @@ namespace AlumnoEjemplos.PabloTGC
             this.mesh.rotateY(rotAngle);
             this.moverse(elapsedTime, terreno);
         }
+        #endregion
     }
 }
