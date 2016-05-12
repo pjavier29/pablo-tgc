@@ -86,12 +86,11 @@ namespace AlumnoEjemplos.MiGrupo
             //Device de DirectX para crear primitivas
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
-            //Carpeta de archivos Media del alumno
-            string alumnoMediaFolder = GuiController.Instance.AlumnoEjemplosMediaDir;
+            //Carpeta de acceso a los recursos
+            string recursos = GuiController.Instance.AlumnoEjemplosDir + "PabloTGC\\Recursos\\";           
 
             //Crear loader
             TgcSceneLoader loader = new TgcSceneLoader();
-
 
             ///////////////USER VARS//////////////////
 
@@ -110,9 +109,9 @@ namespace AlumnoEjemplos.MiGrupo
             // ------------------------------------------------------------
             // Creo el Heightmap para el terreno:
             terreno = new Terreno();
-            terreno.loadHeightmap(alumnoMediaFolder
+            terreno.loadHeightmap(recursos
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "HeightmapHawaii.jpg", 100f, 1f, new Vector3(0, 0, 0));
-            terreno.loadTexture(alumnoMediaFolder
+            terreno.loadTexture(recursos
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "TerrainTextureHawaii.jpg");
 
             // ------------------------------------------------------------
@@ -121,7 +120,7 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
             skyBox.Size = new Vector3(10000, 10000, 10000);
-            string texturesPath = alumnoMediaFolder + "Texturas\\Quake\\SkyBox1\\";
+            string texturesPath = recursos + "Texturas\\Quake\\SkyBox1\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "phobos_lf.jpg");
@@ -132,27 +131,27 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.updateValues();
 
             //Creamos el ambiente selvático
-            scene = loader.loadSceneFromFile(alumnoMediaFolder
+            scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Palmera\\Palmera-TgcScene.xml");
             palmera = scene.Meshes[0];
 
-            scene2 = loader.loadSceneFromFile(alumnoMediaFolder
+            scene2 = loader.loadSceneFromFile(recursos
                  + "MeshCreator\\Meshes\\Vegetacion\\Pino\\Pino-TgcScene.xml");
             pino = scene2.Meshes[0];
 
-            scene3 = loader.loadSceneFromFile(alumnoMediaFolder
+            scene3 = loader.loadSceneFromFile(recursos
                  + "MeshCreator\\Meshes\\Vegetacion\\ArbolBananas\\ArbolBananas-TgcScene.xml");
             arbol = scene3.Meshes[0];
 
-            scene4 = loader.loadSceneFromFile(alumnoMediaFolder
+            scene4 = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Frutas\\Bananas\\Bananas-TgcScene.xml");
             banana = scene4.Meshes[0];
 
-            scene5 = loader.loadSceneFromFile(alumnoMediaFolder
+            scene5 = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Fuego\\fuego-TgcScene.xml");
             fuego = scene5.Meshes[0];
 
-            scene6 = loader.loadSceneFromFile(alumnoMediaFolder
+            scene6 = loader.loadSceneFromFile(recursos
                  + "MeshCreator\\Meshes\\Leña\\lenia-TgcScene.xml");
             lenia = scene6.Meshes[0];
 
@@ -212,7 +211,7 @@ namespace AlumnoEjemplos.MiGrupo
             caja = TgcBox.fromSize(
                 new Vector3(0, 0, 0),
                 new Vector3(20, 20, 20),
-                TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\baldosaFacultad.jpg"));
+                TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\baldosaFacultad.jpg"));
             puebaFisica = new Elemento(100, 300, caja);
             movimiento = new MovimientoParabolico(caja.Position, new Vector3(0, 5, 0), 50, puebaFisica.mesh);
 
@@ -220,20 +219,20 @@ namespace AlumnoEjemplos.MiGrupo
             caja = TgcBox.fromSize(
                 new Vector3(50, 0, 200),
                 new Vector3(80, 300, 80),
-                TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\madera.jpg"));
+                TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\madera.jpg"));
             obstaculos.Add(new Elemento(100, 300, caja));
 
             //Obstaculo 3
             caja = TgcBox.fromSize(
                 new Vector3(300, 0, 100),
                 new Vector3(80, 100, 150),
-                TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\granito.jpg"));
+                TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\granito.jpg"));
             obstaculos.Add(new Elemento(233, 300, caja));
 
 
             //Creamos los animales
             //Creamos la oveja
-            scene = loader.loadSceneFromFile(alumnoMediaFolder
+            scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Oveja\\Ovelha-TgcScene.xml");
             TgcMesh ovejaMesh = scene.Meshes[0];
             oveja = new Animal(5000, 20, ovejaMesh.createMeshInstance("Oveja"));
@@ -241,7 +240,7 @@ namespace AlumnoEjemplos.MiGrupo
             obstaculos.Add(oveja);
 
             //Creamos el gallo
-            scene = loader.loadSceneFromFile(alumnoMediaFolder
+            scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
             TgcMesh galloMesh = scene.Meshes[0];
             gallo = new Animal(5000, 20, galloMesh.createMeshInstance("Gallo"));
@@ -249,7 +248,7 @@ namespace AlumnoEjemplos.MiGrupo
             obstaculos.Add(gallo);
 
             //Crear piso
-            TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "Texturas\\Agua.jpg");
+            TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\Agua.jpg");
             piso = TgcBox.fromExtremes(new Vector3(-5000, -50, -5000), new Vector3(10000, 10, 10000), pisoTexture);
 
 
@@ -264,10 +263,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Creamos las animaciones del mesh del personaje******
             //Paths para archivo XML de la malla
-            string pathMesh = alumnoMediaFolder + "SkeletalAnimations\\Robot\\Robot-TgcSkeletalMesh.xml";
+            string pathMesh = recursos + "SkeletalAnimations\\Robot\\Robot-TgcSkeletalMesh.xml";
 
             //Path para carpeta de texturas de la malla
-            string mediaPath = alumnoMediaFolder + "SkeletalAnimations\\Robot\\";
+            string mediaPath = recursos + "SkeletalAnimations\\Robot\\";
 
             //Lista de animaciones disponibles
             string[] animationList = new string[]{
@@ -293,12 +292,12 @@ namespace AlumnoEjemplos.MiGrupo
             TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
             personaje.mesh = skeletalLoader.loadMeshAndAnimationsFromFile(pathMesh, mediaPath, animationsPath);
             //Le cambiamos la textura para diferenciarlo un poco
-            personaje.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, alumnoMediaFolder + "SkeletalAnimations\\Robot\\Textures\\" + "uvwGreen.jpg") });
+            personaje.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, recursos + "SkeletalAnimations\\Robot\\Textures\\" + "uvwGreen.jpg") });
             //****************************************************
 
             //Agregamos el arma al personaje
             //Hacha
-            scene = loader.loadSceneFromFile(alumnoMediaFolder
+            scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Armas\\Hacha\\Hacha-TgcScene.xml");
             hachaMesh = scene.Meshes[0];
             //Palo
@@ -321,7 +320,6 @@ namespace AlumnoEjemplos.MiGrupo
             personaje.mesh.Position = new Vector3(0, terreno.CalcularAltura(0, 0), 0);
             //Rotarlo 180° porque esta mirando para el otro lado
             personaje.mesh.rotateY(Geometry.DegreeToRadian(180f));
-
 
             //Crear linea para mostrar la direccion del movimiento del personaje
             directionArrow = new TgcArrow();

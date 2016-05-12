@@ -1,6 +1,7 @@
 ﻿using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcGeometry;
@@ -18,6 +19,8 @@ namespace AlumnoEjemplos.PabloTGC
         public float resistencia { get; set; }
         private List<Elemento> elementosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
         public TgcMesh mesh { get; set; }
+
+        public TgcArrow linea = new TgcArrow();
         #endregion
 
         #region Contructores
@@ -103,6 +106,15 @@ namespace AlumnoEjemplos.PabloTGC
         {
             this.mesh.render();
             this.mesh.BoundingBox.render();
+
+            linea.PStart = this.mesh.BoundingBox.PMin;
+            linea.PEnd = new Vector3(this.mesh.BoundingBox.PMin.X, this.mesh.BoundingBox.PMax.Y, this.mesh.BoundingBox.PMin.Z);
+            linea.BodyColor = Color.Green;
+            linea.HeadColor = Color.Green;
+            linea.Thickness = 1;
+            linea.HeadSize = new Vector2(1, 1);
+            linea.updateValues();
+            linea.render();
         }
 
         /// <summary>
