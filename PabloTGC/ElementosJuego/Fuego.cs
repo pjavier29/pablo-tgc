@@ -24,7 +24,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         /// <summary>
         /// Procesa una colisión cuando el personaje colisiona contra el fuego
         /// </summary>
-        public override void procesarColision(Personaje personaje, float elapsedTime, String accion, List<Elemento> elementos, float moveForward, Vector3 movementVector)
+        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector)
         {
             if (this.distanciaA(personaje.mesh.Position) > 20)
             {

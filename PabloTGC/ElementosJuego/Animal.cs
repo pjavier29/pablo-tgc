@@ -92,18 +92,28 @@ namespace AlumnoEjemplos.PabloTGC
         {
             //Aplicamos el movimiento
             //TODO Ver si es correcta la forma que aplico para representar que se esta a la altura del terreno.
-            float xm = FastMath.Sin(this.mesh.Rotation.Y) * velocidadCaminar;
-            float zm = FastMath.Cos(this.mesh.Rotation.Y) * velocidadCaminar;
+            float xm = FastMath.Sin(this.Mesh.Rotation.Y) * velocidadCaminar;
+            float zm = FastMath.Cos(this.Mesh.Rotation.Y) * velocidadCaminar;
             Vector3 movementVector = new Vector3(xm, 0, zm);
-            this.mesh.move(movementVector * elapsedTime);
-            this.mesh.Position = new Vector3(this.mesh.Position.X, terreno.CalcularAltura(this.mesh.Position.X, this.mesh.Position.Z), this.mesh.Position.Z);
+            this.Mesh.move(movementVector * elapsedTime);
+            this.Mesh.Position = new Vector3(this.Mesh.Position.X, terreno.CalcularAltura(this.Mesh.Position.X, this.Mesh.Position.Z), this.Mesh.Position.Z);
         }
 
         private void moverseRotando(float elapsedTime, Terreno terreno, int direccion)
         {
             float rotAngle = Geometry.DegreeToRadian(direccion * velocidadRotar * elapsedTime);
-            this.mesh.rotateY(rotAngle);
+            this.Mesh.rotateY(rotAngle);
             this.moverse(elapsedTime, terreno);
+        }
+
+        /// <summary>
+        /// Renderiza el objeto
+        /// </summary>
+        public override void renderizar()
+        {
+            //Tenemos que actualizar los puntos de la barra ya que el animal se mueve por el terreno
+            this.GetBarraEstado().ActualizarPuntosBase(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
+            base.renderizar();             
         }
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.PabloTGC.Utiles;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace AlumnoEjemplos.PabloTGC
         private Vector3 direccion { get; set; }
         private float velocidad { get; set; }
         private float tiempo { get; set; }
-        private Object mesh;
+        private MallaEnvoltura mesh;
 
         float proporcionalX;
         float proporcionalZ;
@@ -30,7 +31,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.mesh = null;
         }
 
-        public MovimientoParabolico(Vector3 posicionInicial, Vector3 direccion, float velocidad, Object mesh)
+        public MovimientoParabolico(Vector3 posicionInicial, Vector3 direccion, float velocidad, MallaEnvoltura mesh)
         {
             this.tiempo = 0;
             this.posicionInicial = posicionInicial;
@@ -103,26 +104,24 @@ namespace AlumnoEjemplos.PabloTGC
         public void update(float elapsedTime, Terreno terreno)
         {
             if (this.mesh != null) { 
-                ITransformObject objeto = (ITransformObject)this.mesh;
-
                 tiempo += elapsedTime;
 
-                Vector3 posicionUltima = objeto.Position;
+                Vector3 posicionUltima = this.mesh.Posicion();
 
                 float distanciaRecorridaXZ = this.velocidadInicialXZ * tiempo /** elapsedTime*/;
                 float distanciaRecorridaY = ((FastMath.Pow2(tiempo) * -0.5f * Gravedad) + this.velocidadInicialY * tiempo) /** elapsedTime*/;
 
-                float x = objeto.Position.X + proporcionalX * distanciaRecorridaXZ;
-                float z = objeto.Position.Z + proporcionalZ * distanciaRecorridaXZ;
+                float x = this.mesh.Posicion().X + proporcionalX * distanciaRecorridaXZ;
+                float z = this.mesh.Posicion().Z + proporcionalZ * distanciaRecorridaXZ;
 
                 //TODO. Por el momentos nos manejamos con Y siempre positivas
-                objeto.Position = new Vector3(x, objeto.Position.Y + distanciaRecorridaY, z);
+                this.mesh.Posicion(new Vector3(x, this.mesh.Posicion().Y + distanciaRecorridaY, z));
 
                 //TODO necesitamos el tamaño del elemento para poder saber cuando choca contra en terreno
-                if ((objeto.Position.Y - 10) < terreno.CalcularAltura(objeto.Position.X, objeto.Position.Z))
+                if ((this.mesh.MinimoPunto().Y - this.mesh.FactorCorreccion()) < terreno.CalcularAltura(this.mesh.MinimoPunto().X, this.mesh.MinimoPunto().Z))
                 {
                     //Esto debe ser cuando colosiona con el terreno.
-                    objeto.Position = posicionUltima;
+                    this.mesh.Posicion(posicionUltima);
                     //this.mesh = null;
                     tiempo = 0;
                 }
@@ -133,8 +132,7 @@ namespace AlumnoEjemplos.PabloTGC
         {
             if (this.mesh != null)
             {
-                IRenderObject objeto = (IRenderObject)this.mesh;
-                objeto.render();
+                this.mesh.Render();
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.PabloTGC.Utiles;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,12 +16,14 @@ namespace AlumnoEjemplos.PabloTGC
     public class Elemento
     {
         #region Atributos
-        public float peso { get; set; }
-        public float resistencia { get; set; }
-        private List<Elemento> elementosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
-        public TgcMesh mesh { get; set; }
+        private BarraEstado barraEstado;
+        #endregion
 
-        public TgcArrow linea = new TgcArrow();
+        #region Propiedades
+        public float Peso { get; set; }
+        public float Resistencia { get; set; }
+        private List<Elemento> ElementosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
+        public TgcMesh Mesh { get; set; }
         #endregion
 
         #region Contructores
@@ -29,28 +32,31 @@ namespace AlumnoEjemplos.PabloTGC
 
         }
 
-        public Elemento(float peso, float resistencia, TgcBox caja)
+        public Elemento(TgcMesh mesh, float resistencia)
         {
-            this.peso = peso;
-            this.resistencia = resistencia;
-            this.mesh = caja.toMesh("CAJA");//TODO. Pasar el nombre por parámetro
-            this.elementosComposicion = new List<Elemento>();
+            this.Mesh = mesh;
+            this.Resistencia = resistencia;
+            this.barraEstado = new BarraEstado(this.Mesh.BoundingBox.PMin, 
+                new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z), resistencia);
+
         }
 
-        public Elemento(float peso, float resistencia, TgcMesh mesh)
+        public Elemento(float peso, float resistencia, TgcBox caja) : this(caja.toMesh("CAJA"), resistencia)//TODO. Pasar el nombre por parámetro
         {
-            this.peso = peso;
-            this.resistencia = resistencia;
-            this.mesh = mesh;
-            this.elementosComposicion = new List<Elemento>();
+            this.Peso = peso;
+            this.ElementosComposicion = new List<Elemento>();
         }
 
-        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento)
+        public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
         {
-            this.peso = peso;
-            this.resistencia = resistencia;
-            this.mesh = mesh;
-            this.elementosComposicion = new List<Elemento>();
+            this.Peso = peso;
+            this.ElementosComposicion = new List<Elemento>();
+        }
+
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
+        {
+            this.Peso = peso;
+            this.ElementosComposicion = new List<Elemento>();
             this.agregarElemento(elemento);
         }
 
@@ -58,11 +64,16 @@ namespace AlumnoEjemplos.PabloTGC
 
         #region Comportamientos
 
+        public BarraEstado GetBarraEstado()
+        {
+            return this.barraEstado;
+        }
+
         /// <summary>
         /// TODO. Ver si no aplica poner una interfaz colisionable
         /// Procesa una colisión cuando la misma es en contra del personaje
         /// </summary>
-        public virtual void procesarColision(Personaje personaje, float elapsedTime, String accion, List<Elemento> elementos, float moveForward, Vector3 movementVector)
+        public virtual void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector)
         {
             if (moveForward < 0)
             {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
@@ -77,14 +88,24 @@ namespace AlumnoEjemplos.PabloTGC
             }
         }
 
+        public virtual void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos)
+        {
+
+        }
+
         /// <summary>
-        /// Aplica el daño que se recibe por parametro y retorna verdadero si el objeto sigue en pie o false si se destruyo
+        /// Aplica el daño que se recibe por parametro y actualiza la barra de estado
         /// </summary>
         /// <returns></returns>
-        public bool recibirDanio(float danio)
+        public void recibirDanio(float danio)
         {
-            this.resistencia -= danio;
-            return this.resistencia > 0;
+            this.Resistencia -= danio;
+            this.barraEstado.ActualizarEstado(this.Resistencia);  
+        }
+
+        public bool estaDestruido()
+        {
+            return this.Resistencia <= 0;
         }
 
         /// <summary>
@@ -92,29 +113,21 @@ namespace AlumnoEjemplos.PabloTGC
         /// </summary>
         public void destruir()
         {
-            foreach (Elemento elemento in this.elementosComposicion)
+            foreach (Elemento elemento in this.ElementosComposicion)
             {
                 elemento.destruir();
             }
-            this.mesh.dispose();
+            this.Mesh.dispose();
         }
 
         /// <summary>
         /// Renderiza el objeto
         /// </summary>
-        public void renderizar()
+        public virtual void renderizar()
         {
-            this.mesh.render();
-            this.mesh.BoundingBox.render();
-
-            linea.PStart = this.mesh.BoundingBox.PMin;
-            linea.PEnd = new Vector3(this.mesh.BoundingBox.PMin.X, this.mesh.BoundingBox.PMax.Y, this.mesh.BoundingBox.PMin.Z);
-            linea.BodyColor = Color.Green;
-            linea.HeadColor = Color.Green;
-            linea.Thickness = 1;
-            linea.HeadSize = new Vector2(1, 1);
-            linea.updateValues();
-            linea.render();
+            this.Mesh.render();
+            this.Mesh.BoundingBox.render();
+            this.barraEstado.Render();
         }
 
         /// <summary>
@@ -123,27 +136,27 @@ namespace AlumnoEjemplos.PabloTGC
         /// <returns></returns>
         public TgcBoundingBox BoundingBox()
         {
-            return this.mesh.BoundingBox;
+            return this.Mesh.BoundingBox;
         }
 
         public void mover(Vector3 movimiento)
         {
-            this.mesh.move(movimiento.X, movimiento.Y, movimiento.Z);
+            this.Mesh.move(movimiento.X, movimiento.Y, movimiento.Z);
         }
 
         public Vector3 posicion()
         {
-            return this.mesh.Position;
+            return this.Mesh.Position;
         }
 
         public void posicion(Vector3 posicion)
         {
-            this.mesh.Position = posicion;
+            this.Mesh.Position = posicion;
         }
 
         public void liberar()
         {
-            this.mesh.dispose();
+            this.Mesh.dispose();
         }
 
         /// <summary>
@@ -152,17 +165,17 @@ namespace AlumnoEjemplos.PabloTGC
         /// <param name="fuerza"></param>
         public bool seMueveConUnaFuerza(float fuerza)
         {
-            return this.peso < fuerza;
+            return this.Peso < fuerza;
         }
 
         public void agregarElemento(Elemento elemento)
         {
-            this.elementosComposicion.Add(elemento);
+            this.ElementosComposicion.Add(elemento);
         }
 
         public List<Elemento> elementosQueContiene()
         {
-            return this.elementosComposicion;
+            return this.ElementosComposicion;
         }
 
         /// <summary>
@@ -171,9 +184,9 @@ namespace AlumnoEjemplos.PabloTGC
         /// <returns></returns>
         public bool destruccionTotal()
         {
-            if (this.resistencia < 0)
+            if (this.Resistencia <= 0)
             {
-                if (this.resistencia < -1000)
+                if (this.Resistencia < -1000)
                 {
                     return true;
                 }
@@ -186,7 +199,7 @@ namespace AlumnoEjemplos.PabloTGC
         public string nombre()
         {
             //TODO. Refactorizar esto
-            return this.mesh.Name;
+            return this.Mesh.Name;
         }
 
         public float distanciaA(Elemento unElemento)
@@ -202,6 +215,12 @@ namespace AlumnoEjemplos.PabloTGC
                 posicion.Y - this.posicion().Y, posicion.Z - this.posicion().Z);
             return aux.Length();
         }
+
+        public virtual String getAcciones()
+        {
+            //El elemento generico no posee acciones
+            return "";
+        } 
 
         #endregion
 

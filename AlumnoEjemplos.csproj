@@ -87,8 +87,10 @@
     <Compile Include="PabloTGC\Movimientos\MovimientoParabolico.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Elemento.cs" />
     <Compile Include="PabloTGC\Personaje.cs" />
-    <Compile Include="PabloTGC\Suvirval_Craft.cs" />
-    <Compile Include="PabloTGC\Terreno.cs" />
+    <Compile Include="PabloTGC\SuvirvalCraft.cs" />
+    <Compile Include="PabloTGC\Utiles\BarraEstado.cs" />
+    <Compile Include="PabloTGC\Utiles\MallaEnvoltura.cs" />
+    <Compile Include="PabloTGC\Utiles\Terreno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

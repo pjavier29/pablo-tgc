@@ -18,6 +18,7 @@ using TgcViewer.Utils._2D;
 using TgcViewer.Utils.TgcKeyFrameLoader;
 using AlumnoEjemplos.PabloTGC.ElementosJuego;
 using AlumnoEjemplos.PabloTGC.Instrumentos;
+using AlumnoEjemplos.PabloTGC.Utiles;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -37,9 +38,11 @@ namespace AlumnoEjemplos.MiGrupo
         float tiempo;
         bool puedeGolpear;
         //bool puedeIncrementarSaludConFuego = false;
-        TgcScene scene, scene2, scene3, scene4, scene5, scene6;
-        TgcMesh palmera, pino, arbol, banana, fuego, lenia;
+        TgcScene scene, scene2, scene3, scene4, scene5, scene6, scene7;
+        TgcMesh palmera, pino, arbol, banana, fuego, lenia, carneCruda;
         TgcText2d textGameOver;
+        TgcText2d informativo;
+        TgcText2d elementosEnMochila;
         Animal oveja;
         Animal gallo;
         TgcMesh hachaMesh;
@@ -48,6 +51,11 @@ namespace AlumnoEjemplos.MiGrupo
         Elemento puebaFisica;
         MovimientoParabolico movimiento;
         MovimientoParabolico movimientoPersonaje = new MovimientoParabolico();
+        List<MovimientoParabolico> animacones = new List<MovimientoParabolico>();
+
+
+        TgcSphere esfera;
+        
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -130,7 +138,6 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.SkyEpsilon = 10f;
             skyBox.updateValues();
 
-            //Creamos el ambiente selvático
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Palmera\\Palmera-TgcScene.xml");
             palmera = scene.Meshes[0];
@@ -144,7 +151,7 @@ namespace AlumnoEjemplos.MiGrupo
             arbol = scene3.Meshes[0];
 
             scene4 = loader.loadSceneFromFile(recursos
-                + "MeshCreator\\Meshes\\Frutas\\Bananas\\Bananas-TgcScene.xml");
+                + "MeshCreator\\Meshes\\Alimentos\\Frutas\\Bananas\\Bananas-TgcScene.xml");
             banana = scene4.Meshes[0];
 
             scene5 = loader.loadSceneFromFile(recursos
@@ -154,6 +161,10 @@ namespace AlumnoEjemplos.MiGrupo
             scene6 = loader.loadSceneFromFile(recursos
                  + "MeshCreator\\Meshes\\Leña\\lenia-TgcScene.xml");
             lenia = scene6.Meshes[0];
+
+            scene7 = loader.loadSceneFromFile(recursos
+                 + "MeshCreator\\Meshes\\Alimentos\\CarneCruda\\carnecruda-TgcScene.xml");
+            carneCruda = scene7.Meshes[0];
 
             obstaculos = new List<Elemento>();
 
@@ -167,7 +178,7 @@ namespace AlumnoEjemplos.MiGrupo
                     float x = r[i] * (float)Math.Cos(Geometry.DegreeToRadian(100 + 10.0f * j));
                     float z = r[i] * (float)Math.Sin(Geometry.DegreeToRadian(100 + 10.0f * j));
                     palmeraNueva.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
-                    obstaculos.Add(new Elemento(1000, 140, palmeraNueva));
+                    obstaculos.Add(new Elemento(1000, 1400, palmeraNueva));
                 }
             }
 
@@ -182,7 +193,7 @@ namespace AlumnoEjemplos.MiGrupo
                 arbolBanana.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 bananaMesh = banana.createMeshInstance(banana.Name);
                 bananaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                obstaculos.Add(new Elemento(1000, 130, arbolBanana, new Alimento(1000, 1000, bananaMesh)));
+                obstaculos.Add(new Elemento(1000, 1300, arbolBanana, new Alimento(1000, 1000, bananaMesh)));
             }
 
             TgcMesh fuegoMesh;
@@ -198,7 +209,7 @@ namespace AlumnoEjemplos.MiGrupo
                 leniaMesh = lenia.createMeshInstance(/*lenia.Name*/"lenia");
                 fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                 leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                obstaculos.Add(new Elemento(1000, 233, pinoNuevo,
+                obstaculos.Add(new Elemento(1000, 2330, pinoNuevo,
                                 (new Madera(1000, 233, leniaMesh,
                                     new Fuego(1000, 233, fuegoMesh)))));
             }
@@ -213,22 +224,7 @@ namespace AlumnoEjemplos.MiGrupo
                 new Vector3(20, 20, 20),
                 TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\baldosaFacultad.jpg"));
             puebaFisica = new Elemento(100, 300, caja);
-            movimiento = new MovimientoParabolico(caja.Position, new Vector3(0, 5, 0), 50, puebaFisica.mesh);
-
-            //Obstaculo 2
-            caja = TgcBox.fromSize(
-                new Vector3(50, 0, 200),
-                new Vector3(80, 300, 80),
-                TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\madera.jpg"));
-            obstaculos.Add(new Elemento(100, 300, caja));
-
-            //Obstaculo 3
-            caja = TgcBox.fromSize(
-                new Vector3(300, 0, 100),
-                new Vector3(80, 100, 150),
-                TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\granito.jpg"));
-            obstaculos.Add(new Elemento(233, 300, caja));
-
+            movimiento = new MovimientoParabolico(caja.Position, new Vector3(0, 5, 0), 50, new MallaEnvoltura(puebaFisica.Mesh));
 
             //Creamos los animales
             //Creamos la oveja
@@ -236,6 +232,7 @@ namespace AlumnoEjemplos.MiGrupo
                 + "MeshCreator\\Meshes\\Oveja\\Ovelha-TgcScene.xml");
             TgcMesh ovejaMesh = scene.Meshes[0];
             oveja = new Animal(5000, 20, ovejaMesh.createMeshInstance("Oveja"));
+            oveja.agregarElemento(new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda")));
             ovejaMesh.Position = new Vector3(200, terreno.CalcularAltura(200, 200), 200);
             obstaculos.Add(oveja);
 
@@ -244,6 +241,7 @@ namespace AlumnoEjemplos.MiGrupo
                 + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
             TgcMesh galloMesh = scene.Meshes[0];
             gallo = new Animal(5000, 20, galloMesh.createMeshInstance("Gallo"));
+            gallo.agregarElemento(new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda")));
             galloMesh.Position = new Vector3(0, terreno.CalcularAltura(0, 0), 0);
             obstaculos.Add(gallo);
 
@@ -337,7 +335,7 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(personaje.mesh.Position, 200, -300);
 
-            //Texto de Game Over
+            //Texto de Game Over e informativo
             textGameOver = new TgcText2d();
             textGameOver.Text = "GAME OVER";
             textGameOver.Color = Color.Red;
@@ -346,9 +344,20 @@ namespace AlumnoEjemplos.MiGrupo
             textGameOver.Size = new Size(300, 100);
             textGameOver.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold | FontStyle.Italic));
 
-            //Creamos los modificadores para las acciones
-            string[] acciones = new string[] { "Juntar", "Encender"};
-            GuiController.Instance.Modifiers.addInterval("Acción", acciones, 0);
+            informativo = new TgcText2d();
+            informativo.Color = Color.DarkGreen;
+            informativo.Align = TgcText2d.TextAlign.LEFT;
+            informativo.Position = new Point(400, 200);
+            informativo.Size = new Size(500, 500);
+            informativo.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold | FontStyle.Italic));
+
+            elementosEnMochila = new TgcText2d();
+            elementosEnMochila.Color = Color.Blue;
+            elementosEnMochila.Text = "Mochila: ";
+            elementosEnMochila.Align = TgcText2d.TextAlign.LEFT;
+            elementosEnMochila.Position = new Point(10, 20);
+            elementosEnMochila.Size = new Size(500, 500);
+            elementosEnMochila.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold | FontStyle.Italic));
 
             ///////////////MODIFIERS//////////////////
 
@@ -362,27 +371,16 @@ namespace AlumnoEjemplos.MiGrupo
             //Crear un modifier para modificar un vértice
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
 
-
-
-            ///////////////CONFIGURAR CAMARA ROTACIONAL//////////////////
-            //Es la camara que viene por default, asi que no hace falta hacerlo siempre
-            //GuiController.Instance.RotCamera.Enable = true;
-            //Configurar centro al que se mira y distancia desde la que se mira
-            //.Instance.RotCamera.setCamera(new Vector3(0, 0, 0), 100);
-
-
-            /* 
-             ///////////////CONFIGURAR CAMARA PRIMERA PERSONA//////////////////
-             //Camara en primera persona, tipo videojuego FPS
-             //Solo puede haber una camara habilitada a la vez. Al habilitar la camara FPS se deshabilita la camara rotacional
-             //Por default la camara FPS viene desactivada
-             GuiController.Instance.FpsCamera.Enable = true;
-             //Configurar posicion y hacia donde se mira
-             GuiController.Instance.FpsCamera.setCamera(new Vector3(0, 0, -20), new Vector3(0, 0, 0));
-             */
-
             tiempo = 0;
             puedeGolpear = true;
+
+            //TODO esto deberia ser una configuracion del personaje ya que es el radio de accion del mismo
+            esfera = new TgcSphere();
+            esfera.setColor(Color.White);
+            //esfera.setTexture(TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\Agua.jpg"));
+            esfera.Radius = 70;
+            esfera.Position = new Vector3(0,0,0);
+            esfera.updateValues();
         }
 
 
@@ -412,6 +410,9 @@ namespace AlumnoEjemplos.MiGrupo
             bool tirar = false;
             bool lanzar = false;
             bool correr = false;
+            bool juntar = false;
+            bool encender = false;
+            bool consumir = false;
             jumping = false;
             jumpingAdelante = false;
 
@@ -504,6 +505,24 @@ namespace AlumnoEjemplos.MiGrupo
                 personaje.seleccionarInstrumentoManoDerecha(1);
             }
 
+            //Seleccion Juntar
+            if (d3dInput.keyDown(Key.J))
+            {
+                juntar = true;
+            }
+
+            //Seleccion Encender
+            if (d3dInput.keyDown(Key.E))
+            {
+                encender = true;
+            }
+
+            //Seleccion Consumir
+            if (d3dInput.keyDown(Key.U))
+            {
+                consumir = true;
+            }
+
             //Si hubo rotacion
             if (rotating)
             {
@@ -529,17 +548,19 @@ namespace AlumnoEjemplos.MiGrupo
                 personaje.mesh.move(movementVector * elapsedTime);
                 personaje.mesh.Position = new Vector3(personaje.mesh.Position.X, terreno.CalcularAltura(personaje.mesh.Position.X, personaje.mesh.Position.Z), personaje.mesh.Position.Z);
 
-
                 //Detectar colisiones
                 bool collide = false;
-                Elemento obstaculoColiciono = new Elemento();//TODO. Mejorar esta creacion!!!
                 foreach (Elemento obstaculo in obstaculos)
                 {
                     TgcCollisionUtils.BoxBoxResult result = TgcCollisionUtils.classifyBoxBox(personaje.mesh.BoundingBox, obstaculo.BoundingBox());
                     if (result == TgcCollisionUtils.BoxBoxResult.Adentro || result == TgcCollisionUtils.BoxBoxResult.Atravesando)
                     {
                         collide = true;
-                        obstaculoColiciono = obstaculo;
+
+                        //TODO. Cuidado que esto se ejecuta una sola vez a menos que el personaje se mueva continuemente. Cuando aparece un fuego en la partida
+                        //este deberia realizar sus propias colisiones
+                        //TODO. Tener en cuenta que la direccion del movimiento y si esta yendo para adelante o para atrás deberían ser atributos del personaje
+                        obstaculo.procesarColision(personaje, elapsedTime, obstaculos, moveForward, movementVector);
                         break;
                     }
                 }
@@ -547,86 +568,7 @@ namespace AlumnoEjemplos.MiGrupo
                 //Si hubo colision, restaurar la posicion anterior
                 if (collide)
                 {
-                    //TODO. LAS ACCIONES DEBERIAN ESTAR CONFIGURADAS EN EL PERSONAJE
-                    string accionElegida = (string)GuiController.Instance.Modifiers["Acción"];
-
-                    //TODO. Cuidado que esto se ejecuta una sola vez a menos que el personaje se mueva continuemente. Cuando aparece un fuego en la partida
-                    //este deberia realizar sus propias colisiones
-                    //TODO. Tener en cuenta que la direccion del movimiento y si esta yendo para adelante o para atrás deberían ser atributos del personaje
-                    obstaculoColiciono.procesarColision(personaje, elapsedTime, accionElegida, obstaculos, moveForward, movementVector);
-
-                   /* if (obstaculoColiciono.nombre().Equals("fuego"))
-                    {
-                        //TODO. sacar esta flecha que esta al pedo.
-                        directionArrow.PStart = personaje.mesh.Position;
-                        directionArrow.PEnd = obstaculoColiciono.posicion();
-                        directionArrow.updateValues();
-
-                        if (obstaculoColiciono.distanciaA(personaje.mesh.Position) > 20)
-                        {
-                            puedeIncrementarSaludConFuego = true;
-                        }
-                        else
-                        {
-                            personaje.morir();
-                        }
-                    }*/
-
-                    // else {
-                    //if (obstaculoColiciono.nombre().Equals("lenia"))
-                        //{
-                       /*     if (accionElegida.Equals("Juntar"))
-                            {
-                                personaje.juntar(obstaculoColiciono);
-                                obstaculos.Remove(obstaculoColiciono);
-                            }
-                            if (accionElegida.Equals("Encender"))
-                            {
-                                foreach (Elemento obs in obstaculoColiciono.elementosQueContiene())
-                                {
-                                    obs.posicion(obstaculoColiciono.posicion());
-                                    obs.mesh.BoundingBox.scaleTranslate(obstaculoColiciono.posicion(), new Vector3(2f,2f,2f));
-                                    obstaculos.Add(obs);
-                                }
-                                obstaculoColiciono.liberar();
-                                obstaculos.Remove(obstaculoColiciono);
-                                //Movemos el personaje hacia atrás para evitar que se queme con el fuego
-                                //float z = (float)Math.Cos((float)personaje.mesh.Rotation.Y) * 30;
-                                //float x = (float)Math.Sin((float)personaje.mesh.Rotation.Y) * 30;
-                                //personaje.mesh.Position = new Vector3(x, 0, z);
-
-                                float x = movementVector.X * 30;
-                                float z = movementVector.Z * 30;
-                                personaje.mesh.Position = new Vector3(x, terreno.CalcularAltura(x,z), z);
-                            }*/
-                        //}
-
-                       // else {
-
-                            /*if (obstaculoColiciono.nombre().Equals("Banana"))
-                            {
-                                personaje.consumirAlimento();
-                                obstaculoColiciono.liberar();
-                                obstaculos.Remove(obstaculoColiciono);
-                            }*/
-                            //else {
-                              //  if (moveForward < 0)
-                               // {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
-                                  //  if (obstaculoColiciono.seMueveConUnaFuerza(personaje.fuerza))
-                                  //  {
-                                        /*Vector3 direccionMovimiento = new Vector3((personaje.mesh.Position.X - lastPos.X),
-                                            (personaje.mesh.Position.Y - lastPos.Y), (personaje.mesh.Position.Z - lastPos.Z));*/
-                                    //    Vector3 direccionMovimiento = movementVector;
-                                    //    direccionMovimiento.Normalize();
-                                    //    direccionMovimiento.Multiply(moveForward * elapsedTime * -0.1f);
-                                   //     obstaculoColiciono.mover(direccionMovimiento);
-                                  //  }
-                                  //  personaje.mesh.playAnimation("Empujar", true);
-                              //  }
-                            //}
-                        //}
                         personaje.mesh.Position = lastPos;
-                    //}
                 }
                 else
                 {
@@ -694,16 +636,17 @@ namespace AlumnoEjemplos.MiGrupo
                     directionArrow.PEnd = direccion;
                     directionArrow.updateValues();
 
-                    //Buscamos si esta al alcance alguno de los obstáculos
-                    foreach (Elemento obstaculo in obstaculos)
+                    //Si golpeo un obstáculo deberé esperar 2 segundos para poder golpearlo nuevamente
+                    if (puedeGolpear)
                     {
-                        if (this.isPointInsideAABB(direccion, obstaculo.BoundingBox()))
+                        //Buscamos si esta al alcance alguno de los obstáculos
+                        foreach (Elemento obstaculo in obstaculos)
                         {
-                            //Si golpeo un obstáculo deberé esperar 1 segundo para poder golpearlo nuevamente
-                            if (puedeGolpear)
+                            if (this.isPointInsideAABB(direccion, obstaculo.BoundingBox()))
                             {
                                 puedeGolpear = false;
-                                if (!obstaculo.recibirDanio(fuerzaGolpe))
+                                obstaculo.recibirDanio(fuerzaGolpe);
+                                if (obstaculo.estaDestruido())
                                 {
                                     if (!obstaculo.destruccionTotal())
                                     {
@@ -730,6 +673,41 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
+            //TODO. Misma logica de siempre para saber la direccion del persnaje. REVISAR.
+            Vector3 direccionEsfera = personaje.mesh.Position + new Vector3(-(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 50, 
+                (personaje.mesh.BoundingBox.PMax.Y - personaje.mesh.BoundingBox.PMin.Y) / 2, -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * 50);
+            esfera.Position = direccionEsfera;
+            esfera.updateValues();
+            //esfera.render();
+            informativo.Text = "";
+            Elemento obstaculoInteractuar = null;
+            foreach (Elemento elem in obstaculos)
+            {
+                //TODO. Optimizar esto para solo objetos cernanos!!!!!!!!
+                if (this.EsferaColisionaCuadrado(esfera, elem.BoundingBox()))
+                {
+                    obstaculoInteractuar = elem;
+                    break;
+                }
+            }
+            if (obstaculoInteractuar != null)
+            {
+                //Pedimos lista de acciones al elemento
+                informativo.Text = obstaculoInteractuar.getAcciones();
+                if (consumir)
+                {
+                    obstaculoInteractuar.procesarInteraccion("Consumir", personaje, obstaculos);
+                }
+                if (encender)
+                {
+                    obstaculoInteractuar.procesarInteraccion("Encender", personaje, obstaculos);
+                }
+                if (juntar)
+                {
+                    obstaculoInteractuar.procesarInteraccion("Juntar", personaje, obstaculos);
+                }
+            }
+
             if (tirar)
             {
                 if (personaje.elementosEnMochila().Count > 0)
@@ -739,7 +717,8 @@ namespace AlumnoEjemplos.MiGrupo
                     float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 150;
                     //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
                     //el vector salga del personaje.
-                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, terreno.CalcularAltura(x,z), z);
+                    Vector3 direccion = personaje.mesh.Position + new Vector3(x, 0, z);
+                    direccion.Y = terreno.CalcularAltura(direccion.X, direccion.Z);
 
                     Elemento elementoATirar = personaje.elementosEnMochila()[0];
                     elementoATirar.posicion(direccion);
@@ -763,16 +742,17 @@ namespace AlumnoEjemplos.MiGrupo
                 directionArrow.PEnd = direccion;
                 directionArrow.updateValues();
 
-                puebaFisica.mesh.Position = personaje.mesh.Position + new Vector3(0,50,0);
+                puebaFisica.Mesh.Position = personaje.mesh.Position + new Vector3(0,50,0);
 
-                movimiento = new MovimientoParabolico(personaje.mesh.Position, direccion, 20, puebaFisica.mesh);
+                movimiento = new MovimientoParabolico(personaje.mesh.Position, direccion, 20, new MallaEnvoltura(puebaFisica.Mesh));
 
                 personaje.mesh.playAnimation("Arrojar", true);
             }
 
             if (jumping)
             {
-                movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, personaje.mesh.Position + new Vector3(0,1,0), 4, personaje.mesh);
+                movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, personaje.mesh.Position + new Vector3(0,1,0), 4, 
+                    new MallaEnvoltura(personaje.mesh));
             }
 
             if (jumpingAdelante)
@@ -786,7 +766,7 @@ namespace AlumnoEjemplos.MiGrupo
                 //el vector salga del personaje.
                 Vector3 direccion = personaje.mesh.Position + new Vector3(x, /*terreno.CalcularAltura(x, z) + */1, z);
 
-                movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, direccion, 40, personaje.mesh);
+                movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, direccion, 40, new MallaEnvoltura(personaje.mesh));
             }
 
             movimientoPersonaje.update(elapsedTime, terreno);
@@ -802,9 +782,9 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
 
 
-            if (tiempo >= 1)
+            if (tiempo >= 2)
             {
-                //Si paso más de un segundo lo reiniciamos.
+                //Si paso más de dos segundos lo reiniciamos.
                 personaje.afectarSaludPorTiempo(tiempo);
  
                 tiempo = 0;
@@ -876,6 +856,19 @@ namespace AlumnoEjemplos.MiGrupo
                 textGameOver.render();
             }
 
+            if (informativo.Text != "")
+            {
+                informativo.render();
+            }
+
+            String elementosActuales = "";
+            foreach (Elemento elem in personaje.elementosEnMochila())
+            {
+                elementosActuales = elementosActuales + elem.nombre() + ", ";
+            }
+            elementosEnMochila.Text = "Mochila: " + elementosActuales;
+            elementosEnMochila.render();
+
             //Obtener valor de UserVar (hay que castear)
             // int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
 
@@ -925,6 +918,55 @@ namespace AlumnoEjemplos.MiGrupo
             return (point.X >= box.PMin.X && point.X <= box.PMax.X) &&
                    (point.Y >= box.PMin.Y && point.Y <= box.PMax.Y) &&
                    (point.Z >= box.PMin.Z && point.Z <= box.PMax.Z);
+        }
+
+        private bool EsferaColisionaCuadrado(TgcSphere esfera, TgcBoundingBox cuadrado)
+        {
+            // Hacemos el test
+            float s = 0;
+            float d = 0;
+
+            // Comprobamos si el centro de la esfera está dentro del AABB
+            if (this.isPointInsideAABB(esfera.Position, cuadrado))
+            {
+                return true;
+            }
+
+            // Comprobamos si la esfera y el AABB se intersectan
+            if (esfera.Position.X < cuadrado.PMin.X)
+            {
+                s = esfera.Position.X - cuadrado.PMin.X;
+                d += s * s;
+            }
+            else if (esfera.Position.X > cuadrado.PMax.X)
+            {
+                s = esfera.Position.X - cuadrado.PMax.X;
+                d += s * s;
+            }
+
+            if (esfera.Position.Y < cuadrado.PMin.Y)
+            {
+                s = esfera.Position.Y - cuadrado.PMin.Y;
+                d += s * s;
+            }
+            else if (esfera.Position.Y > cuadrado.PMax.Y)
+            {
+                s = esfera.Position.Y - cuadrado.PMax.Y;
+                d += s * s;
+            }
+
+            if (esfera.Position.Z < cuadrado.PMin.Z)
+            {
+                s = esfera.Position.Z - cuadrado.PMin.Z;
+                d += s * s;
+            }
+            else if (esfera.Position.Z > cuadrado.PMax.Z)
+            {
+                s = esfera.Position.Z - cuadrado.PMax.Z;
+                d += s * s;
+            }
+
+            return (d <= esfera.Radius * esfera.Radius);
         }
 
     }
