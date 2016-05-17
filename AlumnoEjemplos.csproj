@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="PabloTGC\ElementosJuego\Alimento.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Animal.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\Cajon.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Fuego.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Madera.cs" />
     <Compile Include="PabloTGC\Instrumentos\Arma.cs" />

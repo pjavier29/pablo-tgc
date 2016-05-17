@@ -73,8 +73,8 @@ namespace AlumnoEjemplos.PabloTGC
         /// TODO. Ver si no aplica poner una interfaz colisionable
         /// Procesa una colisión cuando la misma es en contra del personaje
         /// </summary>
-        public virtual void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector)
-        {
+        public virtual void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector, Vector3 lastPos)
+        {//TODO. Este metodo tiene muchos parametros que deberian ser del personaje.
             if (moveForward < 0)
             {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
                 if (this.seMueveConUnaFuerza(personaje.fuerza))
@@ -85,10 +85,17 @@ namespace AlumnoEjemplos.PabloTGC
                     this.mover(direccionMovimiento);
                 }
                 personaje.mesh.playAnimation("Empujar", true);
+                personaje.mesh.Position = lastPos;
+                personaje.ActualizarBoundingEsfera();
+            }
+            else
+            {
+                personaje.mesh.Position = lastPos;
+                personaje.ActualizarBoundingEsfera();
             }
         }
 
-        public virtual void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos)
+        public virtual void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
         {
 
         }
@@ -127,6 +134,10 @@ namespace AlumnoEjemplos.PabloTGC
         {
             this.Mesh.render();
             this.Mesh.BoundingBox.render();
+        }
+
+        public void renderizarBarraEstado()
+        {
             this.barraEstado.Render();
         }
 
@@ -171,6 +182,19 @@ namespace AlumnoEjemplos.PabloTGC
         public void agregarElemento(Elemento elemento)
         {
             this.ElementosComposicion.Add(elemento);
+        }
+
+        public void EliminarElemento(Elemento elemento)
+        {
+            this.ElementosComposicion.Remove(elemento);
+        }
+
+        public void EliminarElementos(List<Elemento> elementos)
+        {
+            foreach (Elemento elem in elementos)
+            {
+                this.EliminarElemento(elem);
+            }
         }
 
         public List<Elemento> elementosQueContiene()
@@ -220,7 +244,17 @@ namespace AlumnoEjemplos.PabloTGC
         {
             //El elemento generico no posee acciones
             return "";
-        } 
+        }
+
+        public String GetElementos()
+        {
+            String elementos = "";
+            foreach (Elemento elem in this.ElementosComposicion)
+            {
+                elementos = elementos + " - " + elem.nombre();
+            }
+            return elementos;
+        }
 
         #endregion
 

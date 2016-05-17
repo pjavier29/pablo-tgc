@@ -24,7 +24,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         /// <summary>
         /// Procesa una colisión cuando el personaje colisiona contra el fuego
         /// </summary>
-        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector)
+        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector, Vector3 lastPos)
         {
             if (this.distanciaA(personaje.mesh.Position) > 20)
             {
@@ -36,6 +36,13 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             }
         }
 
+        public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        {
+            if (accion.Equals("Parado"))
+            {
+                personaje.incrementarSaludPorTiempo(elapsedTime);
+            }
+        }
         #endregion
     }
 }

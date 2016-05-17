@@ -1,14 +1,21 @@
 ﻿using AlumnoEjemplos.PabloTGC.Instrumentos;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 
 namespace AlumnoEjemplos.PabloTGC
 {
     public class Personaje
     {
+        #region Atributos
+        private TgcSphere boundingEsfera;
+        #endregion
+
         #region Propiedades
         public float fuerza { get; set; }
         public float golpe { get; set; }//TODO este atributo esta al pedo, creo
@@ -36,14 +43,48 @@ namespace AlumnoEjemplos.PabloTGC
 
         #region Comportamientos
 
+        public void IniciarBoundingEsfera()
+        {
+            //Esta esfera seria el "bounding box" del personaje
+            boundingEsfera = new TgcSphere();
+            boundingEsfera.setColor(Color.SkyBlue);
+            boundingEsfera.Radius = 60;
+            boundingEsfera.Position = this.mesh.Position;
+            boundingEsfera.updateValues();
+        }
+
+        public void ActualizarBoundingEsfera()
+        {
+            boundingEsfera.Position = this.mesh.Position + new Vector3(0, (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y) / 2, 0);
+            boundingEsfera.updateValues();
+        }
+
+        public TgcSphere GetBoundingEsfera()
+        {
+            return this.boundingEsfera;
+        }
+
         public void agregarInstrumento(Arma instrumento)
         {
             this.instrumentos.Add(instrumento);
         }
 
-        public void juntar(Elemento obstaculo)
+        public void juntar(Elemento elemento)
         {
-            this.mochila.Add(obstaculo);
+            this.mochila.Add(elemento);
+        }
+
+        public void Dejar(Elemento elemento)
+        {
+            this.mochila.Remove(elemento);
+        }
+
+        public void DejarElementos(List<Elemento> elementos)
+        {
+            foreach (Elemento elem in elementos)
+            {
+                this.Dejar(elem);
+            }
         }
 
         public float correr(float tiempo)
