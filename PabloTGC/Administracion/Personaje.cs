@@ -14,6 +14,7 @@ namespace AlumnoEjemplos.PabloTGC
     {
         #region Atributos
         private TgcSphere boundingEsfera;
+        private TgcSphere alcanceInteraccionEsfera;
         #endregion
 
         #region Propiedades
@@ -53,15 +54,37 @@ namespace AlumnoEjemplos.PabloTGC
             boundingEsfera.updateValues();
         }
 
-        public void ActualizarBoundingEsfera()
+        public void IniciarAlcanceInteraccionEsfera()
         {
+            alcanceInteraccionEsfera = new TgcSphere();
+            alcanceInteraccionEsfera.setColor(Color.White);
+            alcanceInteraccionEsfera.Radius = 70;
+            alcanceInteraccionEsfera.Position = this.mesh.Position;
+            alcanceInteraccionEsfera.updateValues();
+        }
+
+        public void ActualizarEsferas()
+        {
+            //Actualizamos la esfera del bounding
             boundingEsfera.Position = this.mesh.Position + new Vector3(0, (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y) / 2, 0);
             boundingEsfera.updateValues();
+
+            //Actualizamos la esfera del alcance
+            //TODO. Misma logica de siempre para saber la direccion del persnaje. REVISAR.
+            Vector3 direccionEsferaGolpe = this.mesh.Position + new Vector3(-(float)Math.Sin((float)this.mesh.Rotation.Y) * 50,
+                (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y) / 2, -(float)Math.Cos((float)this.mesh.Rotation.Y) * 50);
+            alcanceInteraccionEsfera.Position = direccionEsferaGolpe;
+            alcanceInteraccionEsfera.updateValues();
         }
 
         public TgcSphere GetBoundingEsfera()
         {
             return this.boundingEsfera;
+        }
+
+        public TgcSphere GetAlcanceInteraccionEsfera()
+        {
+            return this.alcanceInteraccionEsfera;
         }
 
         public void agregarInstrumento(Arma instrumento)

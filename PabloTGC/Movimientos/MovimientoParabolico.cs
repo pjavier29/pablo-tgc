@@ -19,6 +19,7 @@ namespace AlumnoEjemplos.PabloTGC
         private float velocidad { get; set; }
         private float tiempo { get; set; }
         private MallaEnvoltura mesh;
+        public bool Finalizo { get; set; }
 
         float proporcionalX;
         float proporcionalZ;
@@ -38,6 +39,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.direccion = direccion;
             this.velocidad = velocidad;
             this.mesh = mesh;
+            this.Finalizo = false;
             this.inicializar();
         }
 
@@ -122,8 +124,9 @@ namespace AlumnoEjemplos.PabloTGC
                 {
                     //Esto debe ser cuando colosiona con el terreno.
                     this.mesh.Posicion(posicionUltima);
-                    //this.mesh = null;
+                    this.mesh = null;
                     tiempo = 0;
+                    this.Finalizo = true;
                 }
             }
         }

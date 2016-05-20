@@ -86,12 +86,12 @@ namespace AlumnoEjemplos.PabloTGC
                 }
                 personaje.mesh.playAnimation("Empujar", true);
                 personaje.mesh.Position = lastPos;
-                personaje.ActualizarBoundingEsfera();
+                personaje.ActualizarEsferas();
             }
             else
             {
                 personaje.mesh.Position = lastPos;
-                personaje.ActualizarBoundingEsfera();
+                personaje.ActualizarEsferas();
             }
         }
 

@@ -52,7 +52,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
 
         public float FactorCorreccion()
         {
-            if (tgcMesh != null) { return 10; } else { return 0; }
+            if (tgcMesh != null) { return 10; } else { return -2; }
         }
         #endregion
     }
