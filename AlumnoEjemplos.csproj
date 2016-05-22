@@ -92,8 +92,11 @@
     <Compile Include="PabloTGC\ElementosJuego\Alimento.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Animal.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Cajon.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\Copa.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Fuego.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\FuenteAgua.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Madera.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\Olla.cs" />
     <Compile Include="PabloTGC\Instrumentos\Arma.cs" />
     <Compile Include="PabloTGC\Movimientos\MovimientoParabolico.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Elemento.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="PabloTGC\Administracion\SuvirvalCraft.cs" />
     <Compile Include="PabloTGC\Utiles\BarraEstado.cs" />
     <Compile Include="PabloTGC\Utiles\ControladorColisiones.cs" />
+    <Compile Include="PabloTGC\Utiles\FuncionesMatematicas.cs" />
     <Compile Include="PabloTGC\Utiles\MallaEnvoltura.cs" />
     <Compile Include="PabloTGC\Utiles\Terreno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

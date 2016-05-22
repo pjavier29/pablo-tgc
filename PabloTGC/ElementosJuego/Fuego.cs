@@ -43,6 +43,41 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 personaje.incrementarSaludPorTiempo(elapsedTime);
             }
         }
+
+        public override void ProcesarColisionConElemento(Elemento elemento)
+        {
+            if (elemento.GetTipo().Equals(Olla))
+            {
+                //Le coloca la misma posicion que tiene el fuego pero sobre su altura
+                elemento.posicion(this.posicion() + new Vector3(0, this.BoundingBox().PMax.Y - this.BoundingBox().PMin.Y, 0));
+                //Agrega el elemento a su lista
+                this.agregarElemento(elemento);
+            }
+            if (elemento.GetTipo().Equals(Alimento))
+            {
+                if(this.elementosQueContiene().Count > 0)
+                {//Por el momento asumimos que esta cocinando si tiene un elementos
+                    foreach (Elemento elem in this.elementosQueContiene())
+                    {
+                        if (elem.GetTipo().Equals(Olla))
+                        {
+                            elem.ProcesarColisionConElemento(elemento);
+                        }
+                    }
+                }
+            }
+        }
+
+        public override bool AdmiteMultipleColision()
+        {
+            return true;
+        }
+
+        public override String GetTipo()
+        {
+            return Fuego;
+        }
+
         #endregion
     }
 }

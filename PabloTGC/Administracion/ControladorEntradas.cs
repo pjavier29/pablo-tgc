@@ -34,24 +34,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         {
             this.comandosSeleccionados.Clear();
 
-            //*************Comando mas prioritario**************
-            //Saltar adelante
-            if (/*d3dInput.keyDown(Key.Space) && d3dInput.keyDown(Key.W)*/d3dInput.keyDown(Key.E))
-            {
-                if (saltar == null)
-                {
-                    saltar = new Saltar(Saltar.Adelante);
-                }
-                else if ((saltar.Movimiento.Finalizo))
-                {
-                    saltar = new Saltar(Saltar.Adelante);
-                }
-                this.comandosSeleccionados.Add(saltar);
-                return this.comandosSeleccionados;
-            }
-            //*************Comando mas prioritario**************
-
-            //**********************Paquete de movimientos principales acelerados***********************
+            #region Paquete de movimientos principales acelerados
             //Si preciono para caminar más rápido para adelante
             if (d3dInput.keyDown(Key.RightShift) || d3dInput.keyDown(Key.LeftShift) && (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.Up)))
             {
@@ -91,9 +74,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             {
                 return this.comandosSeleccionados;
             }
-            //**********************Paquete de movimientos principales acelerados***********************
+            #endregion
 
-            //**********************Paquete de movimientos principales***********************
+            #region Paquete de movimientos principales
             //Movimiento para adelante
             if (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.Up))
             {
@@ -129,8 +112,67 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             {
                 return this.comandosSeleccionados;
             }
-            //**********************Paquete de movimientos principales***********************
+            #endregion
 
+            #region Paquete de acciones con 2 teclas
+            //Tirar un elemento
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D1))
+            {
+                Comando accion = new Tirar(Tirar.Uno);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D2))
+            {
+                Comando accion = new Tirar(Tirar.Dos);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D3))
+            {
+                Comando accion = new Tirar(Tirar.Tres);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D4))
+            {
+                Comando accion = new Tirar(Tirar.Cuatro);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D5))
+            {
+                Comando accion = new Tirar(Tirar.Cinco);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D6))
+            {
+                Comando accion = new Tirar(Tirar.Seis);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D7))
+            {
+                Comando accion = new Tirar(Tirar.Siete);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D8))
+            {
+                Comando accion = new Tirar(Tirar.Ocho);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            if (d3dInput.keyDown(Key.T) && d3dInput.keyDown(Key.D9))
+            {
+                Comando accion = new Tirar(Tirar.Nueve);
+                this.comandosSeleccionados.Add(accion);
+                return this.comandosSeleccionados;
+            }
+            #endregion
+
+            #region Paquete de acciones con 1 tecla
             //Seleccion de Arma palo
             if (d3dInput.keyDown(Key.D1))
             {
@@ -191,14 +233,6 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             if (d3dInput.keyDown(Key.H))
             {
                 Comando accion = new Interactuar(Interactuar.DejarElemento);
-                this.comandosSeleccionados.Add(accion);
-                return this.comandosSeleccionados;
-            }
-
-            //Tirar un elemento
-            if (d3dInput.keyDown(Key.T))
-            {
-                Comando accion = new Tirar();
                 this.comandosSeleccionados.Add(accion);
                 return this.comandosSeleccionados;
             }
@@ -271,9 +305,27 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 return this.comandosSeleccionados;
             }
 
+            //Saltar adelante
+            if (d3dInput.keyDown(Key.Z))
+            {
+                if (saltar == null)
+                {
+                    saltar = new Saltar(Saltar.Adelante);
+                }
+                else if ((saltar.Movimiento.Finalizo))
+                {
+                    saltar = new Saltar(Saltar.Adelante);
+                }
+                this.comandosSeleccionados.Add(saltar);
+                return this.comandosSeleccionados;
+            }
+
             this.comandosSeleccionados.Add(new Interactuar(Interactuar.Parado));
             return this.comandosSeleccionados;
+
+            #endregion
         }
+
 
         #endregion
     }

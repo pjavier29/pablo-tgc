@@ -12,6 +12,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
     {
         #region Atributos
         private TgcArrow linea;
+        private bool progreso;
         #endregion
 
         #region Propiedades
@@ -23,10 +24,21 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         #region Contructores
         public BarraEstado(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo)
         {
+            this.progreso = false;//Por defecto es una barra de regreso (va del 100% al 0%)
+            this.Iniciar(puntoMinimo, puntoMaximo, valorMaximo);
+        }
+
+        public BarraEstado(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo, bool progreso)
+        {
+            this.progreso = progreso;
+            this.Iniciar(puntoMinimo, puntoMaximo, valorMaximo);
+        }
+
+        private void Iniciar(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo)
+        {
             this.PuntoMinimo = puntoMinimo;
             this.PuntoMaximo = puntoMaximo;
             this.ValorMaximo = valorMaximo;
-
             this.linea = new TgcArrow();
             this.linea.PStart = puntoMinimo;
             this.linea.PEnd = puntoMaximo;
@@ -53,18 +65,20 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             this.linea.render();
         }
 
-        public void ActualizarEstado(float resistencia)
+        public void ActualizarEstado(float valorActual)
         {
-            float porcentajerelativo = resistencia / this.ValorMaximo;
+            float porcentajerelativo = valorActual / this.ValorMaximo;
             this.ActualizarAltura(porcentajerelativo);
             this.ActualizarColor(porcentajerelativo);
         }
 
         private void ActualizarAltura(float porcentajerelativo)
         {
-            float alturaTotalBarra = this.PuntoMaximo.Y - this.PuntoMinimo.Y;
-            float nuevaltura = alturaTotalBarra * porcentajerelativo;
-            this.linea.PEnd = new Vector3(this.PuntoMaximo.X, nuevaltura, this.PuntoMaximo.Z);
+            float nuevoLargo = this.LargoBarra() * porcentajerelativo;
+            Vector3 nuevoDestino = new Vector3(this.PuntoMaximo.X - this.PuntoMinimo.X, this.PuntoMaximo.Y - this.PuntoMinimo.Y, this.PuntoMaximo.Z - this.PuntoMinimo.Z);
+            nuevoDestino.Normalize();
+            nuevoDestino.Multiply(nuevoLargo);
+            this.linea.PEnd = this.linea.PStart + nuevoDestino;
         }
 
         private void ActualizarColor(float porcentajerelativo)
@@ -94,6 +108,11 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             }
             this.linea.BodyColor = nuevoColor;
             this.linea.HeadColor = nuevoColor;
+        }
+
+        public float LargoBarra()
+        {
+            return FuncionesMatematicas.Instance.DistanciaEntrePuntos(this.PuntoMinimo, this.PuntoMaximo);
         }
         #endregion
     }

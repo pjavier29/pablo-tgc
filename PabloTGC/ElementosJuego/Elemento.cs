@@ -1,4 +1,5 @@
-﻿using AlumnoEjemplos.PabloTGC.Utiles;
+﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,18 @@ namespace AlumnoEjemplos.PabloTGC
     /// </summary>
     public class Elemento
     {
+        #region Constantes
+        public const String Alimento = "Alimento";
+        public const String Animal = "Animal";
+        public const String Cajon = "Cajon";
+        public const String Fuego = "Fuego";
+        public const String FuenteAgua = "FuenteAgua";
+        public const String Madera = "Madera";
+        public const String Olla = "Olla";
+        public const String General = "Elemento";
+        public const String Copa = "Copa";
+        #endregion
+
         #region Atributos
         private BarraEstado barraEstado;
         #endregion
@@ -95,7 +108,17 @@ namespace AlumnoEjemplos.PabloTGC
             }
         }
 
+        public virtual void Actualizar(SuvirvalCraft contexto, float elapsedTime)
+        {
+
+        }
+
         public virtual void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        {
+
+        }
+
+        public virtual void ProcesarColisionConElemento(Elemento elemento)
         {
 
         }
@@ -116,7 +139,7 @@ namespace AlumnoEjemplos.PabloTGC
         }
 
         /// <summary>
-        /// Destruye el obstáculo
+        /// Destruye el elemento
         /// </summary>
         public void destruir()
         {
@@ -126,6 +149,19 @@ namespace AlumnoEjemplos.PabloTGC
             }
             this.Mesh.dispose();
         }
+        
+        /// <summary>
+        /// Destruye el elemento pero deveulve una lista con los elementos que contenia
+        /// </summary>
+        /// <returns></returns>
+        public List<Elemento> DestruirSolo()
+        {
+            List<Elemento> contenido = new List<Elemento>();
+            contenido.AddRange(this.elementosQueContiene());
+            this.elementosQueContiene().Clear();
+            this.destruir();
+            return contenido;
+        }
 
         /// <summary>
         /// Renderiza el objeto
@@ -133,7 +169,6 @@ namespace AlumnoEjemplos.PabloTGC
         public virtual void renderizar()
         {
             this.Mesh.render();
-            this.Mesh.BoundingBox.render();
         }
 
         public void renderizarBarraEstado()
@@ -182,6 +217,11 @@ namespace AlumnoEjemplos.PabloTGC
         public void agregarElemento(Elemento elemento)
         {
             this.ElementosComposicion.Add(elemento);
+        }
+
+        public void AgregarElementos(List<Elemento> elementos)
+        {
+            this.ElementosComposicion.AddRange(elementos);
         }
 
         public void EliminarElemento(Elemento elemento)
@@ -254,6 +294,41 @@ namespace AlumnoEjemplos.PabloTGC
                 elementos = elementos + " - " + elem.nombre();
             }
             return elementos;
+        }
+
+        public virtual bool AdmiteMultipleColision()
+        {
+            return false;
+        }
+
+        public virtual String GetTipo()
+        {
+            return General;
+        }
+
+        public virtual bool EsDeTipo(String tipo)
+        {
+            return this.GetTipo().Equals(tipo);
+        }
+
+        /// <summary>
+        /// Retorne el primer elemento de la lista que cumpla con el tipo que se paso por parametro o null
+        /// Deberiamos trabjar con Excepciones
+        /// </summary>
+        /// <param name="tipo"></param>
+        /// <returns></returns>
+        public Elemento ElementoDeTipo(String tipo)
+        {
+            Elemento elemento = null;
+            foreach (Elemento elem in this.elementosQueContiene())
+            {
+                if (elem.GetTipo().Equals(tipo))
+                {
+                    elemento = elem;
+                    break;
+                }
+            }
+            return elemento;
         }
 
         #endregion

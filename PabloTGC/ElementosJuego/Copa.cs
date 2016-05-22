@@ -1,5 +1,4 @@
-﻿using Microsoft.DirectX;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,19 +6,16 @@ using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 {
-    public class Alimento : Elemento
+    public class Copa : Elemento
     {
-        #region Atributos
-        private bool esConsumible;
-        #endregion
+        #region Constructores
 
-        #region Contructores
-        public Alimento(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
+        public Copa(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
         {
 
         }
 
-        public Alimento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) : base(peso, resistencia, mesh, elemento)
+        public Copa(float peso, float resistencia, TgcMesh mesh, Elemento elemento) : base(peso, resistencia, mesh, elemento)
         {
 
         }
@@ -27,13 +23,6 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         #endregion
 
         #region Comportamientos
-
-        /// <summary>
-        /// Procesa una colisión cuando el personaje colisiona contra un pedazo de madera
-        /// </summary>
-        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector, Vector3 lastPos)
-        {
-        }
 
         public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
         {
@@ -46,26 +35,19 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     elementos.Remove(this);
                 }
             }
-            if (accion.Equals("Consumir"))
-            {
-                personaje.consumirAlimento();
-                this.liberar();
-                elementos.Remove(this);
-            }
         }
 
         public override String getAcciones()
         {
             //TODO. Mejorar esta lógica
-            return "Juntar, Consumir";
+            return "Juntar";
         }
 
         public override String GetTipo()
         {
-            return Alimento;
+            return Copa;
         }
 
         #endregion
     }
-
 }

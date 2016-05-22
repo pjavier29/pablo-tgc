@@ -64,5 +64,19 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
 
             return (d <= esfera.Radius * esfera.Radius);
         }
+
+        /// <summary>
+        /// Este método verifica la colision entre dos cuadrados pero proyectanto los cuadrados, asumiendo que ambos estan alineados sobre un eje.
+        /// </summary>
+        /// <param name="cuadrado1"></param>
+        /// <param name="cuadrado2"></param>
+        /// <returns></returns>
+        public static bool CuadradoColisionaCuadrano(TgcBoundingBox cuadrado1, TgcBoundingBox cuadrado2)
+        {
+            return (cuadrado1.PMin.X <= cuadrado2.PMax.X && cuadrado1.PMax.X >= cuadrado2.PMin.X) &&
+                   (cuadrado1.PMin.Y <= cuadrado2.PMax.Y && cuadrado1.PMax.Y >= cuadrado2.PMin.Y) &&
+                   (cuadrado1.PMin.Z <= cuadrado2.PMax.Z && cuadrado1.PMax.Z >= cuadrado2.PMin.Z);
+        }
+
     }
 }

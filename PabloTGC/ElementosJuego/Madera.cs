@@ -39,7 +39,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             if (accion.Equals("Juntar"))
             {
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos
-                if (! personaje.elementosEnMochila().Contains(this))
+                if (! personaje.ContieneElementoEnMochila(this))
                 {
                     personaje.juntar(this);
                     elementos.Remove(this);
@@ -50,7 +50,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 foreach (Elemento elem in this.elementosQueContiene())
                 {
                     elem.posicion(this.posicion());
-                    elem.Mesh.BoundingBox.scaleTranslate(this.posicion(), new Vector3(2f, 2f, 2f));
+                    elem.Mesh.BoundingBox.scaleTranslate(this.posicion(), new Vector3(2f, 0.25f, 2f));
                     elementos.Add(elem);
                 }
                 this.liberar();
@@ -62,6 +62,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         {
             //TODO. Mejorar esta lógica
             return "Juntar, Encender";
+        }
+
+        public override String GetTipo()
+        {
+            return Madera;
         }
 
         #endregion

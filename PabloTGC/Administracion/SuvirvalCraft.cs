@@ -33,15 +33,12 @@ namespace AlumnoEjemplos.MiGrupo
         public TgcSkyBox skyBox;
         TgcBox piso;
         public List<Elemento> elementos;
+        public List<Elemento> elementosSinInteraccion;
         public Personaje personaje;
-        //bool jumping;
-        //bool jumpingAdelante;
         TgcArrow directionArrow;
         float tiempo;
-        //bool puedeGolpear;
-        //bool puedeIncrementarSaludConFuego = false;
-        TgcScene scene, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9, scene10;
-        TgcMesh palmera, pino, arbol, banana, fuego, lenia, carneCruda, cajon, manzanaVerde, manzanaRoja;
+        TgcScene scene, scene2, scene3, scene4, scene5, scene6, scene7;
+        TgcMesh palmera, pino, arbol, banana, fuego, lenia, carneCruda;
         TgcText2d textGameOver;
         public TgcText2d informativo;
         TgcText2d elementosEnMochila;
@@ -53,11 +50,6 @@ namespace AlumnoEjemplos.MiGrupo
         public Elemento puebaFisica;
         public MovimientoParabolico movimiento;
         public MovimientoParabolico movimientoPersonaje;
-        List<MovimientoParabolico> animacones = new List<MovimientoParabolico>();
-
-        //public Lanzar lanzar;
-        //public Saltar saltar;
-        //public Golpear golpear;
 
         public ControladorEntradas controladorEntradas;
 
@@ -170,19 +162,8 @@ namespace AlumnoEjemplos.MiGrupo
                  + "MeshCreator\\Meshes\\Alimentos\\CarneCruda\\carnecruda-TgcScene.xml");
             carneCruda = scene7.Meshes[0];
 
-            scene8 = loader.loadSceneFromFile(recursos
-                 + "MeshCreator\\Meshes\\Cajon\\cajon-TgcScene.xml");
-            cajon = scene8.Meshes[0];
-
-            scene9 = loader.loadSceneFromFile(recursos
-                + "MeshCreator\\Meshes\\Alimentos\\Frutas\\ManzanaVerde\\manzanaverde-TgcScene.xml");
-            manzanaVerde = scene9.Meshes[0];
-
-            scene10 = loader.loadSceneFromFile(recursos
-                + "MeshCreator\\Meshes\\Alimentos\\Frutas\\ManzanaRoja\\manzanaroja-TgcScene.xml");
-            manzanaRoja = scene10.Meshes[0];
-
             elementos = new List<Elemento>();
+            elementosSinInteraccion = new List<Elemento>();
 
             float[] r = { 1850f, 2100f, 2300f, 1800f };
             for (int i = 0; i < 4; i++)
@@ -246,8 +227,15 @@ namespace AlumnoEjemplos.MiGrupo
                 + "MeshCreator\\Meshes\\Oveja\\Ovelha-TgcScene.xml");
             TgcMesh ovejaMesh = scene.Meshes[0];
             oveja = new Animal(5000, 20, ovejaMesh.createMeshInstance("Oveja"));
-            oveja.agregarElemento(new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda")));
             ovejaMesh.Position = new Vector3(200, terreno.CalcularAltura(200, 200), 200);
+            scene = loader.loadSceneFromFile(recursos
+                 + "MeshCreator\\Meshes\\Alimentos\\Hamburguesa\\Hamburguesa-TgcScene.xml");
+            TgcMesh hamburguesa = ovejaMesh = scene.Meshes[0];
+            Alimento alimento = new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda"));
+            alimento.posicion(ovejaMesh.Position);
+            alimento.agregarElemento(new Alimento(1000, 1000, hamburguesa.createMeshInstance("Hamburguesa_1")));
+            alimento.BoundingBox().scaleTranslate(alimento.posicion(), new Vector3(2f, 2f, 2f));
+            oveja.agregarElemento(alimento);
             elementos.Add(oveja);
 
             //Creamos el gallo
@@ -255,17 +243,107 @@ namespace AlumnoEjemplos.MiGrupo
                 + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
             TgcMesh galloMesh = scene.Meshes[0].createMeshInstance("Gallo");
             gallo = new Animal(5000, 20, galloMesh);
-            gallo.agregarElemento(new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda")));
             galloMesh.Position = new Vector3(0, terreno.CalcularAltura(0, 0), 0);
+            alimento = new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda"));
+            alimento.posicion(galloMesh.Position);
+            alimento.agregarElemento(new Alimento(1000, 1000, hamburguesa.createMeshInstance("Hamburguesa_2")));
+            alimento.BoundingBox().scaleTranslate(alimento.posicion(), new Vector3(2f, 2f, 2f));
+            gallo.agregarElemento(alimento);
             elementos.Add(gallo);
 
-            //Creamos el cajon con sus elementos
-            TgcMesh cajonRealMesh = cajon.createMeshInstance("Cajon_1");
+            //**************Creamos el cajon con las manzanas*********************
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Cajon\\cajon-TgcScene.xml");
+            TgcMesh cajonRealMesh = scene.Meshes[0].createMeshInstance("Cajon_Manzanas");
             Elemento cajonReal = new Cajon(5000, 1000, cajonRealMesh);
             cajonRealMesh.Position = new Vector3(233, terreno.CalcularAltura(233, 233), 233);
-            cajonReal.agregarElemento(new Alimento(1000,1000, manzanaVerde.createMeshInstance("Manzana Verde")));
-            cajonReal.agregarElemento(new Alimento(1000, 1000, manzanaRoja.createMeshInstance("Manzana Roja")));
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Alimentos\\Frutas\\ManzanaVerde\\manzanaverde-TgcScene.xml");
+            TgcMesh manzanaVerde = scene.Meshes[0].createMeshInstance("Manzana Verde");
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Alimentos\\Frutas\\ManzanaRoja\\manzanaroja-TgcScene.xml");
+            TgcMesh manzanaRoja = scene.Meshes[0].createMeshInstance("Manzana Roja");
+            manzanaVerde.Scale = new Vector3(0.1f, 0.1f, 0.1f);
+            cajonReal.agregarElemento(new Alimento(1000,1000, manzanaVerde));
+            manzanaRoja.Scale = new Vector3(0.1f, 0.1f, 0.1f);
+            cajonReal.agregarElemento(new Alimento(1000, 1000, manzanaRoja));
             elementos.Add(cajonReal);
+            //********************************************************************
+
+            //**************Creamos el cajon con la olla*********************
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Cajon\\cajon-TgcScene.xml");
+            TgcMesh cajonOllaMesh = scene.Meshes[0].createMeshInstance("Cajon_Olla");
+            Elemento cajonOlla = new Cajon(5000, 1000, cajonOllaMesh);
+            cajonOllaMesh.Position = new Vector3(-233, terreno.CalcularAltura(-233, -233), -233);
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Olla\\Olla-TgcScene.xml");
+            TgcMesh ollaMesh = scene.Meshes[0].createMeshInstance("Olla");
+            ollaMesh.Scale = new Vector3(0.1f, 0.1f, 0.1f);
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\CopaMadera\\CopaMadera-TgcScene.xml");
+            TgcMesh copaMesh = scene.Meshes[0].createMeshInstance("Copa");
+            copaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
+            cajonOlla.agregarElemento(new Olla(1000, 1000, ollaMesh));
+            cajonOlla.agregarElemento(new Copa(1000, 1000, copaMesh));
+            elementos.Add(cajonOlla);
+            //********************************************************************
+
+            //*******************Creamos los arboles y la fuente de agua**********************
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Vegetacion\\Arbol\\Arbol-TgcScene.xml");
+            arbol = scene.Meshes[0];
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Vegetacion\\ArbolAmarillo\\arbolamarillo-TgcScene.xml");
+            TgcMesh arbolAmarillo = scene.Meshes[0];
+            float[] posicionesArboles = { 500f, 700f, 900f, 1100f };
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 1; j < 8; j++)
+                {
+                    TgcMesh arbolNuevo;
+                    if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.8)
+                    {
+                        arbolNuevo = arbol.createMeshInstance(arbol.Name + i);
+                    }
+                    else
+                    {
+                        arbolNuevo = arbolAmarillo.createMeshInstance(arbolAmarillo.Name + i);
+                    }
+                    arbolNuevo.Scale = new Vector3(2f, 3f, 2f);
+                    float x = (posicionesArboles[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(j * 100f, (j * 100f + 30)));
+                    float z = (posicionesArboles[i]  * FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-1.4f, -1));
+                    arbolNuevo.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
+                    elementos.Add(new Elemento(1000, 1400, arbolNuevo));
+                }
+            }
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\FuenteAgua\\FuenteAgua-TgcScene.xml");
+            TgcMesh fuente = scene.Meshes[0].createMeshInstance("Fuente de Agua");
+            fuente.Scale = new Vector3(1.5f, 2.5f, 1.5f);
+            //Sabemos que en la posicion 400x;-400z no hay ningun arbol
+            fuente.Position = new Vector3(400, terreno.CalcularAltura(400, -400), -400);
+            elementos.Add(new FuenteAgua(1000, 1400, fuente));
+            //*********************************************************************************
+
+            //***************Creamos las algas***********************************************************
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Vegetacion\\Alga\\alga-TgcScene.xml");
+            arbol = scene.Meshes[0];
+            float[] posicionesArbustos = { 200f, 300f, 400f, 500f, 600f, 700f, 800f, 900f, 1000f };
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 20; j++)
+                {
+                    TgcMesh arbusto = arbol.createMeshInstance(arbol.Name + i);
+                    arbusto.Scale = new Vector3(0.5f, 0.7f, 0.5f);
+                    float x = (posicionesArbustos[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(j * 100f, (j * 100f + 30)));
+                    float z = (-3000 + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-100, 100));
+                    arbusto.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
+                    elementosSinInteraccion.Add(new Elemento(1000, 1400, arbusto));
+                }
+            }
+            //*****************************************************************************************************************************************
 
             //Crear piso
             TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\Agua.jpg");
@@ -1010,11 +1088,25 @@ namespace AlumnoEjemplos.MiGrupo
             //Render personaje
             personaje.mesh.animateAndRender();
 
-            //Render obstaculos
-            foreach (Elemento obstaculo in elementos)
+            //Actualiza los elementos
+            List<Elemento> aux = new List<Elemento>();
+            aux.AddRange(elementos);//TODO. Porque sino con la actualziacion borramos elementos de la colecsion de elemetos y se rompe todo
+            foreach (Elemento elemento in aux)
             {
-                obstaculo.renderizar();
-                //obstaculo.BoundingBox.render();
+                elemento.Actualizar(this, elapsedTime);
+            }
+
+            //Render elementos
+            foreach (Elemento elemento in elementos)
+            {
+                elemento.renderizar();
+                elemento.BoundingBox().render();
+            }
+
+            //Render elementos sin interaccion
+            foreach (Elemento elemento in elementosSinInteraccion)
+            {
+                elemento.renderizar();
             }
 
             //Renderizar SkyBox
@@ -1076,68 +1168,19 @@ namespace AlumnoEjemplos.MiGrupo
             personaje.mesh.dispose();
             terreno.dispose();
             skyBox.dispose();
-            foreach (Elemento obstaculo in elementos)
+            foreach (Elemento elemento in elementos)
             {
-                obstaculo.destruir();
+                elemento.destruir();
             }
+            foreach (Elemento elemento in elementosSinInteraccion)
+            {
+                elemento.destruir();
+            }
+            informativo.dispose();
             textGameOver.dispose();
+            oveja.destruir();
+            gallo.destruir();
         }
-
-        /*private bool isPointInsideAABB(Vector3 point, TgcBoundingBox box)
-        {
-            return (point.X >= box.PMin.X && point.X <= box.PMax.X) &&
-                   (point.Y >= box.PMin.Y && point.Y <= box.PMax.Y) &&
-                   (point.Z >= box.PMin.Z && point.Z <= box.PMax.Z);
-        }
-
-        private bool EsferaColisionaCuadrado(TgcSphere esfera, TgcBoundingBox cuadrado)
-        {
-            // Hacemos el test
-            float s = 0;
-            float d = 0;
-
-            // Comprobamos si el centro de la esfera está dentro del AABB
-            if (this.isPointInsideAABB(esfera.Position, cuadrado))
-            {
-                return true;
-            }
-
-            // Comprobamos si la esfera y el AABB se intersectan
-            if (esfera.Position.X < cuadrado.PMin.X)
-            {
-                s = esfera.Position.X - cuadrado.PMin.X;
-                d += s * s;
-            }
-            else if (esfera.Position.X > cuadrado.PMax.X)
-            {
-                s = esfera.Position.X - cuadrado.PMax.X;
-                d += s * s;
-            }
-
-            if (esfera.Position.Y < cuadrado.PMin.Y)
-            {
-                s = esfera.Position.Y - cuadrado.PMin.Y;
-                d += s * s;
-            }
-            else if (esfera.Position.Y > cuadrado.PMax.Y)
-            {
-                s = esfera.Position.Y - cuadrado.PMax.Y;
-                d += s * s;
-            }
-
-            if (esfera.Position.Z < cuadrado.PMin.Z)
-            {
-                s = esfera.Position.Z - cuadrado.PMin.Z;
-                d += s * s;
-            }
-            else if (esfera.Position.Z > cuadrado.PMax.Z)
-            {
-                s = esfera.Position.Z - cuadrado.PMax.Z;
-                d += s * s;
-            }
-
-            return (d <= esfera.Radius * esfera.Radius);
-        }*/
 
     }
 }

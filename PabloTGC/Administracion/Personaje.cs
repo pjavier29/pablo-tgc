@@ -15,6 +15,7 @@ namespace AlumnoEjemplos.PabloTGC
         #region Atributos
         private TgcSphere boundingEsfera;
         private TgcSphere alcanceInteraccionEsfera;
+        private Elemento[] mochila;
         #endregion
 
         #region Propiedades
@@ -26,7 +27,6 @@ namespace AlumnoEjemplos.PabloTGC
         public float salud { get; set; }
         public float tiempoCorriendo { get; set; }
         public float resistenciaFisica { get; set; }
-        private List<Elemento> mochila { get; set; }
 
         private Arma instrumentoManoDerecha { get; set; }//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
         private List<Arma> instrumentos { get; set; }//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
@@ -36,7 +36,7 @@ namespace AlumnoEjemplos.PabloTGC
 
         public Personaje()
         {
-            this.mochila = new List<Elemento>();
+            this.mochila = new Elemento[9] {null, null, null, null, null, null, null, null, null};//La mochila solo tiene 9 elementos
             this.instrumentos = new List<Arma>();
             this.tiempoCorriendo = 0;
         }
@@ -94,12 +94,28 @@ namespace AlumnoEjemplos.PabloTGC
 
         public void juntar(Elemento elemento)
         {
-            this.mochila.Add(elemento);
+            for (int i = 0; i < 9; i++)
+            {
+                if (this.mochila[i] == null)
+                {
+                    this.mochila[i] = elemento;
+                    return;
+                }
+            }
+            throw new Exception("No tiene más lugar en la mochila");
         }
 
         public void Dejar(Elemento elemento)
         {
-            this.mochila.Remove(elemento);
+            for (int i = 0; i < 9; i++)
+            {
+                if (this.mochila[i] != null && this.mochila[i].Equals(elemento))
+                {
+                    this.mochila[i] = null;
+                    return;
+                }
+            }
+            throw new Exception("No tiene ese elementos en su mochila");
         }
 
         public void DejarElementos(List<Elemento> elementos)
@@ -166,6 +182,12 @@ namespace AlumnoEjemplos.PabloTGC
             this.salud = 100;
         }
 
+        public void ConsumirAguar(float cantidad)
+        {
+            //TODO. Este método debe ser definido en forma mas precisa
+            this.salud += cantidad;
+        }
+
         public void incrementarSaludPorTiempo(float tiempoEnSegundos)
         {
             //TODO. Este método debe ser definido en forma mas precisa
@@ -183,7 +205,49 @@ namespace AlumnoEjemplos.PabloTGC
 
         public List<Elemento> elementosEnMochila()
         {
-            return this.mochila;
+            List<Elemento> elementos = new List<Elemento>();
+            for (int i = 0; i < 9; i++)
+            {
+                if (this.mochila[i] != null)
+                {
+                    elementos.Add(this.mochila[i]);
+                }
+            }
+            return elementos;
+        }
+
+        public bool ContieneElementoEnMochila(Elemento elemento)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                if (this.mochila[i] != null && this.mochila[i].Equals(elemento))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool ContieneElementoEnMochilaDeTipo(String tipo)
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                if (this.mochila[i] != null && this.mochila[i].EsDeTipo(tipo))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool ContieneElementoEnPosicionDeMochila(int numero)
+        {
+            return (this.mochila[numero] != null) ;
+        }
+
+        public Elemento DarElementoEnPosicionDeMochila(int numero)
+        {
+            return this.mochila[numero];
         }
 
         /// <summary>

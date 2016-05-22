@@ -27,13 +27,14 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
 
         #region Propiedades
         public String Accion { get; set; }
-        public Elemento ObstaculoInteractuar { get; set; }
+        public List<Elemento> ObstaculosInteractuar { get; set; }
         #endregion
 
         #region Constructores
         public Interactuar(String accion)
         {
             this.Accion = accion;
+            this.ObstaculosInteractuar = new List<Elemento>();
         }
 
         #endregion
@@ -45,20 +46,24 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             //Simulamos el descanso del personaje
             contexto.personaje.incrementoResistenciaFisica(elapsedTime);
 
+            this.ObstaculosInteractuar.Clear();
             foreach (Elemento elem in contexto.elementos)
             {
                 //TODO. Optimizar esto para solo objetos cernanos!!!!!!!!
                 if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
                 {
-                    ObstaculoInteractuar = elem;
-                    break;
+                    this.ObstaculosInteractuar.Add(elem);
+                    if (! elem.AdmiteMultipleColision())
+                    {
+                        break;
+                    }                
                 }
             }
-            if (ObstaculoInteractuar != null)
+            foreach (Elemento elem in this.ObstaculosInteractuar)
             {
-                ObstaculoInteractuar.renderizarBarraEstado();
-                ObstaculoInteractuar.procesarInteraccion(this.Accion, contexto.personaje, contexto.elementos, elapsedTime);
-                contexto.informativo.Text = ObstaculoInteractuar.getAcciones();
+                elem.renderizarBarraEstado();
+                elem.procesarInteraccion(this.Accion, contexto.personaje, contexto.elementos, elapsedTime);
+                contexto.informativo.Text = elem.getAcciones();
             }
         }
 

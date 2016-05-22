@@ -34,7 +34,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 List<Elemento> auxiliar = new List<Elemento>();
                 foreach (Elemento elem in this.elementosQueContiene())
                 {
-                    if (!personaje.elementosEnMochila().Contains(elem))
+                    if (!personaje.ContieneElementoEnMochila(elem))
                     {
                         personaje.juntar(elem);
                         auxiliar.Add(elem);
@@ -70,6 +70,10 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             }
         }
 
+        public override String GetTipo()
+        {
+            return Cajon;
+        }
         #endregion
     }
 }

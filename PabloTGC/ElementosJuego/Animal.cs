@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.PabloTGC.Utiles;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,6 @@ namespace AlumnoEjemplos.PabloTGC
         private float velocidadCaminar;
         private float velocidadRotar;
         private String movimientoActual;
-        private Random aleatorio;
         #endregion
 
         #region Contructores
@@ -27,7 +27,6 @@ namespace AlumnoEjemplos.PabloTGC
             this.tiempoEnActividad = 7;
             this.tiempoInactivo = 3;
             this.tiempo = 0;
-            aleatorio = new Random();
             this.velocidadCaminar = 30f;
             this.velocidadRotar = 10F;
             this.movimientoActual = "Caminar";
@@ -49,7 +48,7 @@ namespace AlumnoEjemplos.PabloTGC
                 if (tiempo > tiempoEnActividad + tiempoInactivo)
                 {
                     tiempo = 0;
-                    double aleatorioActual = aleatorio.NextDouble();
+                    double aleatorioActual = FuncionesMatematicas.Instance.NumeroAleatorioDouble();
                     if (aleatorioActual < 0.2F)
                     {
                         movimientoActual = "Caminar";
@@ -115,6 +114,12 @@ namespace AlumnoEjemplos.PabloTGC
             this.GetBarraEstado().ActualizarPuntosBase(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
             base.renderizar();             
         }
+
+        public override String GetTipo()
+        {
+            return Animal;
+        }
+
         #endregion
     }
 }
