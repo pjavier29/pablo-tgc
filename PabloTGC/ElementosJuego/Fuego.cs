@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.MiGrupo;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +37,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             }
         }
 
-        public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
             if (accion.Equals("Parado"))
             {
-                personaje.incrementarSaludPorTiempo(elapsedTime);
+                contexto.personaje.incrementarSaludPorTiempo(elapsedTime);
             }
         }
 

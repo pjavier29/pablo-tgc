@@ -283,6 +283,16 @@ namespace AlumnoEjemplos.PabloTGC
             return this.instrumentoManoDerecha.potenciaGolpe * this.fuerza;
         }
 
+        public float PorcentajeDeSalud()
+        {
+            return this.salud / 100;
+        }
+
+        public float PorcentajeDeCansancio()
+        {
+            return 1 - (this.tiempoCorriendo / this.resistenciaFisica);
+        }
+
         #endregion
     }
 }

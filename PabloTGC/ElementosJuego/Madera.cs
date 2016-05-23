@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.MiGrupo;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,15 +35,15 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         {
         }
 
-        public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
             if (accion.Equals("Juntar"))
             {
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos
-                if (! personaje.ContieneElementoEnMochila(this))
+                if (! contexto.personaje.ContieneElementoEnMochila(this))
                 {
-                    personaje.juntar(this);
-                    elementos.Remove(this);
+                    contexto.personaje.juntar(this);
+                    contexto.elementos.Remove(this);
                 }
             }
             if (accion.Equals("Encender"))
@@ -51,10 +52,10 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 {
                     elem.posicion(this.posicion());
                     elem.Mesh.BoundingBox.scaleTranslate(this.posicion(), new Vector3(2f, 0.25f, 2f));
-                    elementos.Add(elem);
+                    contexto.elementos.Add(elem);
                 }
                 this.liberar();
-                elementos.Remove(this);
+                contexto.elementos.Remove(this);
             }
         }
 

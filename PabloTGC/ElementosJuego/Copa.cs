@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlumnoEjemplos.MiGrupo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,15 +25,15 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
             if (accion.Equals("Juntar"))
             {
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos
-                if (!personaje.ContieneElementoEnMochila(this))
+                if (!contexto.personaje.ContieneElementoEnMochila(this))
                 {
-                    personaje.juntar(this);
-                    elementos.Remove(this);
+                    contexto.personaje.juntar(this);
+                    contexto.elementos.Remove(this);
                 }
             }
         }

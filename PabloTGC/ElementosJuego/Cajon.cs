@@ -1,4 +1,6 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,49 +13,106 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
     {
         #region Atributos
         private bool estaAbierto;
+        private BarraEstado progresoApertura;
+        private float tiempoApertura;
         #endregion
 
         #region Contructores
         public Cajon(float peso, float resistencia, TgcMesh mesh) : base(peso, resistencia, mesh)
         {
             this.estaAbierto = false;
+            this.progresoApertura = null;
+            this.tiempoApertura = 0;
         }
         #endregion
 
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
             //TODO. Podria agregarse para que se cambie el mesh del cajon y se muestre cerrado o abierto.
-            if (accion.Equals("Abrir"))
+            if (!this.estaAbierto)
             {
-                this.estaAbierto = true;
-            }
-            if (accion.Equals("Juntar Todo"))
-            {
-                List<Elemento> auxiliar = new List<Elemento>();
-                foreach (Elemento elem in this.elementosQueContiene())
+                if (accion.Equals("Abrir"))
                 {
-                    if (!personaje.ContieneElementoEnMochila(elem))
+                    if (! this.SeEstaAbriendo())
                     {
-                        personaje.juntar(elem);
-                        auxiliar.Add(elem);
+                        this.progresoApertura = new BarraEstado(new Vector3(this.BoundingBox().PMin.X, this.BoundingBox().PMax.Y, this.BoundingBox().PMax.Z),
+                                this.BoundingBox().PMax, this.TiempoTotalApertura(), true);//Queremos una barra de progreso
                     }
                 }
-                this.EliminarElementos(auxiliar);
             }
-            if (accion.Equals("Dejar Elemento"))
+            else
             {
-                List<Elemento> auxiliar = new List<Elemento>();
-                foreach (Elemento elem in personaje.elementosEnMochila())
+                //TODO. Por el momento podemos mantener todo en un renglon ya que no imprimimos ninguna imagen de los elementos en cuestion
+                contexto.cajonReglon1.Text = "";
+                contexto.mostrarMenuCajon = true;
+                contexto.mostrarMenuMochila = true;//Porque la mochila y el cajon se muestran juntos
+                //TODO. Agregar despues validacion para que el cajon no admita mas de 9 posiciones
+                int i = 0;
+                foreach(Elemento cont in this.elementosQueContiene())
                 {
-                    if (!this.elementosQueContiene().Contains(elem))
-                    {
-                        this.agregarElemento(elem);
-                        auxiliar.Add(elem);
-                    }
+                    contexto.cajonReglon1.Text = contexto.cajonReglon1.Text + (i + 1).ToString() + "    " + cont.GetTipo() + System.Environment.NewLine;
+                    i++;
                 }
-                personaje.DejarElementos(auxiliar);
+
+                if (accion.Equals("Juntar Todo"))
+                {
+                    List<Elemento> auxiliar = new List<Elemento>();
+                    foreach (Elemento elem in this.elementosQueContiene())
+                    {
+                        if (!contexto.personaje.ContieneElementoEnMochila(elem))
+                        {
+                            contexto.personaje.juntar(elem);
+                         auxiliar.Add(elem);
+                        }
+                    }
+                    this.EliminarElementos(auxiliar);
+                }
+                if (accion.Equals("Dejar Elemento"))
+                {
+                    List<Elemento> auxiliar = new List<Elemento>();
+                    foreach (Elemento elem in contexto.personaje.elementosEnMochila())
+                    {
+                        if (!this.elementosQueContiene().Contains(elem))
+                        {
+                            this.agregarElemento(elem);
+                            auxiliar.Add(elem);
+                        }
+                    }
+                    contexto.personaje.DejarElementos(auxiliar);
+                }
+            }
+        }
+
+        public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
+        {
+            if (this.SeEstaAbriendo())
+            {
+                this.tiempoApertura += elapsedTime;
+                if (this.tiempoApertura > this.TiempoTotalApertura())
+                {
+                    this.progresoApertura.Liberar();
+                    this.progresoApertura = null;
+                    this.tiempoApertura = 0;
+                    this.estaAbierto = true;
+                }
+                else
+                {
+                    this.progresoApertura.ActualizarEstado(this.tiempoApertura);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Renderiza el objeto
+        /// </summary>
+        public override void renderizar()
+        {
+            base.renderizar();
+            if (this.SeEstaAbriendo())
+            {
+                this.progresoApertura.Render();
             }
         }
 
@@ -62,18 +121,30 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //TODO. Mejorar esta lógica
             if (estaAbierto)
             {
-                return this.GetElementos() + " Juntar Todo (J), Dejar Elemento (H)";
+                return " Juntar Todo (J), Dejar Elemento (H)";
             }
-            else
+            else if(! this.SeEstaAbriendo())
             {
                 return "Abrir (B)";
             }
+            return "";
         }
 
         public override String GetTipo()
         {
             return Cajon;
         }
+
+        private float TiempoTotalApertura()
+        {
+            return 2;
+        }
+
+        private bool SeEstaAbriendo()
+        {
+            return this.progresoApertura != null;
+        }
+
         #endregion
     }
 }

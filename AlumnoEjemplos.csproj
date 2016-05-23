@@ -85,6 +85,7 @@
     <Compile Include="PabloTGC\Comandos\Girar.cs" />
     <Compile Include="PabloTGC\Comandos\Golpear.cs" />
     <Compile Include="PabloTGC\Comandos\Lanzar.cs" />
+    <Compile Include="PabloTGC\Comandos\Menu.cs" />
     <Compile Include="PabloTGC\Comandos\Mover.cs" />
     <Compile Include="PabloTGC\Comandos\Saltar.cs" />
     <Compile Include="PabloTGC\Comandos\Seleccionar.cs" />

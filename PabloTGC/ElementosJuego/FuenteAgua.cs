@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlumnoEjemplos.MiGrupo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,17 +19,17 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
             if (accion.Equals("Consumir"))
             {
-                if (personaje.ContieneElementoEnMochilaDeTipo(Copa))
+                if (contexto.personaje.ContieneElementoEnMochilaDeTipo(Copa))
                 {
-                    personaje.ConsumirAguar(50f);
+                    contexto.personaje.ConsumirAguar(50f);
                 }
                 else
                 {
-                    personaje.ConsumirAguar(0.4f);
+                    contexto.personaje.ConsumirAguar(0.4f);
                 }
             }
         }

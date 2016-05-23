@@ -41,17 +41,28 @@ namespace AlumnoEjemplos.MiGrupo
         TgcMesh palmera, pino, arbol, banana, fuego, lenia, carneCruda;
         TgcText2d textGameOver;
         public TgcText2d informativo;
-        TgcText2d elementosEnMochila;
         Animal oveja;
         Animal gallo;
         TgcMesh hachaMesh;
         TgcMesh palo;
+
+        TgcSprite mochila;
+        TgcSprite cajon;
+        TgcText2d mochilaReglon1;
+        public TgcText2d cajonReglon1;
+        public bool mostrarMenuMochila;
+        public bool mostrarMenuCajon;
 
         public Elemento puebaFisica;
         public MovimientoParabolico movimiento;
         public MovimientoParabolico movimientoPersonaje;
 
         public ControladorEntradas controladorEntradas;
+
+        TgcSprite salud;
+        TgcSprite hidratacion;
+        TgcSprite alimentacion;
+        TgcSprite cansancio;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -443,21 +454,6 @@ namespace AlumnoEjemplos.MiGrupo
             textGameOver.Size = new Size(300, 100);
             textGameOver.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold | FontStyle.Italic));
 
-            informativo = new TgcText2d();
-            informativo.Color = Color.DarkGreen;
-            informativo.Align = TgcText2d.TextAlign.LEFT;
-            informativo.Position = new Point(400, 200);
-            informativo.Size = new Size(500, 500);
-            informativo.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold | FontStyle.Italic));
-
-            elementosEnMochila = new TgcText2d();
-            elementosEnMochila.Color = Color.Blue;
-            elementosEnMochila.Text = "Mochila: ";
-            elementosEnMochila.Align = TgcText2d.TextAlign.LEFT;
-            elementosEnMochila.Position = new Point(10, 20);
-            elementosEnMochila.Size = new Size(500, 500);
-            elementosEnMochila.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold | FontStyle.Italic));
-
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
@@ -474,6 +470,77 @@ namespace AlumnoEjemplos.MiGrupo
             //puedeGolpear = true;
 
             controladorEntradas = new ControladorEntradas();
+
+            //****************Crear Sprite de la mochila y del cajon**********************************************
+            mochila = new TgcSprite();
+            mochila.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Mochila.jpg");
+
+            //Ubicarlo centrado en la pantalla
+            Size screenSize = GuiController.Instance.Panel3d.Size;
+            Size textureSize = mochila.Texture.Size;
+            mochila.Position = new Vector2(20, (screenSize.Height - textureSize.Height / 2) / 2);
+            mochila.Scaling = new Vector2(0.5f, 0.5f);
+
+            mochilaReglon1 = new TgcText2d();
+            mochilaReglon1.Color = Color.Black;
+            mochilaReglon1.Text = "";
+            mochilaReglon1.Align = TgcText2d.TextAlign.LEFT;
+            mochilaReglon1.Position = new Point(0, 0);
+            //Imagen 1024, escalada 0.5 son 512 menos 70 de la parte de arriba quedarian 442 para los 9 renglones
+            //largo es como la imagen
+            mochilaReglon1.Size = new Size(512, 50);
+            mochilaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+
+            cajon = new TgcSprite();
+            cajon.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Cajon.jpg");
+
+            //Ubicarlo centrado en la pantalla
+            Size textureCacjonSize = cajon.Texture.Size;
+            cajon.Position = new Vector2(screenSize.Width - 20 - (textureCacjonSize.Width / 2), (screenSize.Height - textureCacjonSize.Height / 2) / 2);
+            cajon.Scaling = new Vector2(0.5f, 0.5f);
+
+            cajonReglon1 = new TgcText2d();
+            cajonReglon1.Color = Color.White;
+            cajonReglon1.Text = "";
+            cajonReglon1.Align = TgcText2d.TextAlign.LEFT;
+            cajonReglon1.Position = new Point(0, 0);
+            //Imagen 1024, escalada 0.5 son 512 menos 70 de la parte de arriba quedarian 442 para los 9 renglones
+            //largo es como la imagen
+            cajonReglon1.Size = new Size(512, 50);
+            cajonReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+
+            //****************Crear Sprite de la mochila y del cajon**********************************************
+
+            //****************Crear el texto informativo**********************************************************
+            informativo = new TgcText2d();
+            informativo.Color = Color.Yellow;
+            informativo.Align = TgcText2d.TextAlign.CENTER;
+            informativo.Position = new Point(10, screenSize.Height - 75);
+            informativo.Size = new Size(screenSize.Width, 50);
+            informativo.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold));
+            //****************Crear el texto informativo**********************************************************
+
+            //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
+            salud = new TgcSprite();
+            salud.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraSalud.png");
+            salud.Position = new Vector2(20, 20);
+            salud.Scaling = new Vector2(0.5f, 0.5f);
+
+            hidratacion = new TgcSprite();
+            hidratacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraHidratacion.png");
+            hidratacion.Position = new Vector2(200, 20);
+            hidratacion.Scaling = new Vector2(0.5f, 0.5f);
+
+            alimentacion = new TgcSprite();
+            alimentacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraAlimentacion.png");
+            alimentacion.Position = new Vector2(380, 20);
+            alimentacion.Scaling = new Vector2(0.5f, 0.5f);
+
+            cansancio = new TgcSprite();
+            cansancio.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraCansancio.png");
+            cansancio.Position = new Vector2(560, 20);
+            cansancio.Scaling = new Vector2(0.5f, 0.5f);
+            //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
         }
 
 
@@ -491,511 +558,16 @@ namespace AlumnoEjemplos.MiGrupo
             //Hacer que la camara siga al personaje en su nueva posicion. Sumamos 100 en el posición de Y porque queremos que la cámara este un poco más alta.
             GuiController.Instance.ThirdPersonCamera.Target = personaje.mesh.Position + new Vector3(0,100,0);
 
-            //Calcular proxima posicion de personaje segun Input
-            //float moveForward = 0f;
-            //float rotate = 0;
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
-            //TODO. Mejorar esta logica de representación de estados
-            //bool moving = false;
-            //bool rotating = false;
-            //bool patear = false;
-            //bool pegar = false;
-            //bool tirar = false;
-            //bool lanzar = false;
-            //bool correr = false;
-            //bool juntar = false;
-            //bool encender = false;
-            //bool consumir = false;
-            //bool abrir = false;
-           // bool juntarTodo = false;
-            //bool dejarElemento = false;
-            //jumping = false;
-            //jumpingAdelante = false;
-
-            //bool hayInteraccion = true;
-            //Comando accion = null;
-            ///Comando rotar = null;
-           // Comando tirar = null;
-            //Comando interactuar = null;
-           // bool saltoAdelante = false;
-
-            //Saltar adelante
-       //     if (/*d3dInput.keyDown(Key.Space) && d3dInput.keyDown(Key.W)*/d3dInput.keyDown(Key.E))
-        //    {
-                //jumpingAdelante = true;
-        //        hayInteraccion = false;
-        //        saltoAdelante = true;
-        //        if (saltar == null)
-         //       {
-       //             saltar = new Saltar(Saltar.Adelante);
-       //             saltar.Ejecutar(this, elapsedTime);
-        //        }
-        //        if ((saltar.Movimiento.Finalizo))
-       //         {
-      //              saltar.Ejecutar(this, elapsedTime);
-      //          }
-      //      }
-
-            //Movimiento para adelante
-            //if (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.Up))
-           // {
-                /*dirC = -1f;
-                moveForward = dirC * personaje.velocidadCaminar;
-                moving = true;*/
-             //   if(!saltoAdelante)
-          //      { 
-              //      accion = new Mover(-1f);
-             //       accion.Ejecutar(this, elapsedTime);
-            //        hayInteraccion = false;
-          //      }
-         //   }
-
-       //     //Movimiento para Atras
-         //   if (d3dInput.keyDown(Key.S) || d3dInput.keyDown(Key.Down))
-         //   {
-         //       /*moveForward = personaje.velocidadCaminar;
-         //       moving = true;*/
-         //       accion = new Mover(1f);
-         //       accion.Ejecutar(this, elapsedTime);
-         //       hayInteraccion = false;
-         //   }
-
-            //Rotar Derecha
-      //      if (d3dInput.keyDown(Key.Right) || d3dInput.keyDown(Key.D))
-      //      {
-                /*rotate = personaje.velocidadRotacion;
-                rotating = true;*/
-     //           rotar = new Girar(1f);
-     //           rotar.Ejecutar(this, elapsedTime);
-    //            hayInteraccion = false;
-   //         }
-
-            //Rotar Izquierda
-     //       if (d3dInput.keyDown(Key.Left) || d3dInput.keyDown(Key.A))
-     //       {
-                /*dirR = -1f;
-                rotate = dirR * personaje.velocidadRotacion;
-                rotating = true;*/
-     //           rotar = new Girar(-1f);
-    //            rotar.Ejecutar(this, elapsedTime);
-     //           hayInteraccion = false;
-     //       }
-
-            //Si preciono para caminar más rápido
-    //        if (d3dInput.keyDown(Key.RightShift) || d3dInput.keyDown(Key.LeftShift))
-    //        {
-                //moveForward = dirC * personaje.correr(elapsedTime);
-                //rotate = dirR * personaje.rotarRapido();
-                //correr = true;
-              /*  if (accion != null)
-                {
-                    Mover mover = (Mover)accion;
-                    mover.MovimientoRapido = true;
-                    mover.Ejecutar(this, elapsedTime);
-                }*/
-    //            if (rotar != null)
-    //            {
-    //                Girar girar = (Girar)rotar;
-    //                girar.MovimientoRapido = true;
-    //                girar.Ejecutar(this, elapsedTime);
-    //            }
-    //            hayInteraccion = false;
-    //        }
-
-        /*    //Pegar una piña
-            if (d3dInput.keyDown(Key.RightControl))
-            {
-                //pegar = true;
-                if (golpear == null)
-                {
-                    golpear = new Golpear(Golpear.Pegar);
-                }
-                else
-                {
-                    golpear.GolpeActual = Golpear.Pegar;
-                }
-                golpear.Ejecutar(this, elapsedTime);
-                hayInteraccion = false;
-            }
-
-            //Pegar una patada
-            if (d3dInput.keyDown(Key.LeftControl))
-            {
-                //patear = true;
-                if (golpear == null)
-                {
-                    golpear = new Golpear(Golpear.Patear);
-                }
-                else
-                {
-                    golpear.GolpeActual = Golpear.Patear;
-                }
-                golpear.Ejecutar(this, elapsedTime);
-                hayInteraccion = false;
-            }*/
-
-      /*      //Tirar un elemento
-            if (d3dInput.keyDown(Key.T))
-            {
-                // tirar = true;
-                tirar = new Tirar();
-                tirar.Ejecutar(this, elapsedTime);
-                hayInteraccion = false;
-            }*/
-
-            //Lanza un elemento con fuerza
-      //      if (d3dInput.keyDown(Key.C))
-     //       {
-                //lanzar = true;
-      //          if (!(lanzar != null && !(lanzar.Movimiento.Finalizo)))
-      //          {
-      //              lanzar = new Lanzar(puebaFisica);
-           //         lanzar.Ejecutar(this, elapsedTime);
-      //          }
-                //hayInteraccion = false;
-     //       }
-
-            //Saltar
-      //      if (d3dInput.keyDown(Key.Space))
-       //     {
-                //jumping = true;
-       //         hayInteraccion = false;
-      //          if (saltar == null)
-      //          {
-       //             saltar = new Saltar(Saltar.EnLugar);
-       //             saltar.Ejecutar(this, elapsedTime);
-       //         }
-       //         if ((saltar.Movimiento.Finalizo))
-       //         {
-        //            saltar.Ejecutar(this, elapsedTime);
-       //         }
-         //   }
-
-         /*   //Seleccion de Arma palo
-            if (d3dInput.keyDown(Key.D1))
-            {
-                personaje.seleccionarInstrumentoManoDerecha(0);
-            }
-
-            //Seleccion de Arma Hacha
-            if (d3dInput.keyDown(Key.D2))
-            {
-                personaje.seleccionarInstrumentoManoDerecha(1);
-            }
-
-            //Seleccion Juntar
-            if (d3dInput.keyDown(Key.R))
-            {
-                //juntar = true;
-                if (interactuar == null)
-                {
-                    interactuar = new Interactuar(Interactuar.Juntar);
-                }
-            }
-
-            //Seleccion Encender
-            if (d3dInput.keyDown(Key.E))
-            {
-                //encender = true;
-                if (interactuar == null)
-                {
-                    interactuar = new Interactuar(Interactuar.Encender);
-                }
-            }
-
-            //Seleccion Consumir
-            if (d3dInput.keyDown(Key.U))
-            {
-                //consumir = true;
-                if (interactuar == null)
-                {
-                    interactuar = new Interactuar(Interactuar.Consumir);
-                }
-            }
-
-            //Abrir
-            if (d3dInput.keyDown(Key.B))
-            {
-                //abrir = true;
-                if (interactuar == null)
-                {
-                    interactuar = new Interactuar(Interactuar.Abrir);
-                }
-            }
-
-            //Juntar todo
-            if (d3dInput.keyDown(Key.J))
-            {
-                //juntarTodo = true;
-                if (interactuar == null)
-                {
-                    interactuar = new Interactuar(Interactuar.JuntarTodo);
-                }
-            }
-
-            //Dejar Elemento
-            if (d3dInput.keyDown(Key.H))
-            {
-                //dejarElemento = true;
-                if (interactuar == null)
-                {
-                    interactuar = new Interactuar(Interactuar.DejarElemento);
-                }
-            }*/
 
             informativo.Text = "";
-            /*if (interactuar == null)
-            {
-                interactuar = new Interactuar(Interactuar.Parado);
-            }*/
-
-            //if (hayInteraccion)
-            //{
-             //   interactuar.Ejecutar(this, elapsedTime);
-            //}
+            mostrarMenuMochila = false;
+            mostrarMenuCajon = false;
 
             foreach (Comando comando in controladorEntradas.ProcesarEntradasTeclado())
             {
                 comando.Ejecutar(this, elapsedTime);
             }
-
-            //Si hubo rotacion
-            /*if (rotating)
-            {
-                //Rotar personaje y la camara, hay que multiplicarlo por el tiempo transcurrido para no atarse a la velocidad el hardware
-                float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
-                personaje.mesh.rotateY(rotAngle);
-                GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
-            }*/
-
-            //Si hubo desplazamiento
-            //if (moving)
-            // {
-            //puedeIncrementarSaludConFuego = false;
-
-            //Aplicar movimiento hacia adelante o atras segun la orientacion actual del Mesh
-            //   Vector3 lastPos = personaje.mesh.Position;
-
-            //Aplicamos el movimiento
-            //TODO Ver si es correcta la forma que aplico para representar que se esta a la altura del terreno.
-            //         float xm = FastMath.Sin(personaje.mesh.Rotation.Y) * moveForward;
-            //         float zm = FastMath.Cos(personaje.mesh.Rotation.Y) * moveForward;
-            //        Vector3 movementVector = new Vector3(xm, 0, zm);
-            //        personaje.mesh.move(movementVector * elapsedTime);
-            //        personaje.mesh.Position = new Vector3(personaje.mesh.Position.X, terreno.CalcularAltura(personaje.mesh.Position.X, personaje.mesh.Position.Z), personaje.mesh.Position.Z);
-
-            //         personaje.ActualizarBoundingEsfera();
-
-            //Detectar colisiones
-            //           bool collide = false;
-            //         foreach (Elemento obstaculo in obstaculos)
-            //         {
-            /*TgcCollisionUtils.BoxBoxResult result = TgcCollisionUtils.classifyBoxBox(personaje.mesh.BoundingBox, obstaculo.BoundingBox());
-            if (result == TgcCollisionUtils.BoxBoxResult.Adentro || result == TgcCollisionUtils.BoxBoxResult.Atravesando)*/
-            //             if(this.EsferaColisionaCuadrado(personaje.GetBoundingEsfera(), obstaculo.BoundingBox()))
-            //               {
-            //                 collide = true;
-
-            //TODO. Cuidado que esto se ejecuta una sola vez a menos que el personaje se mueva continuemente. Cuando aparece un fuego en la partida
-            //este deberia realizar sus propias colisiones
-            //TODO. Tener en cuenta que la direccion del movimiento y si esta yendo para adelante o para atrás deberían ser atributos del personaje
-            //                   obstaculo.procesarColision(personaje, elapsedTime, obstaculos, moveForward, movementVector, lastPos);
-            //                   break;
-            //               }
-            //           }
-
-            //            if (!collide)
-            //           {
-            //              if (correr)
-            //               {
-            //Activar animacion de corriendo
-            //                     personaje.mesh.playAnimation("Correr", true);
-            //                  }
-            //              else if (moving)
-            //               {
-            //                   //Activar animacion de caminando
-            //                   personaje.mesh.playAnimation("Caminando", true);
-            //              }
-            //           }
-
-            //Si hubo mivimiento actualizamos el centro del SkyBox para simular que es infinito
-            //           if (!personaje.mesh.Position.Equals(lastPos))
-            //           {
-            //Si no hubo colisiones y el personaje se movio finalmente
-            //                skyBox.Center += new Vector3((personaje.mesh.Position.X - lastPos.X), 0, (personaje.mesh.Position.Z - lastPos.Z));
-            //              skyBox.updateValues();
-            //           }
-            //       }
-
-            //Si no se esta moviendo, activar animacion de Parado, puede estar pateando o pegando
-            //         else
-            //       {
-            //TODO. Mejorar esta lógica de estados.
-
-            //    if ((pegar || patear))
-            //       {
-            //           float alcance = 0;
-            //          float fuerzaGolpe = 0;
-
-            //          if (patear)
-            //            {
-            //               personaje.mesh.playAnimation("Patear", true);
-            //                 alcance = this.personaje.alcancePatada();
-            //                fuerzaGolpe = this.personaje.fuerzaPatada();
-            //            }
-
-            //              if (pegar)
-            //             {
-            //                personaje.mesh.playAnimation("Pegar", true);
-            //                alcance = this.personaje.alcanceGolpe();
-            //                fuerzaGolpe = this.personaje.fuerzaGolpe();
-            //            }
-
-            //             //Si golpeo un obstáculo deberé esperar 2 segundos para poder golpearlo nuevamente
-            //             if (puedeGolpear)
-            //              {
-            //Buscamos si esta al alcance alguno de los obstáculos
-            //                  foreach (Elemento obstaculo in obstaculos)
-            //                  {
-            //                     if (this.EsferaColisionaCuadrado(personaje.GetAlcanceInteraccionEsfera(), obstaculo.BoundingBox()))
-            //                     {
-            //                          obstaculo.recibirDanio(fuerzaGolpe);
-            //                          if (obstaculo.estaDestruido())
-            //                         {
-            //                           if (!obstaculo.destruccionTotal())
-            //                            {
-            //                                foreach (Elemento obs in obstaculo.elementosQueContiene())
-            //                                {
-            //TODO. Aplicar algun algoritmo de dispersion copado
-            //                                    obs.posicion(obstaculo.posicion());
-            //                                    obstaculos.Add(obs);
-            //                           }
-            //                              }
-            //                              obstaculo.liberar();
-            ////                              obstaculos.Remove(obstaculo);
-            //                         }
-            //En principio solo se puede golpear un obstaculo a la vez.
-            //Tener en cuenta que estamos borrando un elemento de una colección que se esta recorriendo.
-            //                          puedeGolpear = false;
-            //                          break;
-            //                      }
-            //                  }
-            //              }
-            //           }
-            //           else
-            //        {
-            //           personaje.mesh.playAnimation("Parado", true);
-            //          }
-            //            }
-
-            //Simulamos el descanso del personaje
-            //        personaje.incrementoResistenciaFisica(elapsedTime);
-
-            //          informativo.Text = "";
-            //          Elemento obstaculoInteractuar = null;
-            //          foreach (Elemento elem in obstaculos)
-            //           {
-            //TODO. Optimizar esto para solo objetos cernanos!!!!!!!!
-            //              if (this.EsferaColisionaCuadrado(personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
-            //              {
-            //                  obstaculoInteractuar = elem;
-            //                  break;
-            //              }
-            //         }
-            //           if (obstaculoInteractuar != null)
-            //          {
-            //             obstaculoInteractuar.renderizarBarraEstado();
-
-            //Pedimos lista de acciones al elemento
-            //               informativo.Text = obstaculoInteractuar.getAcciones();
-            //              if (consumir)
-            //             {
-            //                 obstaculoInteractuar.procesarInteraccion("Consumir", personaje, obstaculos, elapsedTime);
-            //             }
-            //              if (encender)
-            //              {
-            //                   obstaculoInteractuar.procesarInteraccion("Encender", personaje, obstaculos, elapsedTime);
-            //               }
-            //              if (juntar)
-            //              {
-            //                  obstaculoInteractuar.procesarInteraccion("Juntar", personaje, obstaculos, elapsedTime);
-            //              }
-            //            if (abrir)
-            //           {
-            //             obstaculoInteractuar.procesarInteraccion("Abrir", personaje, obstaculos, elapsedTime);
-            //           }
-            //       if (juntarTodo)
-            //         {
-            //       obstaculoInteractuar.procesarInteraccion("Juntar Todo", personaje, obstaculos, elapsedTime);
-            //     }
-            //       if (dejarElemento)
-            //     {
-            //         obstaculoInteractuar.procesarInteraccion("Dejar Elemento", personaje, obstaculos, elapsedTime);
-            //     }
-            //Accion generica
-            //    obstaculoInteractuar.procesarInteraccion("Parado", personaje, obstaculos, elapsedTime);
-            // }
-
-            /* if (tirar)
-             {
-                 if (personaje.elementosEnMochila().Count > 0)
-                 {
-                     //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
-                     float z = -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * 150;
-                     float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 150;
-                     //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
-                     //el vector salga del personaje.
-                     Vector3 direccion = personaje.mesh.Position + new Vector3(x, 0, z);
-                     direccion.Y = terreno.CalcularAltura(direccion.X, direccion.Z);
-
-                     Elemento elementoATirar = personaje.elementosEnMochila()[0];
-                     elementoATirar.posicion(direccion);
-                     obstaculos.Add(elementoATirar);
-                     personaje.elementosEnMochila().Remove(elementoATirar);
-                 }
-             }*/
-
-            // if (lanzar)
-            //  {
-            //TODO. Tener en cuenta que la direccion se esta calculando mas arriba, aunque aqui se calcula la direccion si el perosnaje esta quieto. Analizar!!!
-            //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
-            //        float z = -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * 50;
-            //         float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 50;
-            //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
-            //el vector salga del personaje.
-            //          Vector3 direccion = personaje.mesh.Position + new Vector3(x, /*terreno.CalcularAltura(x, z) + */1, z);
-
-
-            //         directionArrow.PStart = personaje.mesh.Position;
-            //           directionArrow.PEnd = direccion;
-            //          directionArrow.updateValues();
-
-            //         puebaFisica.Mesh.Position = personaje.mesh.Position + new Vector3(0,50,0);
-
-            //      movimiento = new MovimientoParabolico(personaje.mesh.Position, direccion, 20, new MallaEnvoltura(puebaFisica.Mesh));
-
-            //          personaje.mesh.playAnimation("Arrojar", true);
-            //       }
-
-            /* if (jumping)
-             {
-                 movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, personaje.mesh.Position + new Vector3(0,1,0), 4, 
-                     new MallaEnvoltura(personaje.mesh));
-             }*/
-
-            // if (jumpingAdelantefalse)
-            //     {
-            //TODO. Agregar para que no tome al mismo tiempo la tecla de avance W con la barra
-            //TODO. Tener en cuenta que la direccion se esta calculando mas arriba, aunque aqui se calcula la direccion si el perosnaje esta quieto. Analizar!!!
-            //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
-            //          float z = -(float)Math.Cos((float)personaje.mesh.Rotation.Y) * 50;
-            //          float x = -(float)Math.Sin((float)personaje.mesh.Rotation.Y) * 50;
-            //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
-            //el vector salga del personaje.
-            //          Vector3 direccion = personaje.mesh.Position + new Vector3(x, /*terreno.CalcularAltura(x, z) + */1, z);
-
-            //           movimientoPersonaje = new MovimientoParabolico(personaje.mesh.Position, direccion, 40, new MallaEnvoltura(personaje.mesh));
-            //       }
 
             GuiController.Instance.UserVars.setValue("salud", personaje.salud);
             GuiController.Instance.UserVars.setValue("fuerza", personaje.fuerza);
@@ -1123,13 +695,56 @@ namespace AlumnoEjemplos.MiGrupo
                 informativo.render();
             }
 
-            String elementosActuales = "";
-            foreach (Elemento elem in personaje.elementosEnMochila())
-            {
-                elementosActuales = elementosActuales + elem.nombre() + ", ";
+            GuiController.Instance.Drawer2D.beginDrawSprite();
+            salud.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.5f);
+            salud.render();
+            hidratacion.render();
+            hidratacion.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.5f);//TODO poner valor real
+            alimentacion.render();
+            alimentacion.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.5f);//TODO poner valor real
+            cansancio.Scaling = new Vector2(personaje.PorcentajeDeCansancio() * 0.5f, 0.5f);
+            cansancio.render();
+            GuiController.Instance.Drawer2D.endDrawSprite();
+
+            if (mostrarMenuMochila)
+            { 
+                //Iniciar dibujado de todos los Sprites de la escena (en este caso es solo uno)
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                //Dibujar sprite (si hubiese mas, deberian ir todos aquí)
+                mochila.render();
+                if (mostrarMenuCajon)
+                {
+                    //El cajon se muestra siempre junto con la mochila
+                    cajon.render();
+                }
+                //Finalizar el dibujado de Sprites
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                //TODO. Por el momento podemos mantener todo en un renglon ya que no imprimimos ninguna imagen de los elementos en cuestion
+                mochilaReglon1.Text = "";
+                for (int i = 0; i < 9; i++)
+                {
+                    if (personaje.ContieneElementoEnPosicionDeMochila(i))
+                    {
+                     mochilaReglon1.Text = mochilaReglon1.Text + (i+1).ToString() + "    " + personaje.DarElementoEnPosicionDeMochila(i).GetTipo() + System.Environment.NewLine;
+                    }
+                    else
+                    {
+                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    "  + "Disponible" + System.Environment.NewLine;
+                    }
+                }
+                int x = (int)(mochila.Position.X);
+                int y = (int)(mochila.Position.Y);
+                mochilaReglon1.Position = new Point(x + 11, y + 95);
+                mochilaReglon1.render();
+                if (mostrarMenuCajon)
+                {
+                    //En texto que va en el renglon lo completa el cajon cuando hay una interaccion.
+                    x = (int)(cajon.Position.X);
+                    y = (int)(cajon.Position.Y);
+                    cajonReglon1.Position = new Point(x + 11, y + 85);
+                    cajonReglon1.render();
+                }
             }
-            elementosEnMochila.Text = "Mochila: " + elementosActuales;
-            elementosEnMochila.render();
 
             //Obtener valor de UserVar (hay que castear)
             // int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
@@ -1180,6 +795,14 @@ namespace AlumnoEjemplos.MiGrupo
             textGameOver.dispose();
             oveja.destruir();
             gallo.destruir();
+            mochila.dispose();
+            cajon.dispose();
+            mochilaReglon1.dispose();
+            cajonReglon1.dispose();
+            alimentacion.dispose();
+            salud.dispose();
+            hidratacion.dispose();
+            cansancio.dispose();
         }
 
     }

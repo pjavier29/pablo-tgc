@@ -114,6 +114,12 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         {
             return FuncionesMatematicas.Instance.DistanciaEntrePuntos(this.PuntoMinimo, this.PuntoMaximo);
         }
+
+        public void Liberar()
+        {
+            this.linea.dispose();
+        }
+
         #endregion
     }
 }

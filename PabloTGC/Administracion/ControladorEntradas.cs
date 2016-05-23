@@ -320,6 +320,13 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 return this.comandosSeleccionados;
             }
 
+            //Imprimir menu de mochila del personaje
+            if (d3dInput.keyDown(Key.M))
+            {
+                this.comandosSeleccionados.Add(new Menu(Menu.Mochila));
+                return this.comandosSeleccionados;
+            }
+
             this.comandosSeleccionados.Add(new Interactuar(Interactuar.Parado));
             return this.comandosSeleccionados;
 

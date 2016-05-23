@@ -113,7 +113,7 @@ namespace AlumnoEjemplos.PabloTGC
 
         }
 
-        public virtual void procesarInteraccion(String accion, Personaje personaje, List<Elemento> elementos, float elapsedTime)
+        public virtual void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
 
         }
