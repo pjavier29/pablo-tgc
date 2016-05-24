@@ -69,7 +69,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     }
                     this.EliminarElementos(auxiliar);
                 }
-                if (accion.Equals("Dejar Elemento"))
+                if (accion.Equals("Dejar Todo"))
                 {
                     List<Elemento> auxiliar = new List<Elemento>();
                     foreach (Elemento elem in contexto.personaje.elementosEnMochila())
@@ -121,7 +121,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //TODO. Mejorar esta lógica
             if (estaAbierto)
             {
-                return " Juntar Todo (J), Dejar Elemento (H)";
+                return " Juntar Todo (Y), Dejar Todo (U)";
             }
             else if(! this.SeEstaAbriendo())
             {

@@ -39,7 +39,7 @@ namespace AlumnoEjemplos.MiGrupo
         float tiempo;
         TgcScene scene, scene2, scene3, scene4, scene5, scene6, scene7;
         TgcMesh palmera, pino, arbol, banana, fuego, lenia, carneCruda;
-        TgcText2d textGameOver;
+        TgcText2d estadoJuego;
         public TgcText2d informativo;
         Animal oveja;
         Animal gallo;
@@ -63,6 +63,17 @@ namespace AlumnoEjemplos.MiGrupo
         TgcSprite hidratacion;
         TgcSprite alimentacion;
         TgcSprite cansancio;
+        TgcSprite saludIcono;
+        TgcSprite hidratacionIcono;
+        TgcSprite alimentacionIcono;
+        TgcSprite cansancioIcono;
+        TgcSprite objetivosIcono;
+        TgcText2d mensajeObjetivo1;
+        float tiempoObjetivo;
+
+        TgcSprite ayuda;
+        public TgcText2d ayudaReglon1;
+        public bool mostrarAyuda;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -445,15 +456,6 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.ThirdPersonCamera.Enable = true;
             GuiController.Instance.ThirdPersonCamera.setCamera(personaje.mesh.Position, 200, -300);
 
-            //Texto de Game Over e informativo
-            textGameOver = new TgcText2d();
-            textGameOver.Text = "GAME OVER";
-            textGameOver.Color = Color.Red;
-            textGameOver.Align = TgcText2d.TextAlign.LEFT;
-            textGameOver.Position = new Point(300, 100);
-            textGameOver.Size = new Size(300, 100);
-            textGameOver.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold | FontStyle.Italic));
-
             ///////////////MODIFIERS//////////////////
 
             //Crear un modifier para un valor FLOAT
@@ -467,7 +469,6 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
 
             tiempo = 0;
-            //puedeGolpear = true;
 
             controladorEntradas = new ControladorEntradas();
 
@@ -475,7 +476,6 @@ namespace AlumnoEjemplos.MiGrupo
             mochila = new TgcSprite();
             mochila.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Mochila.jpg");
 
-            //Ubicarlo centrado en la pantalla
             Size screenSize = GuiController.Instance.Panel3d.Size;
             Size textureSize = mochila.Texture.Size;
             mochila.Position = new Vector2(20, (screenSize.Height - textureSize.Height / 2) / 2);
@@ -521,26 +521,84 @@ namespace AlumnoEjemplos.MiGrupo
             //****************Crear el texto informativo**********************************************************
 
             //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
+            saludIcono = new TgcSprite();
+            saludIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Corazon.png");
+            saludIcono.Position = new Vector2(20, 20);
+            //saludIcono.Scaling = new Vector2(0.5f, 0.5f);
+
             salud = new TgcSprite();
             salud.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraSalud.png");
-            salud.Position = new Vector2(20, 20);
-            salud.Scaling = new Vector2(0.5f, 0.5f);
+            salud.Position = new Vector2(100, 40);
+            //salud.Scaling = new Vector2(0.5f, 0.5f);
+
+            hidratacionIcono = new TgcSprite();
+            hidratacionIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Agua.png");
+            hidratacionIcono.Position = new Vector2(250, 20);
 
             hidratacion = new TgcSprite();
             hidratacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraHidratacion.png");
-            hidratacion.Position = new Vector2(200, 20);
-            hidratacion.Scaling = new Vector2(0.5f, 0.5f);
+            hidratacion.Position = new Vector2(330, 40);
+            //hidratacion.Scaling = new Vector2(0.5f, 0.5f);
+
+            alimentacionIcono = new TgcSprite();
+            alimentacionIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Hamburguesa.png");
+            alimentacionIcono.Position = new Vector2(480, 20);
 
             alimentacion = new TgcSprite();
             alimentacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraAlimentacion.png");
-            alimentacion.Position = new Vector2(380, 20);
-            alimentacion.Scaling = new Vector2(0.5f, 0.5f);
+            alimentacion.Position = new Vector2(560, 40);
+            //alimentacion.Scaling = new Vector2(0.5f, 0.5f);
+
+            cansancioIcono = new TgcSprite();
+            cansancioIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Cansancio.png");
+            cansancioIcono.Position = new Vector2(710, 20);
 
             cansancio = new TgcSprite();
             cansancio.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraCansancio.png");
-            cansancio.Position = new Vector2(560, 20);
-            cansancio.Scaling = new Vector2(0.5f, 0.5f);
+            cansancio.Position = new Vector2(790, 40);
+            //cansancio.Scaling = new Vector2(0.5f, 0.5f);
             //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
+
+            //****************************Creacion de objetivos*********************
+            objetivosIcono = new TgcSprite();
+            objetivosIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Objetivos.png");
+            objetivosIcono.Position = new Vector2(screenSize.Width - 350, 25);
+            mensajeObjetivo1 = new TgcText2d();
+            mensajeObjetivo1.Color = Color.Red;
+            mensajeObjetivo1.Align = TgcText2d.TextAlign.LEFT;
+            mensajeObjetivo1.Position = new Point(screenSize.Width - 250, 25);
+            mensajeObjetivo1.Size = new Size(200, 50);
+            mensajeObjetivo1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            tiempoObjetivo = 12;//Segundos que forman 20 minutos
+                                  //****************************Creacion de objetivos*********************
+
+            //*****************Creación de texto informativo********************************
+            //Texto de Game Over e informativo
+            estadoJuego = new TgcText2d();
+            estadoJuego.Align = TgcText2d.TextAlign.CENTER;
+            estadoJuego.Position = new Point(5, screenSize.Height / 2);
+            estadoJuego.Size = new Size(screenSize.Width, 50);
+            estadoJuego.changeFont(new System.Drawing.Font("TimesNewRoman", 60, FontStyle.Bold));
+            //*****************Creación de texto informativo********************************
+
+            //*****************Creación de menu ayuda********************************************************
+            ayuda = new TgcSprite();
+            ayuda.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\ayuda.jpg");
+
+            //Ubicarlo centrado en la pantalla
+            Size ayudaTextureSize = ayuda.Texture.Size;
+            ayuda.Position = new Vector2((screenSize.Width - ayudaTextureSize.Width) / 2, (screenSize.Height - ayudaTextureSize.Height / 2) / 2);
+            ayuda.Scaling = new Vector2(1f, 0.6f);
+
+
+            ayudaReglon1 = new TgcText2d();
+            ayudaReglon1.Color = Color.Black;
+            ayudaReglon1.Text = "";
+            ayudaReglon1.Align = TgcText2d.TextAlign.LEFT;
+            ayudaReglon1.Position = new Point(0, 0);
+            ayudaReglon1.Size = new Size(ayudaTextureSize.Width, ayudaTextureSize.Height);
+            ayudaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 11, FontStyle.Bold));
+            //*****************Creación de menu ayuda********************************************************
         }
 
 
@@ -560,9 +618,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
 
-            informativo.Text = "";
+            informativo.Text = "Obtener Ayuda (F1)";
             mostrarMenuMochila = false;
             mostrarMenuCajon = false;
+            mostrarAyuda = false;
 
             foreach (Comando comando in controladorEntradas.ProcesarEntradasTeclado())
             {
@@ -578,41 +637,28 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
             GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
 
-
-            if (tiempo >= 2)
-            {
-                //Si paso más de dos segundos lo reiniciamos.
-                personaje.afectarSaludPorTiempo(tiempo);
- 
-                tiempo = 0;
-                //puedeGolpear = true;
-            }
+            //Afectamos salud por paso de tiempo
+            personaje.afectarSaludPorTiempo(elapsedTime);
             tiempo += elapsedTime;
 
-            //Analisis de posibilidad de incrementar o no salud por fuego
-            /*if (puedeIncrementarSaludConFuego)
-            {
-                personaje.incrementarSaludPorTiempo(elapsedTime);
-            }*/
-
             float offsetHeight;
-            if (d3dInput.keyDown(Key.O))
+            if (d3dInput.keyDown(Key.F9))
             {
                 offsetHeight = GuiController.Instance.ThirdPersonCamera.OffsetHeight;
                 GuiController.Instance.ThirdPersonCamera.OffsetHeight = offsetHeight + 1;
             }
-            if (d3dInput.keyDown(Key.P))
+            if (d3dInput.keyDown(Key.F10))
             {
                 offsetHeight = GuiController.Instance.ThirdPersonCamera.OffsetHeight;
                 GuiController.Instance.ThirdPersonCamera.OffsetHeight = offsetHeight - 1;
             }
             float offsetForward;
-            if (d3dInput.keyDown(Key.K))
+            if (d3dInput.keyDown(Key.F11))
             {
                 offsetForward = GuiController.Instance.ThirdPersonCamera.OffsetForward;
                 GuiController.Instance.ThirdPersonCamera.OffsetForward = offsetForward + 1;
             }
-            if (d3dInput.keyDown(Key.L))
+            if (d3dInput.keyDown(Key.F12))
             {
                 offsetForward = GuiController.Instance.ThirdPersonCamera.OffsetForward;
                 GuiController.Instance.ThirdPersonCamera.OffsetForward = offsetForward - 1;
@@ -626,7 +672,6 @@ namespace AlumnoEjemplos.MiGrupo
                 if (movimiento.Finalizo)
                 {
                     movimiento = null;
-                    //lanzar = null;
                 }
             }
             else
@@ -641,7 +686,6 @@ namespace AlumnoEjemplos.MiGrupo
                 if (movimientoPersonaje.Finalizo)
                 {
                     movimientoPersonaje = null;
-                    //saltar = null;
                 }
             }
 
@@ -687,7 +731,15 @@ namespace AlumnoEjemplos.MiGrupo
             //Personaje muerto
             if (personaje.estaMuerto())
             {
-                textGameOver.render();
+                estadoJuego.Color = Color.Red;
+                estadoJuego.Text = "Game Over";
+                estadoJuego.render();
+            }
+            else if (this.tiempo > this.tiempoObjetivo)
+            {
+                estadoJuego.Color = Color.Green;
+                estadoJuego.Text = "Has Ganado";
+                estadoJuego.render();
             }
 
             if (informativo.Text != "")
@@ -696,15 +748,22 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
             GuiController.Instance.Drawer2D.beginDrawSprite();
-            salud.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.5f);
+            saludIcono.render();
+            hidratacionIcono.render();
+            alimentacionIcono.render();
+            cansancioIcono.render();
+            salud.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.3f);
             salud.render();
+            hidratacion.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.3f);//TODO poner valor real
             hidratacion.render();
-            hidratacion.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.5f);//TODO poner valor real
+            alimentacion.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.3f);//TODO poner valor real
             alimentacion.render();
-            alimentacion.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.5f);//TODO poner valor real
-            cansancio.Scaling = new Vector2(personaje.PorcentajeDeCansancio() * 0.5f, 0.5f);
+            cansancio.Scaling = new Vector2(personaje.PorcentajeDeCansancio() * 0.5f, 0.3f);
             cansancio.render();
+            objetivosIcono.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
+            mensajeObjetivo1.Text = "Sobrevivir " + System.Environment.NewLine + TimeSpan.FromSeconds(this.tiempoObjetivo - this.tiempo).ToString(@"hh\:mm\:ss");
+            mensajeObjetivo1.render();
 
             if (mostrarMenuMochila)
             { 
@@ -744,6 +803,16 @@ namespace AlumnoEjemplos.MiGrupo
                     cajonReglon1.Position = new Point(x + 11, y + 85);
                     cajonReglon1.render();
                 }
+            }
+
+            if (mostrarAyuda)
+            {
+                //TODO poner todos los Sprite dentro de una sola apertura y cierre del controlador
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                ayuda.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                ayudaReglon1.Position = new Point(((int)(ayuda.Position.X)) + 40 , ((int)(ayuda.Position.Y)) + 130);
+                ayudaReglon1.render();
             }
 
             //Obtener valor de UserVar (hay que castear)
@@ -792,7 +861,7 @@ namespace AlumnoEjemplos.MiGrupo
                 elemento.destruir();
             }
             informativo.dispose();
-            textGameOver.dispose();
+            estadoJuego.dispose();
             oveja.destruir();
             gallo.destruir();
             mochila.dispose();
@@ -803,6 +872,14 @@ namespace AlumnoEjemplos.MiGrupo
             salud.dispose();
             hidratacion.dispose();
             cansancio.dispose();
+            mensajeObjetivo1.dispose();
+            objetivosIcono.dispose();
+            alimentacionIcono.dispose();
+            saludIcono.dispose();
+            hidratacionIcono.dispose();
+            cansancioIcono.dispose();
+            ayudaReglon1.dispose();
+            ayuda.dispose();
         }
 
     }

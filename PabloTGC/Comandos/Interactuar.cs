@@ -18,7 +18,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
         public const String Juntar = "Juntar";
         public const String Abrir = "Abrir";
         public const String JuntarTodo = "Juntar Todo";
-        public const String DejarElemento = "Dejar Elemento";
+        public const String DejarTodo = "Dejar Todo";
         public const String Parado = "Parado";//Accion generica
         #endregion
 

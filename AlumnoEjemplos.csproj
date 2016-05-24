@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PabloTGC\Administracion\ControladorEntradas.cs" />
+    <Compile Include="PabloTGC\Comandos\Ayuda.cs" />
     <Compile Include="PabloTGC\Comandos\Comando.cs" />
     <Compile Include="PabloTGC\Comandos\Interactuar.cs" />
     <Compile Include="PabloTGC\Comandos\Girar.cs" />

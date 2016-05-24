@@ -34,6 +34,15 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         {
             this.comandosSeleccionados.Clear();
 
+            #region Paquete de fuciones (Fx)
+            //Si preciono para ver el menú de ayuda
+            if (d3dInput.keyDown(Key.F1))
+            {
+                this.comandosSeleccionados.Add(new Ayuda(this.TextoDeComandos()));
+                return this.comandosSeleccionados;
+            }
+            #endregion
+
             #region Paquete de movimientos principales acelerados
             //Si preciono para caminar más rápido para adelante
             if (d3dInput.keyDown(Key.RightShift) || d3dInput.keyDown(Key.LeftShift) && (d3dInput.keyDown(Key.W) || d3dInput.keyDown(Key.Up)))
@@ -190,7 +199,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
 
             //Seleccion Juntar
-            if (d3dInput.keyDown(Key.R))
+            if (d3dInput.keyDown(Key.J))
             {
                 Comando accion = new Interactuar(Interactuar.Juntar);
                 this.comandosSeleccionados.Add(accion);
@@ -206,7 +215,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
 
             //Seleccion Consumir
-            if (d3dInput.keyDown(Key.U))
+            if (d3dInput.keyDown(Key.C))
             {
                 Comando accion = new Interactuar(Interactuar.Consumir);
                 this.comandosSeleccionados.Add(accion);
@@ -222,17 +231,17 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
 
             //Juntar todo
-            if (d3dInput.keyDown(Key.J))
+            if (d3dInput.keyDown(Key.Y))
             {
                 Comando accion = new Interactuar(Interactuar.JuntarTodo);
                 this.comandosSeleccionados.Add(accion);
                 return this.comandosSeleccionados;
             }
 
-            //Dejar Elemento
-            if (d3dInput.keyDown(Key.H))
+            //Dejar Todo
+            if (d3dInput.keyDown(Key.U))
             {
-                Comando accion = new Interactuar(Interactuar.DejarElemento);
+                Comando accion = new Interactuar(Interactuar.DejarTodo);
                 this.comandosSeleccionados.Add(accion);
                 return this.comandosSeleccionados;
             }
@@ -289,7 +298,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
 
             //Lanza un elemento con fuerza
-            if (d3dInput.keyDown(Key.C))
+            if (d3dInput.keyDown(Key.L))
             {
                 if (lanzar == null)
                 {
@@ -334,6 +343,35 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         }
 
 
+        private String TextoDeComandos()
+        {
+            String comandos = "";
+            comandos += "- Presione F1 para obtener ayuda" + System.Environment.NewLine;
+            comandos += "- Presione W o Flecha Arriba para avanzar" + System.Environment.NewLine;
+            comandos += "- Presione S o Flecha Abajo para retroceder" + System.Environment.NewLine;
+            comandos += "- Presione D o Flecha Derecha para girar a la derecha" + System.Environment.NewLine;
+            comandos += "- Presione A o Flecha Izquierda para girar a la izquierda" + System.Environment.NewLine;
+            comandos += "- Presione Shift Derecho o Izquierdo para movimientos acelerados" + System.Environment.NewLine;
+            comandos += "- Presione T y el número que desee (1-9) para dejar elementos de la mochila" + System.Environment.NewLine;
+            comandos += "- Presione Número (1-9) para seleccionar arma configurada" + System.Environment.NewLine;
+            comandos += "- Presione J para juntar un elemento del suelo" + System.Environment.NewLine;
+            comandos += "- Presione E para encender un leño" + System.Environment.NewLine;//TODO. Que sean acciones en general, no una tecla para cada accion.
+            comandos += "- Presione C para consumir algún alimento" + System.Environment.NewLine;
+            comandos += "- Presione B para abrir los cajones" + System.Environment.NewLine;
+            comandos += "- Presione Y para juntar cuando haya más de un elemento" + System.Environment.NewLine;
+            comandos += "- Presione U para dejar cuando haya más de un elemento" + System.Environment.NewLine;
+            comandos += "- Presione Control Derecho para golpear con el arma seleccionada" + System.Environment.NewLine;
+            comandos += "- Presione Control Izquierdo para golpear con una patada" + System.Environment.NewLine;
+            comandos += "- Presione la Barra Espaciadora para saltar" + System.Environment.NewLine;
+            comandos += "- Presione Z para saltar hacia adelante" + System.Environment.NewLine;
+            comandos += "- Presione L para lanzar una piedra" + System.Environment.NewLine;
+            comandos += "- Presione M para mostrar la mochila" + System.Environment.NewLine;
+            comandos += "- Presione F9 DEFINIR" + System.Environment.NewLine;//TODO. Cuando implementemos las multiples camaras.
+            comandos += "- Presione F10 DEFINIR" + System.Environment.NewLine;
+            comandos += "- Presione F11 DEFNIR" + System.Environment.NewLine;
+            comandos += "- Presione F12 DEFNIR" + System.Environment.NewLine;
+            return comandos;
+        }
         #endregion
     }
 }

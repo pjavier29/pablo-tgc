@@ -285,7 +285,16 @@ namespace AlumnoEjemplos.PabloTGC
 
         public float PorcentajeDeSalud()
         {
-            return this.salud / 100;
+            float actual = this.salud / 100;
+            if (actual < 0)
+            {
+                return 0;
+            }
+            else if(actual > 1)
+            {
+                return 1;
+            }
+            return actual;
         }
 
         public float PorcentajeDeCansancio()

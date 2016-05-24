@@ -37,7 +37,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         public override String getAcciones()
         {
             //TODO. Mejorar esta lógica
-            return "Consumir (U)";
+            return "Consumir (C)";
         }
 
         public override String GetTipo()

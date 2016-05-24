@@ -47,7 +47,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //TODO. Al momento de juntar la hamburguesa no sera eliminado de la coleccion y seguira todo igual (de todas formas por ahora nos sirve)
             if (! this.EstaCocinando())
             {
-                return "Juntar";
+                return "Juntar (J)";
             }
             return "";
         }
