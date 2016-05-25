@@ -111,7 +111,7 @@ namespace AlumnoEjemplos.PabloTGC
         public override void renderizar()
         {
             //Tenemos que actualizar los puntos de la barra ya que el animal se mueve por el terreno
-            this.GetBarraEstado().ActualizarPuntosBase(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
+            this.ActualizarBarraEstadoCompleta(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
             base.renderizar();             
         }
 

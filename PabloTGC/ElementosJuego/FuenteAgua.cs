@@ -21,6 +21,8 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            //En la fuente de agua no queremos que se miestre barra de estado
+            base.procesarInteraccion(accion, contexto, elapsedTime);
             if (accion.Equals("Consumir"))
             {
                 if (contexto.personaje.ContieneElementoEnMochilaDeTipo(Copa))

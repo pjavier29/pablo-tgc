@@ -64,7 +64,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     this.elementoCoccion = elemento;
                     this.tiempoCoccion = 0;
                     this.progresoCoccion = new BarraEstado(new Vector3(this.BoundingBox().PMin.X, this.BoundingBox().PMax.Y, this.BoundingBox().PMax.Z),
-                        this.BoundingBox().PMax, this.TiempoCoccionElementos(), true);//Queremos una barra de progreso
+                        this.BoundingBox().PMax, this.TiempoCoccionElementos());
                 }
             }
         }

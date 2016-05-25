@@ -37,6 +37,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            base.procesarInteraccion(accion, contexto, elapsedTime);
             if (accion.Equals("Juntar"))
             {
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos

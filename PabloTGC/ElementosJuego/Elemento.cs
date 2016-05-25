@@ -30,6 +30,9 @@ namespace AlumnoEjemplos.PabloTGC
 
         #region Atributos
         private BarraEstado barraEstado;
+        private float resistenciaTotal;
+        private bool hayInteraccion;
+        private float momentoUltimoGolpe;
         #endregion
 
         #region Propiedades
@@ -49,8 +52,12 @@ namespace AlumnoEjemplos.PabloTGC
         {
             this.Mesh = mesh;
             this.Resistencia = resistencia;
-            this.barraEstado = new BarraEstado(this.Mesh.BoundingBox.PMin, 
-                new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z), resistencia);
+            this.resistenciaTotal = resistencia;
+            /*this.barraEstado = new BarraEstado(this.Mesh.BoundingBox.PMin, 
+                new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z), resistencia);*/
+            this.barraEstado = null;
+            this.hayInteraccion = false;
+            this.momentoUltimoGolpe = 0;
 
         }
 
@@ -76,11 +83,6 @@ namespace AlumnoEjemplos.PabloTGC
         #endregion
 
         #region Comportamientos
-
-        public BarraEstado GetBarraEstado()
-        {
-            return this.barraEstado;
-        }
 
         /// <summary>
         /// TODO. Ver si no aplica poner una interfaz colisionable
@@ -110,12 +112,39 @@ namespace AlumnoEjemplos.PabloTGC
 
         public virtual void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
+            if (this.hayInteraccion)
+            {
+                if (this.barraEstado != null)
+                {
+                    this.barraEstado.ActualizarEstado(this.Resistencia);
+                }
+            }
+            else
+            {
+                if (this.barraEstado != null)
+                {
+                    this.barraEstado.Liberar();
+                    this.barraEstado = null;
+                }
+            }
 
+            //Preguntamos por el tiempo del ultimo golpe porque queremos que la barra de estado se muestre durante 5 segudos despues de cada golpe,
+            //independientemente de que no haya interaccion
+            if (this.SuperoTiempoGolpe(contexto.tiempo))
+            {
+                //Esto maneja la sincronización, ya que siempre se ejecuta primero las colisiones e interacciones y luego las actualizaciones.
+                this.hayInteraccion = false;
+            }
         }
 
         public virtual void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
-
+            if (this.barraEstado == null)
+            {
+                this.barraEstado = new BarraEstado(this.Mesh.BoundingBox.PMin,
+                    new Vector3(this.BoundingBox().PMin.X, this.BoundingBox().PMax.Y, this.BoundingBox().PMin.Z), this.resistenciaTotal);       
+            }
+            this.hayInteraccion = true;
         }
 
         public virtual void ProcesarColisionConElemento(Elemento elemento)
@@ -127,10 +156,11 @@ namespace AlumnoEjemplos.PabloTGC
         /// Aplica el daño que se recibe por parametro y actualiza la barra de estado
         /// </summary>
         /// <returns></returns>
-        public void recibirDanio(float danio)
+        public void recibirDanio(float danio, float tiempoDeGolpe)
         {
+            this.hayInteraccion = true;
+            this.momentoUltimoGolpe = tiempoDeGolpe;
             this.Resistencia -= danio;
-            this.barraEstado.ActualizarEstado(this.Resistencia);  
         }
 
         public bool estaDestruido()
@@ -148,6 +178,10 @@ namespace AlumnoEjemplos.PabloTGC
                 elemento.destruir();
             }
             this.Mesh.dispose();
+            if (this.barraEstado != null)
+            {
+                this.barraEstado.Liberar();
+            }
         }
         
         /// <summary>
@@ -169,11 +203,18 @@ namespace AlumnoEjemplos.PabloTGC
         public virtual void renderizar()
         {
             this.Mesh.render();
+            if (this.barraEstado != null)
+            {
+                this.barraEstado.Render();
+            }
         }
 
-        public void renderizarBarraEstado()
+        public void ActualizarBarraEstadoCompleta(Vector3 puntoOrigen, Vector3 puntoDestino)
         {
-            this.barraEstado.Render();
+            if (this.barraEstado != null)
+            {
+                this.barraEstado.ActualizarPuntosBase(puntoOrigen, puntoDestino);
+            }
         }
 
         /// <summary>
@@ -329,6 +370,16 @@ namespace AlumnoEjemplos.PabloTGC
                 }
             }
             return elemento;
+        }
+
+        private bool SuperoTiempoGolpe(float tiempoActual)
+        {
+            if (this.momentoUltimoGolpe == 0)
+            {
+                return true;
+            }
+            //Sabemos que el tiempo esta en segundos
+            return tiempoActual - this.momentoUltimoGolpe > 5;
         }
 
         #endregion

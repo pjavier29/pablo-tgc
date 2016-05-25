@@ -61,7 +61,6 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             }
             foreach (Elemento elem in this.ObstaculosInteractuar)
             {
-                elem.renderizarBarraEstado();
                 elem.procesarInteraccion(this.Accion, contexto, elapsedTime);
                 contexto.informativo.Text = elem.getAcciones();
             }

@@ -39,6 +39,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            //En el fuego no queremos que se muestre barra de estado.
             if (accion.Equals("Parado"))
             {
                 contexto.personaje.incrementarSaludPorTiempo(elapsedTime);

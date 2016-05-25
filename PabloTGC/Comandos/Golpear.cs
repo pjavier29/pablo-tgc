@@ -11,12 +11,11 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
     public class Golpear : Comando
     {
         #region Atributo;
-        private float timer;
+        private float momentoUltimoGolpe;
         #endregion
 
         #region Propiedades
         public String GolpeActual { get; set; }
-        public bool PuedeGolpear { get; set; }
         #endregion
 
         #region Constantes
@@ -27,9 +26,8 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
         #region Constructores
         public Golpear(String tipoDeGolpe)
         {
-            this.timer = 0;
-            this.PuedeGolpear = true;
             this.GolpeActual = tipoDeGolpe;
+            this.momentoUltimoGolpe = 0;
         }
         #endregion
 
@@ -53,17 +51,17 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 fuerzaGolpe = contexto.personaje.fuerzaGolpe();
             }
 
-            this.ActualizarTimer(elapsedTime);
-
             //Si golpeo un obstáculo deberé esperar 2 segundos para poder golpearlo nuevamente
-            if (this.PuedeGolpear)
+            if (this.PuedeGolpear(contexto.tiempo))
             {
                 //Buscamos si esta al alcance alguno de los obstáculos
                 foreach (Elemento elem in contexto.elementos)
                 {
                     if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
                     {
-                        elem.recibirDanio(fuerzaGolpe);
+                        //Si golpeo actualizamos el tiempo local
+                        this.momentoUltimoGolpe = contexto.tiempo;
+                        elem.recibirDanio(fuerzaGolpe, contexto.tiempo);
                         if (elem.estaDestruido())
                         {
                             if (!elem.destruccionTotal())
@@ -80,24 +78,16 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                         }
 
                         //En principio solo se puede golpear un obstaculo a la vez.
-                        this.PuedeGolpear = false;
                         break;
                     }
                 }
             }
         }
 
-        private void ActualizarTimer(float elapsedTime)
+        private bool PuedeGolpear(float tiempo)
         {
-            //TODO. el timer deberia ser manejado por otro objeto general, porque sino el tiempo solo se actualiza cuando se esta pegando,
-            //entonces si doy un golpe y me voy a golpear otro objeto debo espear el tiempo restante hasta completar el segundo y medio para poder
-            //golpearlo, pero yo en el medio pude caminar por mucho tiempo que deberia ser contado para la espera.
-            if (this.timer >= 1.5f)
-            {
-                this.timer = 0;
-                this.PuedeGolpear = true;
-            }
-            this.timer += elapsedTime;
+            if (this.momentoUltimoGolpe == 0) { return true; }
+            return (tiempo - this.momentoUltimoGolpe) > 1.5f;
         }
         #endregion
     }

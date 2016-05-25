@@ -30,6 +30,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            base.procesarInteraccion(accion, contexto, elapsedTime);
             //TODO. Podria agregarse para que se cambie el mesh del cajon y se muestre cerrado o abierto.
             if (!this.estaAbierto)
             {
@@ -38,7 +39,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     if (! this.SeEstaAbriendo())
                     {
                         this.progresoApertura = new BarraEstado(new Vector3(this.BoundingBox().PMin.X, this.BoundingBox().PMax.Y, this.BoundingBox().PMax.Z),
-                                this.BoundingBox().PMax, this.TiempoTotalApertura(), true);//Queremos una barra de progreso
+                                this.BoundingBox().PMax, this.TiempoTotalApertura());
                     }
                 }
             }
@@ -87,6 +88,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
+            base.Actualizar(contexto, elapsedTime);
             if (this.SeEstaAbriendo())
             {
                 this.tiempoApertura += elapsedTime;

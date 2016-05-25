@@ -12,7 +12,6 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
     {
         #region Atributos
         private TgcArrow linea;
-        private bool progreso;
         #endregion
 
         #region Propiedades
@@ -24,13 +23,6 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         #region Contructores
         public BarraEstado(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo)
         {
-            this.progreso = false;//Por defecto es una barra de regreso (va del 100% al 0%)
-            this.Iniciar(puntoMinimo, puntoMaximo, valorMaximo);
-        }
-
-        public BarraEstado(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo, bool progreso)
-        {
-            this.progreso = progreso;
             this.Iniciar(puntoMinimo, puntoMaximo, valorMaximo);
         }
 

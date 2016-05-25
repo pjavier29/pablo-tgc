@@ -21,6 +21,7 @@ using AlumnoEjemplos.PabloTGC.Instrumentos;
 using AlumnoEjemplos.PabloTGC.Utiles;
 using AlumnoEjemplos.PabloTGC.Comandos;
 using AlumnoEjemplos.PabloTGC.Administracion;
+using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -31,12 +32,12 @@ namespace AlumnoEjemplos.MiGrupo
     {
         public Terreno terreno;
         public TgcSkyBox skyBox;
-        TgcBox piso;
+        public TgcBox piso;
         public List<Elemento> elementos;
         public List<Elemento> elementosSinInteraccion;
         public Personaje personaje;
         TgcArrow directionArrow;
-        float tiempo;
+        public float tiempo;
         TgcScene scene, scene2, scene3, scene4, scene5, scene6, scene7;
         TgcMesh palmera, pino, arbol, banana, fuego, lenia, carneCruda;
         TgcText2d estadoJuego;
@@ -73,7 +74,10 @@ namespace AlumnoEjemplos.MiGrupo
 
         TgcSprite ayuda;
         public TgcText2d ayudaReglon1;
+        public TgcText2d ayudaReglon2;
         public bool mostrarAyuda;
+
+        public Camara camara;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -233,26 +237,22 @@ namespace AlumnoEjemplos.MiGrupo
                                     new Fuego(1000, 233, fuegoMesh)))));
             }
 
-            //Cargar obstaculos y posicionarlos. Los obstáculos se crean con TgcBox en lugar de cargar un modelo.
-            TgcBox caja;
-            //Caja para tirar
-            caja = TgcBox.fromSize(
-                new Vector3(0, 0, 0),
-                new Vector3(20, 20, 20),
-                TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\baldosaFacultad.jpg"));
-            puebaFisica = new Elemento(100, 300, caja);
-            //movimiento = new MovimientoParabolico(caja.Position, new Vector3(0, 5, 0), 50, new MallaEnvoltura(puebaFisica.Mesh));
+            //Creamos la piedra para tirar
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Roca\\Roca-TgcScene.xml");
+            TgcMesh piedraMesh = scene.Meshes[0].createMeshInstance("Piedra");
+            puebaFisica = new Elemento(100, 300, piedraMesh);
 
             //Creamos los animales
             //Creamos la oveja
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Oveja\\Ovelha-TgcScene.xml");
-            TgcMesh ovejaMesh = scene.Meshes[0];
-            oveja = new Animal(5000, 20, ovejaMesh.createMeshInstance("Oveja"));
+            TgcMesh ovejaMesh = scene.Meshes[0].createMeshInstance("Oveja");
+            oveja = new Animal(5000, 20, ovejaMesh);
             ovejaMesh.Position = new Vector3(200, terreno.CalcularAltura(200, 200), 200);
             scene = loader.loadSceneFromFile(recursos
                  + "MeshCreator\\Meshes\\Alimentos\\Hamburguesa\\Hamburguesa-TgcScene.xml");
-            TgcMesh hamburguesa = ovejaMesh = scene.Meshes[0];
+            TgcMesh hamburguesa = scene.Meshes[0];
             Alimento alimento = new Alimento(1000, 1000, carneCruda.createMeshInstance("CarneCruda"));
             alimento.posicion(ovejaMesh.Position);
             alimento.agregarElemento(new Alimento(1000, 1000, hamburguesa.createMeshInstance("Hamburguesa_1")));
@@ -369,7 +369,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Crear piso
             TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\Agua.jpg");
-            piso = TgcBox.fromExtremes(new Vector3(-5000, -50, -5000), new Vector3(10000, 10, 10000), pisoTexture);
+            piso = TgcBox.fromExtremes(new Vector3(-5000, 3, -5000), new Vector3(5000, 7, 5000), pisoTexture);
 
 
             //Creamos el personaje
@@ -452,62 +452,58 @@ namespace AlumnoEjemplos.MiGrupo
             directionArrow.Thickness = 1;
             directionArrow.HeadSize = new Vector2(10, 20);
 
-            //Configurar camara en Tercer Persona
-            GuiController.Instance.ThirdPersonCamera.Enable = true;
-            GuiController.Instance.ThirdPersonCamera.setCamera(personaje.mesh.Position, 200, -300);
-
-            ///////////////MODIFIERS//////////////////
-
-            //Crear un modifier para un valor FLOAT
-            GuiController.Instance.Modifiers.addFloat("valorFloat", -50f, 200f, 0f);
-
-            //Crear un modifier para un ComboBox con opciones
-            string[] opciones = new string[]{"opcion1", "opcion2", "opcion3"};
-            GuiController.Instance.Modifiers.addInterval("valorIntervalo", opciones, 0);
-
-            //Crear un modifier para modificar un vértice
-            GuiController.Instance.Modifiers.addVertex3f("valorVertice", new Vector3(-100, -100, -100), new Vector3(50, 50, 50), new Vector3(0, 0, 0));
-
             tiempo = 0;
-
             controladorEntradas = new ControladorEntradas();
+            camara = new CamaraPrimeraPersona(GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
 
             //****************Crear Sprite de la mochila y del cajon**********************************************
-            mochila = new TgcSprite();
-            mochila.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Mochila.jpg");
-
             Size screenSize = GuiController.Instance.Panel3d.Size;
-            Size textureSize = mochila.Texture.Size;
-            mochila.Position = new Vector2(20, (screenSize.Height - textureSize.Height / 2) / 2);
-            mochila.Scaling = new Vector2(0.5f, 0.5f);
 
+            mochila = new TgcSprite();
             mochilaReglon1 = new TgcText2d();
+            mochila.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Mochila.jpg");
+            Size textureSize = mochila.Texture.Size;
+            if (screenSize.Width >= 1024)
+            {
+                mochila.Position = new Vector2(20, (screenSize.Height - textureSize.Height / 2) / 2);
+                mochila.Scaling = new Vector2(0.5f, 0.5f);
+                mochilaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            }
+            else
+            {
+                mochila.Position = new Vector2(20, (screenSize.Height - (textureSize.Height * 2 / 5)) / 2);
+                mochila.Scaling = new Vector2(0.4f, 0.4f);
+                mochilaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
+            }
+            mochilaReglon1.Position = new Point((int)(mochila.Position.X) + 11,
+                (int)(mochila.Position.Y) + 95);
             mochilaReglon1.Color = Color.Black;
             mochilaReglon1.Text = "";
             mochilaReglon1.Align = TgcText2d.TextAlign.LEFT;
-            mochilaReglon1.Position = new Point(0, 0);
-            //Imagen 1024, escalada 0.5 son 512 menos 70 de la parte de arriba quedarian 442 para los 9 renglones
-            //largo es como la imagen
-            mochilaReglon1.Size = new Size(512, 50);
-            mochilaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            mochilaReglon1.Size = new Size(textureSize.Width, textureSize.Height);
 
             cajon = new TgcSprite();
-            cajon.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Cajon.jpg");
-
-            //Ubicarlo centrado en la pantalla
-            Size textureCacjonSize = cajon.Texture.Size;
-            cajon.Position = new Vector2(screenSize.Width - 20 - (textureCacjonSize.Width / 2), (screenSize.Height - textureCacjonSize.Height / 2) / 2);
-            cajon.Scaling = new Vector2(0.5f, 0.5f);
-
             cajonReglon1 = new TgcText2d();
+            cajon.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Cajon.jpg");
+            Size textureCacjonSize = cajon.Texture.Size;
+            if (screenSize.Width >= 1024)
+            {
+                cajon.Position = new Vector2(screenSize.Width - 20 - (textureCacjonSize.Width / 2), (screenSize.Height - textureCacjonSize.Height / 2) / 2);
+                cajon.Scaling = new Vector2(0.5f, 0.5f);
+                cajonReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            }
+            else
+            {
+                cajon.Position = new Vector2(screenSize.Width - 20 - ((textureCacjonSize.Width * 2) / 5), 
+                    (screenSize.Height - textureCacjonSize.Height * 2 / 5) / 2);
+                cajon.Scaling = new Vector2(0.4f, 0.4f);
+                cajonReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
+            }
             cajonReglon1.Color = Color.White;
             cajonReglon1.Text = "";
             cajonReglon1.Align = TgcText2d.TextAlign.LEFT;
-            cajonReglon1.Position = new Point(0, 0);
-            //Imagen 1024, escalada 0.5 son 512 menos 70 de la parte de arriba quedarian 442 para los 9 renglones
-            //largo es como la imagen
-            cajonReglon1.Size = new Size(512, 50);
-            cajonReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            cajonReglon1.Position = new Point((int)(cajon.Position.X) + 11, (int)(cajon.Position.Y) + 85);
+            cajonReglon1.Size = new Size(textureSize.Width, textureSize.Height);
 
             //****************Crear Sprite de la mochila y del cajon**********************************************
 
@@ -515,21 +511,27 @@ namespace AlumnoEjemplos.MiGrupo
             informativo = new TgcText2d();
             informativo.Color = Color.Yellow;
             informativo.Align = TgcText2d.TextAlign.CENTER;
-            informativo.Position = new Point(10, screenSize.Height - 75);
             informativo.Size = new Size(screenSize.Width, 50);
-            informativo.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold));
+            if (screenSize.Width >= 1024)
+            {
+                informativo.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold));
+                informativo.Position = new Point(10, screenSize.Height - 75);
+            }
+            else
+            {
+                informativo.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
+                informativo.Position = new Point(10, screenSize.Height - 50);
+            }
             //****************Crear el texto informativo**********************************************************
 
             //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
             saludIcono = new TgcSprite();
             saludIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Corazon.png");
             saludIcono.Position = new Vector2(20, 20);
-            //saludIcono.Scaling = new Vector2(0.5f, 0.5f);
 
             salud = new TgcSprite();
             salud.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraSalud.png");
             salud.Position = new Vector2(100, 40);
-            //salud.Scaling = new Vector2(0.5f, 0.5f);
 
             hidratacionIcono = new TgcSprite();
             hidratacionIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Agua.png");
@@ -538,7 +540,6 @@ namespace AlumnoEjemplos.MiGrupo
             hidratacion = new TgcSprite();
             hidratacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraHidratacion.png");
             hidratacion.Position = new Vector2(330, 40);
-            //hidratacion.Scaling = new Vector2(0.5f, 0.5f);
 
             alimentacionIcono = new TgcSprite();
             alimentacionIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Hamburguesa.png");
@@ -547,7 +548,6 @@ namespace AlumnoEjemplos.MiGrupo
             alimentacion = new TgcSprite();
             alimentacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraAlimentacion.png");
             alimentacion.Position = new Vector2(560, 40);
-            //alimentacion.Scaling = new Vector2(0.5f, 0.5f);
 
             cansancioIcono = new TgcSprite();
             cansancioIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Cansancio.png");
@@ -556,20 +556,27 @@ namespace AlumnoEjemplos.MiGrupo
             cansancio = new TgcSprite();
             cansancio.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraCansancio.png");
             cansancio.Position = new Vector2(790, 40);
-            //cansancio.Scaling = new Vector2(0.5f, 0.5f);
             //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
 
             //****************************Creacion de objetivos*********************
             objetivosIcono = new TgcSprite();
-            objetivosIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Objetivos.png");
-            objetivosIcono.Position = new Vector2(screenSize.Width - 350, 25);
             mensajeObjetivo1 = new TgcText2d();
+            objetivosIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Objetivos.png");
+            if (screenSize.Width >= 1024)
+            {
+                objetivosIcono.Position = new Vector2(screenSize.Width - 350, 25);
+                mensajeObjetivo1.Position = new Point(screenSize.Width - 250, 25);
+            }
+            else
+            {
+                objetivosIcono.Position = new Vector2(20, 90);
+                mensajeObjetivo1.Position = new Point(120, 90);
+            }
             mensajeObjetivo1.Color = Color.Red;
             mensajeObjetivo1.Align = TgcText2d.TextAlign.LEFT;
-            mensajeObjetivo1.Position = new Point(screenSize.Width - 250, 25);
             mensajeObjetivo1.Size = new Size(200, 50);
             mensajeObjetivo1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
-            tiempoObjetivo = 12;//Segundos que forman 20 minutos
+            tiempoObjetivo = 1200;//Segundos que forman 20 minutos
                                   //****************************Creacion de objetivos*********************
 
             //*****************Creación de texto informativo********************************
@@ -587,17 +594,37 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Ubicarlo centrado en la pantalla
             Size ayudaTextureSize = ayuda.Texture.Size;
-            ayuda.Position = new Vector2((screenSize.Width - ayudaTextureSize.Width) / 2, (screenSize.Height - ayudaTextureSize.Height / 2) / 2);
-            ayuda.Scaling = new Vector2(1f, 0.6f);
-
-
             ayudaReglon1 = new TgcText2d();
+            ayudaReglon2 = new TgcText2d();
+            if (screenSize.Width >= 1024)
+            {
+                //Sabemos que la textura tiene 1024
+                ayuda.Position = new Vector2((screenSize.Width - ayudaTextureSize.Width) / 2, 
+                    (screenSize.Height - ayudaTextureSize.Height / 2) / 2);
+                ayuda.Scaling = new Vector2(1f, 0.6f);
+                ayudaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 11, FontStyle.Bold));
+                ayudaReglon2.changeFont(new System.Drawing.Font("TimesNewRoman", 12, FontStyle.Bold));
+                ayudaReglon2.Position = new Point(((int)(ayuda.Position.X)) + 840, ((int)(ayuda.Position.Y)) + 580);
+            }
+            else
+            {
+                //Sabemos que la textura tiene 1024
+                ayuda.Position = new Vector2((ayudaTextureSize.Width - screenSize.Width) / 2,
+                    ((ayudaTextureSize.Height / 2) - screenSize.Height) / 2);
+                ayuda.Scaling = new Vector2(0.9f, 0.5f);
+                ayudaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 8, FontStyle.Bold));
+                ayudaReglon2.changeFont(new System.Drawing.Font("TimesNewRoman", 8, FontStyle.Bold));
+                ayudaReglon2.Position = new Point(((int)(ayuda.Position.X)) + 800, ((int)(ayuda.Position.Y)) + 480);
+            }
             ayudaReglon1.Color = Color.Black;
             ayudaReglon1.Text = "";
             ayudaReglon1.Align = TgcText2d.TextAlign.LEFT;
             ayudaReglon1.Position = new Point(0, 0);
             ayudaReglon1.Size = new Size(ayudaTextureSize.Width, ayudaTextureSize.Height);
-            ayudaReglon1.changeFont(new System.Drawing.Font("TimesNewRoman", 11, FontStyle.Bold));
+            ayudaReglon2.Color = Color.DarkViolet;
+            ayudaReglon2.Text = "Versión: " + this.Version();
+            ayudaReglon2.Align = TgcText2d.TextAlign.LEFT;
+            ayudaReglon2.Size = new Size(200, 50);
             //*****************Creación de menu ayuda********************************************************
         }
 
@@ -613,10 +640,8 @@ namespace AlumnoEjemplos.MiGrupo
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
-            //Hacer que la camara siga al personaje en su nueva posicion. Sumamos 100 en el posición de Y porque queremos que la cámara este un poco más alta.
-            GuiController.Instance.ThirdPersonCamera.Target = personaje.mesh.Position + new Vector3(0,100,0);
-
-            TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            //TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
+            tiempo += elapsedTime;
 
             informativo.Text = "Obtener Ayuda (F1)";
             mostrarMenuMochila = false;
@@ -627,6 +652,8 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 comando.Ejecutar(this, elapsedTime);
             }
+
+            camara.Render(personaje);
 
             GuiController.Instance.UserVars.setValue("salud", personaje.salud);
             GuiController.Instance.UserVars.setValue("fuerza", personaje.fuerza);
@@ -639,30 +666,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Afectamos salud por paso de tiempo
             personaje.afectarSaludPorTiempo(elapsedTime);
-            tiempo += elapsedTime;
-
-            float offsetHeight;
-            if (d3dInput.keyDown(Key.F9))
-            {
-                offsetHeight = GuiController.Instance.ThirdPersonCamera.OffsetHeight;
-                GuiController.Instance.ThirdPersonCamera.OffsetHeight = offsetHeight + 1;
-            }
-            if (d3dInput.keyDown(Key.F10))
-            {
-                offsetHeight = GuiController.Instance.ThirdPersonCamera.OffsetHeight;
-                GuiController.Instance.ThirdPersonCamera.OffsetHeight = offsetHeight - 1;
-            }
-            float offsetForward;
-            if (d3dInput.keyDown(Key.F11))
-            {
-                offsetForward = GuiController.Instance.ThirdPersonCamera.OffsetForward;
-                GuiController.Instance.ThirdPersonCamera.OffsetForward = offsetForward + 1;
-            }
-            if (d3dInput.keyDown(Key.F12))
-            {
-                offsetForward = GuiController.Instance.ThirdPersonCamera.OffsetForward;
-                GuiController.Instance.ThirdPersonCamera.OffsetForward = offsetForward - 1;
-            }
 
             //Actualizamos los objetos Fisicos y los renderizamos
             if (movimiento != null)
@@ -699,10 +702,12 @@ namespace AlumnoEjemplos.MiGrupo
             directionArrow.render();
 
             //Render piso
+            //Movemos el piso para generar efecto de movimiento del agua.
+            piso.Position += new Vector3(0,FastMath.Sin(tiempo) * elapsedTime, 0);
             piso.render();
 
             //Render personaje
-            personaje.mesh.animateAndRender();
+            //personaje.mesh.animateAndRender();
 
             //Actualiza los elementos
             List<Elemento> aux = new List<Elemento>();
@@ -791,16 +796,10 @@ namespace AlumnoEjemplos.MiGrupo
                         mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    "  + "Disponible" + System.Environment.NewLine;
                     }
                 }
-                int x = (int)(mochila.Position.X);
-                int y = (int)(mochila.Position.Y);
-                mochilaReglon1.Position = new Point(x + 11, y + 95);
                 mochilaReglon1.render();
                 if (mostrarMenuCajon)
                 {
                     //En texto que va en el renglon lo completa el cajon cuando hay una interaccion.
-                    x = (int)(cajon.Position.X);
-                    y = (int)(cajon.Position.Y);
-                    cajonReglon1.Position = new Point(x + 11, y + 85);
                     cajonReglon1.render();
                 }
             }
@@ -813,31 +812,7 @@ namespace AlumnoEjemplos.MiGrupo
                 GuiController.Instance.Drawer2D.endDrawSprite();
                 ayudaReglon1.Position = new Point(((int)(ayuda.Position.X)) + 40 , ((int)(ayuda.Position.Y)) + 130);
                 ayudaReglon1.render();
-            }
-
-            //Obtener valor de UserVar (hay que castear)
-            // int valor = (int)GuiController.Instance.UserVars.getValue("variablePrueba");
-
-
-            //Obtener valores de Modifiers
-            float valorFloat = (float)GuiController.Instance.Modifiers["valorFloat"];
-            string opcionElegida = (string)GuiController.Instance.Modifiers["valorIntervalo"];
-            Vector3 valorVertice = (Vector3)GuiController.Instance.Modifiers["valorVertice"];
-
-
-            ///////////////INPUT//////////////////
-            //conviene deshabilitar ambas camaras para que no haya interferencia
-
-            //Capturar Input teclado 
-            if (GuiController.Instance.D3dInput.keyPressed(Microsoft.DirectX.DirectInput.Key.F))
-            {
-                //Tecla F apretada
-            }
-
-            //Capturar Input Mouse
-            if (GuiController.Instance.D3dInput.buttonPressed(TgcViewer.Utils.Input.TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            {
-                //Boton izq apretado
+                ayudaReglon2.render();
             }
 
         }
@@ -880,7 +855,12 @@ namespace AlumnoEjemplos.MiGrupo
             cansancioIcono.dispose();
             ayudaReglon1.dispose();
             ayuda.dispose();
+            ayudaReglon2.dispose();
         }
 
+        private String Version()
+        {
+            return "0.01.001";
+        }
     }
 }

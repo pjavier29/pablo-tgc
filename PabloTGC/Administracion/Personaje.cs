@@ -16,6 +16,7 @@ namespace AlumnoEjemplos.PabloTGC
         private TgcSphere boundingEsfera;
         private TgcSphere alcanceInteraccionEsfera;
         private Elemento[] mochila;
+        private float direccionVision;
         #endregion
 
         #region Propiedades
@@ -39,6 +40,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.mochila = new Elemento[9] {null, null, null, null, null, null, null, null, null};//La mochila solo tiene 9 elementos
             this.instrumentos = new List<Arma>();
             this.tiempoCorriendo = 0;
+            this.direccionVision = 0;
         }
         #endregion
 
@@ -300,6 +302,52 @@ namespace AlumnoEjemplos.PabloTGC
         public float PorcentajeDeCansancio()
         {
             return 1 - (this.tiempoCorriendo / this.resistenciaFisica);
+        }
+
+        public Vector3 Direccion(float distancia)
+        {
+            //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
+            float z = -(float)Math.Cos((float)this.mesh.Rotation.Y) * distancia;
+            float x = -(float)Math.Sin((float)this.mesh.Rotation.Y) * distancia;
+            //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
+            //el vector salga del personaje.
+            return this.mesh.Position + new Vector3(x, 0, z);
+        }
+
+        public Vector3 DireccionAlturaCabeza(float distancia)
+        {
+            //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
+            float z = -(float)Math.Cos((float)this.mesh.Rotation.Y) * distancia;
+            float x = -(float)Math.Sin((float)this.mesh.Rotation.Y) * distancia;
+            //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
+            //el vector salga del personaje.
+            return this.PosicionAlturaCabeza() + new Vector3(x, this.direccionVision, z);
+        }
+
+        public Vector3 PosicionAlturaCabeza()
+        {
+            return this.mesh.Position + new Vector3(0, (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y), 0);
+        }
+
+        public void SubirVision(float valor)
+        {
+            if (this.direccionVision < 200)
+            {
+                this.direccionVision += valor;
+            }
+        }
+
+        public void BajarVision(float valor)
+        {
+            if (this.direccionVision > -(this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y))
+            {
+                this.direccionVision -= valor;
+            }
+        }
+
+        public void Renderizar()
+        {
+            this.mesh.animateAndRender();
         }
 
         #endregion

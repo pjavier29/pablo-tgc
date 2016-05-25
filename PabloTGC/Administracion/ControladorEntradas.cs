@@ -41,6 +41,42 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 this.comandosSeleccionados.Add(new Ayuda(this.TextoDeComandos()));
                 return this.comandosSeleccionados;
             }
+            //Si preciono para usar camara en primera persona
+            if (d3dInput.keyDown(Key.F2))
+            {
+                this.comandosSeleccionados.Add(new CambiarCamara(CambiarCamara.PrimeraPersona));
+                return this.comandosSeleccionados;
+            }
+            //Si preciono para usar camara en tercera persona
+            if (d3dInput.keyDown(Key.F3))
+            {
+                this.comandosSeleccionados.Add(new CambiarCamara(CambiarCamara.TerceraPersona));
+                return this.comandosSeleccionados;
+            }
+            //Si preciono para bajar la camara
+            if (d3dInput.keyDown(Key.F5))
+            {
+                this.comandosSeleccionados.Add(new MoverCamara(MoverCamara.BajarCamara));
+                return this.comandosSeleccionados;
+            }
+            //Si preciono para subir la camara
+            if (d3dInput.keyDown(Key.F6))
+            {
+                this.comandosSeleccionados.Add(new MoverCamara(MoverCamara.SubirCamara));
+                return this.comandosSeleccionados;
+            }
+            //Si preciono para Acercar la camara
+            if (d3dInput.keyDown(Key.F7))
+            {
+                this.comandosSeleccionados.Add(new MoverCamara(MoverCamara.AcercarCamara));
+                return this.comandosSeleccionados;
+            }
+            //Si preciono para alajar la camara
+            if (d3dInput.keyDown(Key.F8))
+            {
+                this.comandosSeleccionados.Add(new MoverCamara(MoverCamara.AlejarCamara));
+                return this.comandosSeleccionados;
+            }
             #endregion
 
             #region Paquete de movimientos principales acelerados
@@ -255,10 +291,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 }
                 else
                 {
-                    if (golpear.PuedeGolpear)
-                    {
-                        golpear.GolpeActual = Golpear.Pegar;
-                    }    
+                    golpear.GolpeActual = Golpear.Pegar; 
                 }
                 this.comandosSeleccionados.Add(golpear);
                 return this.comandosSeleccionados;
@@ -273,10 +306,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 }
                 else
                 {
-                    if (golpear.PuedeGolpear)
-                    {
-                        golpear.GolpeActual = Golpear.Patear;
-                    }
+                    golpear.GolpeActual = Golpear.Patear;
+
                 }
                 this.comandosSeleccionados.Add(golpear);
                 return this.comandosSeleccionados;
@@ -347,6 +378,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         {
             String comandos = "";
             comandos += "- Presione F1 para obtener ayuda" + System.Environment.NewLine;
+            comandos += "- Presione F2 para usar la cámara en primera persona | F3 para la cámara en tercera persona" + System.Environment.NewLine;
             comandos += "- Presione W o Flecha Arriba para avanzar" + System.Environment.NewLine;
             comandos += "- Presione S o Flecha Abajo para retroceder" + System.Environment.NewLine;
             comandos += "- Presione D o Flecha Derecha para girar a la derecha" + System.Environment.NewLine;
@@ -366,10 +398,10 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             comandos += "- Presione Z para saltar hacia adelante" + System.Environment.NewLine;
             comandos += "- Presione L para lanzar una piedra" + System.Environment.NewLine;
             comandos += "- Presione M para mostrar la mochila" + System.Environment.NewLine;
-            comandos += "- Presione F9 DEFINIR" + System.Environment.NewLine;//TODO. Cuando implementemos las multiples camaras.
-            comandos += "- Presione F10 DEFINIR" + System.Environment.NewLine;
-            comandos += "- Presione F11 DEFNIR" + System.Environment.NewLine;
-            comandos += "- Presione F12 DEFNIR" + System.Environment.NewLine;
+            comandos += "- Presione F5 para bajar la cámara" + System.Environment.NewLine;
+            comandos += "- Presione F6 para subir la cámara" + System.Environment.NewLine;
+            comandos += "- Presione F7 para acercar la cámara (Válido solo para cámara en tercera persona)"+ System.Environment.NewLine;
+            comandos += "- Presione F8 para alejar la cámara (Válido solo para cámara en tercera persona)" + System.Environment.NewLine;
             return comandos;
         }
         #endregion

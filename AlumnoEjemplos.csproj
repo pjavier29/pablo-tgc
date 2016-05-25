@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="PabloTGC\Administracion\ControladorEntradas.cs" />
     <Compile Include="PabloTGC\Comandos\Ayuda.cs" />
+    <Compile Include="PabloTGC\Comandos\CambiarCamara.cs" />
     <Compile Include="PabloTGC\Comandos\Comando.cs" />
     <Compile Include="PabloTGC\Comandos\Interactuar.cs" />
     <Compile Include="PabloTGC\Comandos\Girar.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="PabloTGC\Comandos\Lanzar.cs" />
     <Compile Include="PabloTGC\Comandos\Menu.cs" />
     <Compile Include="PabloTGC\Comandos\Mover.cs" />
+    <Compile Include="PabloTGC\Comandos\MoverCamara.cs" />
     <Compile Include="PabloTGC\Comandos\Saltar.cs" />
     <Compile Include="PabloTGC\Comandos\Seleccionar.cs" />
     <Compile Include="PabloTGC\Comandos\Tirar.cs" />
@@ -105,6 +107,9 @@
     <Compile Include="PabloTGC\Administracion\Personaje.cs" />
     <Compile Include="PabloTGC\Administracion\SuvirvalCraft.cs" />
     <Compile Include="PabloTGC\Utiles\BarraEstado.cs" />
+    <Compile Include="PabloTGC\Utiles\Camaras\Camara.cs" />
+    <Compile Include="PabloTGC\Utiles\Camaras\CamaraPrimeraPersona.cs" />
+    <Compile Include="PabloTGC\Utiles\Camaras\CamaraTerceraPersona.cs" />
     <Compile Include="PabloTGC\Utiles\ControladorColisiones.cs" />
     <Compile Include="PabloTGC\Utiles\FuncionesMatematicas.cs" />
     <Compile Include="PabloTGC\Utiles\MallaEnvoltura.cs" />
