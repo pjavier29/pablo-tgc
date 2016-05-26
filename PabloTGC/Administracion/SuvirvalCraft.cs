@@ -22,6 +22,7 @@ using AlumnoEjemplos.PabloTGC.Utiles;
 using AlumnoEjemplos.PabloTGC.Comandos;
 using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
+using TgcViewer.Utils.Shaders;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -219,6 +220,9 @@ namespace AlumnoEjemplos.MiGrupo
                 elementos.Add(new Elemento(1000, 1300, arbolBanana, new Alimento(1000, 1000, bananaMesh)));
             }
 
+            //Cargar Shader personalizado para el efecto del fuego
+            Microsoft.DirectX.Direct3D.Effect effect = TgcShaders.loadEffect(recursos + "Shaders\\FuegoShader.fx");
+
             TgcMesh fuegoMesh;
             TgcMesh leniaMesh;
             for (int i = 0; i < 4; i++)
@@ -229,6 +233,8 @@ namespace AlumnoEjemplos.MiGrupo
                 float z = -(r[i] - 123);
                 pinoNuevo.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 fuegoMesh = fuego.createMeshInstance(/*fuego.Name*/"fuego");
+                fuegoMesh.Effect = effect;
+                fuegoMesh.Technique = "RenderScene";
                 leniaMesh = lenia.createMeshInstance(/*lenia.Name*/"lenia");
                 fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                 leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
@@ -349,6 +355,8 @@ namespace AlumnoEjemplos.MiGrupo
             //*********************************************************************************
 
             //***************Creamos las algas***********************************************************
+            //Cargar Shader personalizado para el efecto de las algas
+            Microsoft.DirectX.Direct3D.Effect efectoAlgas = TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx");
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Alga\\alga-TgcScene.xml");
             arbol = scene.Meshes[0];
@@ -362,6 +370,15 @@ namespace AlumnoEjemplos.MiGrupo
                     float x = (posicionesArbustos[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(j * 100f, (j * 100f + 30)));
                     float z = (-3000 + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-100, 100));
                     arbusto.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
+                    arbusto.Effect = efectoAlgas.Clone(d3dDevice);
+                    if (FuncionesMatematicas.Instance.NumeroAleatorioFloat() > 0.5f)
+                    {
+                        arbusto.Technique = "RenderScene";
+                    }
+                    else
+                    {
+                        arbusto.Technique = "RenderScene2";
+                    }
                     elementosSinInteraccion.Add(new Elemento(1000, 1400, arbusto));
                 }
             }
@@ -720,6 +737,11 @@ namespace AlumnoEjemplos.MiGrupo
             //Render elementos
             foreach (Elemento elemento in elementos)
             {
+                if (elemento.EsDeTipo(Elemento.Fuego))
+                {
+                    //TODO, llevar esta responsabilidad al propio elemento
+                    elemento.Efecto().SetValue("time", tiempo);
+                }
                 elemento.renderizar();
                 elemento.BoundingBox().render();
             }
@@ -727,6 +749,8 @@ namespace AlumnoEjemplos.MiGrupo
             //Render elementos sin interaccion
             foreach (Elemento elemento in elementosSinInteraccion)
             {
+                //Por ahora las algas son los unicos elementos que estan aca.
+                elemento.Efecto().SetValue("time", tiempo);
                 elemento.renderizar();
             }
 

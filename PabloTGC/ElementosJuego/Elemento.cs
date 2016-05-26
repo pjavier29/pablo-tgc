@@ -1,6 +1,7 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Utiles;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -224,6 +225,11 @@ namespace AlumnoEjemplos.PabloTGC
         public TgcBoundingBox BoundingBox()
         {
             return this.Mesh.BoundingBox;
+        }
+
+        public Effect Efecto()
+        {
+            return this.Mesh.Effect;
         }
 
         public void mover(Vector3 movimiento)
