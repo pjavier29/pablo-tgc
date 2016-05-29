@@ -31,7 +31,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 }
                 else
                 {
-                    contexto.personaje.ConsumirAguar(0.4f);
+                    contexto.personaje.ConsumirAguar(0.04f);
                 }
             }
         }

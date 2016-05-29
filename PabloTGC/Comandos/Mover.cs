@@ -47,7 +47,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             }
             else
             {
-                movimiento = this.sentido* contexto.personaje.velocidadCaminar;
+                movimiento = this.sentido* contexto.personaje.VelocidadCaminar;
             }
 
             //Aplicamos el movimiento
@@ -57,6 +57,14 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             contexto.personaje.mesh.move(movementVector * elapsedTime);
             contexto.personaje.mesh.Position = new Vector3(contexto.personaje.mesh.Position.X,
                 contexto.terreno.CalcularAltura(contexto.personaje.mesh.Position.X, contexto.personaje.mesh.Position.Z), contexto.personaje.mesh.Position.Z);
+
+            //Para saber si sale o no del mapa
+            //TODO. Queda pendiente aplicarlo a los animales y cuando salta para adelante.
+            if (! FuncionesMatematicas.Instance.EstaDentroDelCuadrado(contexto.personaje.mesh.Position, contexto.esquina))
+            {
+                contexto.personaje.mesh.Position = lastPos;
+                return;
+            }
 
             contexto.personaje.ActualizarEsferas();
 

@@ -93,7 +93,7 @@ namespace AlumnoEjemplos.PabloTGC
         {//TODO. Este metodo tiene muchos parametros que deberian ser del personaje.
             if (moveForward < 0)
             {//Si esta caminando para adelante entonces empujamos la caja, sino no hacemos nada.
-                if (this.seMueveConUnaFuerza(personaje.fuerza))
+                if (this.seMueveConUnaFuerza(personaje.Fuerza))
                 {
                     Vector3 direccionMovimiento = movementVector;
                     direccionMovimiento.Normalize();
@@ -351,6 +351,11 @@ namespace AlumnoEjemplos.PabloTGC
         public virtual String GetTipo()
         {
             return General;
+        }
+
+        public virtual String GetDescripcion()
+        {
+            return this.GetTipo();
         }
 
         public virtual bool EsDeTipo(String tipo)

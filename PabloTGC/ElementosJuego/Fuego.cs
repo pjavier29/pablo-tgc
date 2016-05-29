@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         {
             if (this.distanciaA(personaje.mesh.Position) > 20)
             {
-                personaje.incrementarSaludPorTiempo(elapsedTime);
+                personaje.IncrementarTemperaturaCorporalPorTiempo(elapsedTime);
             }
             else
             {
@@ -42,7 +42,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //En el fuego no queremos que se muestre barra de estado.
             if (accion.Equals("Parado"))
             {
-                contexto.personaje.incrementarSaludPorTiempo(elapsedTime);
+                contexto.personaje.IncrementarTemperaturaCorporalPorTiempo(elapsedTime);
             }
         }
 

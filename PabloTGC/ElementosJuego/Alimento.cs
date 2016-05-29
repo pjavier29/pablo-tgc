@@ -11,18 +11,18 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
     public class Alimento : Elemento
     {
         #region Atributos
-        private bool esConsumible;
+        private float nutricion;
         #endregion
 
         #region Contructores
-        public Alimento(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
+        public Alimento(float peso, float resistencia, TgcMesh mesh, float nutricion) :base(peso, resistencia, mesh)
         {
-
+            this.nutricion = nutricion;
         }
 
-        public Alimento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) : base(peso, resistencia, mesh, elemento)
+        public Alimento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, float nutricion) : base(peso, resistencia, mesh, elemento)
         {
-
+            this.nutricion = nutricion;
         }
 
         #endregion
@@ -50,7 +50,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             }
             if (accion.Equals("Consumir"))
             {
-                contexto.personaje.consumirAlimento();
+                contexto.personaje.ConsumirAlimento(this.nutricion);
                 this.liberar();
                 contexto.elementos.Remove(this);
             }
@@ -65,6 +65,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         public override String GetTipo()
         {
             return Alimento;
+        }
+
+        public override String GetDescripcion()
+        {
+            return this.nombre() + " - " + this.nutricion;
         }
 
         #endregion

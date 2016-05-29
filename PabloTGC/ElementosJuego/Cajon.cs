@@ -53,7 +53,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 int i = 0;
                 foreach(Elemento cont in this.elementosQueContiene())
                 {
-                    contexto.cajonReglon1.Text = contexto.cajonReglon1.Text + (i + 1).ToString() + "    " + cont.GetTipo() + System.Environment.NewLine;
+                    contexto.cajonReglon1.Text = contexto.cajonReglon1.Text + (i + 1).ToString() + "    " + cont.GetDescripcion() + System.Environment.NewLine;
                     i++;
                 }
 

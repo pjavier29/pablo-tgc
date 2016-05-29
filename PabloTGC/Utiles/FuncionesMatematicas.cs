@@ -65,6 +65,26 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         {
             return FastMath.Sqrt(FastMath.Pow2(destino.X - origen.X) + FastMath.Pow2(destino.Y - origen.Y) + FastMath.Pow2(destino.Z - origen.Z));
         }
+
+        /// <summary>
+        /// Determina si un punto esta dentro del un cuadrado, arma el cuadrado en base al punto esquina. Replica el punto segun los ejes cartesianos
+        /// </summary>
+        /// <param name="punto"></param>
+        /// <param name="esquina"></param>
+        /// <returns></returns>
+        public bool EstaDentroDelCuadrado(Vector3 punto, Vector3 esquina)
+        {
+            float xp = punto.X;
+            float zp = punto.Z;
+            float xe = esquina.X;
+            float ze = esquina.Z;
+            if (xp < 0) { xp *= -1; }
+            if (zp < 0) { zp *= -1; }
+            if (xe < 0) { xe *= -1; }
+            if (ze < 0) { ze *= -1; }
+            return xp < xe && zp < ze;
+
+        }
         #endregion
     }
 }

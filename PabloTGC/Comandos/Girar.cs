@@ -44,7 +44,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             }
             else
             {
-                rotate = this.sentido * contexto.personaje.velocidadRotacion;
+                rotate = this.sentido * contexto.personaje.VelocidadRotacion;
             }
 
             //Rotar personaje y la camara, hay que multiplicarlo por el tiempo transcurrido para no atarse a la velocidad el hardware
