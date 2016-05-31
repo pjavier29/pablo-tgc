@@ -1,5 +1,6 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,12 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         {
 
         }
+
+        public Fuego(float peso, float resistencia, TgcMesh mesh, Effect efecto) : base(peso, resistencia, mesh, efecto)
+        {
+
+        }
+
         #endregion
 
         #region Comportamientos

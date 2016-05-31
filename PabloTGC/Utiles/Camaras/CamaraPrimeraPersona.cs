@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TgcViewer;
 
 namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
 {
@@ -27,6 +28,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
         public void Render(Personaje personaje)
         {
             this.d3dDevice.Transform.View = Matrix.LookAtLH(personaje.PosicionAlturaCabeza(), personaje.DireccionAlturaCabeza(150), new Vector3(0, 1, 0));
+            GuiController.Instance.Frustum.updateVolume(d3dDevice.Transform.View, d3dDevice.Transform.Projection);
             //El personaje no debe animarse cuando se esta en primera persona
             //personaje.Renderizar();
         }

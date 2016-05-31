@@ -47,7 +47,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             contexto.personaje.incrementoResistenciaFisica(elapsedTime);
 
             this.ObstaculosInteractuar.Clear();
-            foreach (Elemento elem in contexto.elementos)
+            foreach (Elemento elem in contexto.optimizador.ElementosColision)
             {
                 //TODO. Optimizar esto para solo objetos cernanos!!!!!!!!
                 if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))

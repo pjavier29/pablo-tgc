@@ -34,6 +34,7 @@ namespace AlumnoEjemplos.PabloTGC
         private float resistenciaTotal;
         private bool hayInteraccion;
         private float momentoUltimoGolpe;
+        public bool tieneEfecto;
         #endregion
 
         #region Propiedades
@@ -59,19 +60,13 @@ namespace AlumnoEjemplos.PabloTGC
             this.barraEstado = null;
             this.hayInteraccion = false;
             this.momentoUltimoGolpe = 0;
-
-        }
-
-        public Elemento(float peso, float resistencia, TgcBox caja) : this(caja.toMesh("CAJA"), resistencia)//TODO. Pasar el nombre por parámetro
-        {
-            this.Peso = peso;
-            this.ElementosComposicion = new List<Elemento>();
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
         {
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
+            this.tieneEfecto = false;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
@@ -79,6 +74,22 @@ namespace AlumnoEjemplos.PabloTGC
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
             this.agregarElemento(elemento);
+            this.tieneEfecto = false;
+        }
+
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Effect efecto) : this(mesh, resistencia)
+        {
+            this.Peso = peso;
+            this.ElementosComposicion = new List<Elemento>();
+            this.agregarElemento(elemento);
+            this.SetEfecto(efecto);
+        }
+
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Effect efecto) : this(mesh, resistencia)
+        {
+            this.Peso = peso;
+            this.ElementosComposicion = new List<Elemento>();
+            this.SetEfecto(efecto);
         }
 
         #endregion
@@ -113,6 +124,11 @@ namespace AlumnoEjemplos.PabloTGC
 
         public virtual void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
+            if (this.tieneEfecto)
+            {
+                //TODO. Esto debe de manejarse de otra manera para que se pueda setear el valor que corresponda de manera mas generica.
+                this.Efecto().SetValue("time", contexto.tiempo);
+            }
             if (this.hayInteraccion)
             {
                 if (this.barraEstado != null)
@@ -225,11 +241,6 @@ namespace AlumnoEjemplos.PabloTGC
         public TgcBoundingBox BoundingBox()
         {
             return this.Mesh.BoundingBox;
-        }
-
-        public Effect Efecto()
-        {
-            return this.Mesh.Effect;
         }
 
         public void mover(Vector3 movimiento)
@@ -391,6 +402,17 @@ namespace AlumnoEjemplos.PabloTGC
             }
             //Sabemos que el tiempo esta en segundos
             return tiempoActual - this.momentoUltimoGolpe > 5;
+        }
+
+        public void SetEfecto(Effect efecto)
+        {
+            this.Mesh.Effect = efecto;
+            this.tieneEfecto = true;
+        }
+
+        public Effect Efecto()
+        {
+            return this.Mesh.Effect;
         }
 
         #endregion

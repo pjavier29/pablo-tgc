@@ -35,6 +35,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 {
                     contexto.personaje.juntar(this);
                     contexto.elementos.Remove(this);
+                    contexto.optimizador.ForzarActualizacion();
                 }
             }
         }

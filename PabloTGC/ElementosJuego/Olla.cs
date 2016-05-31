@@ -37,6 +37,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 {
                     contexto.personaje.juntar(this);
                     contexto.elementos.Remove(this);
+                    contexto.optimizador.ForzarActualizacion();
                 }
             }
         }
@@ -91,6 +92,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                         contexto.elementos.Remove(this.elementoCoccion);
                         this.elementoCoccion = null;
                         contexto.elementos.AddRange(contenido);
+                        contexto.optimizador.ForzarActualizacion();
                     }
                 }
                 else

@@ -1,4 +1,5 @@
-﻿using AlumnoEjemplos.PabloTGC.Utiles;
+﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -34,12 +35,12 @@ namespace AlumnoEjemplos.PabloTGC
         #endregion
 
         #region Comportamientos
-        public void update(float elapsedTime, Terreno terreno)
+        public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
             tiempo += elapsedTime;
             if (tiempo < tiempoEnActividad)
             {
-                this.simularMovimiento(elapsedTime, terreno);
+                this.simularMovimiento(elapsedTime, contexto.terreno);
                 //TODO. Colocar animación de caminar
             }
             else

@@ -97,6 +97,7 @@
     <Compile Include="PabloTGC\ElementosJuego\Animal.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Cajon.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Copa.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\ElementoSinInteraccion.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Fuego.cs" />
     <Compile Include="PabloTGC\ElementosJuego\FuenteAgua.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Madera.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="PabloTGC\Utiles\ControladorColisiones.cs" />
     <Compile Include="PabloTGC\Utiles\FuncionesMatematicas.cs" />
     <Compile Include="PabloTGC\Utiles\MallaEnvoltura.cs" />
+    <Compile Include="PabloTGC\Utiles\Optimizador.cs" />
     <Compile Include="PabloTGC\Utiles\Terreno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

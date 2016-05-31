@@ -55,7 +55,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 elementoATirar.posicion(posicionElemento);
 
                 List<Elemento> posiblesColisiones = new List<Elemento>();
-                foreach (Elemento elem in contexto.elementos)
+                foreach (Elemento elem in contexto.optimizador.ElementosColision)
                 {
                     //TODO. Optimizar esto para solo objetos cernanos!!!!!!!!
                     if (ControladorColisiones.CuadradoColisionaCuadrano(elementoATirar.BoundingBox(), elem.BoundingBox()))
@@ -74,6 +74,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
  
                 //De todas formas se procesa el tirado del elemento.
                 contexto.elementos.Add(elementoATirar);
+                contexto.optimizador.ForzarActualizacion();
                 contexto.personaje.Dejar(elementoATirar);
             }
         }

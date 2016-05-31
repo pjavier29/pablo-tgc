@@ -55,7 +55,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             if (this.PuedeGolpear(contexto.tiempo))
             {
                 //Buscamos si esta al alcance alguno de los obstáculos
-                foreach (Elemento elem in contexto.elementos)
+                foreach (Elemento elem in contexto.optimizador.ElementosColision)
                 {
                     if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
                     {
@@ -75,6 +75,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                             }
                             elem.liberar();
                             contexto.elementos.Remove(elem);
+                            contexto.optimizador.ForzarActualizacion();
                         }
 
                         //En principio solo se puede golpear un obstaculo a la vez.

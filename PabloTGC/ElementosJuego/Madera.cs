@@ -45,6 +45,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 {
                     contexto.personaje.juntar(this);
                     contexto.elementos.Remove(this);
+                    contexto.optimizador.ForzarActualizacion();
                 }
             }
             if (accion.Equals("Encender"))
@@ -57,6 +58,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 }
                 this.liberar();
                 contexto.elementos.Remove(this);
+                contexto.optimizador.ForzarActualizacion();
             }
         }
 

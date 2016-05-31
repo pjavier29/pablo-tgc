@@ -70,7 +70,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
 
             //Detectar colisiones
             bool collide = false;
-            foreach (Elemento elem in contexto.elementos)
+            foreach (Elemento elem in contexto.optimizador.ElementosColision)
             {
                 if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetBoundingEsfera(), elem.BoundingBox()))
                 {

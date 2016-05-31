@@ -47,11 +47,9 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 rotate = this.sentido * contexto.personaje.VelocidadRotacion;
             }
 
-            //Rotar personaje y la camara, hay que multiplicarlo por el tiempo transcurrido para no atarse a la velocidad el hardware
+            //Rotar personaje, hay que multiplicarlo por el tiempo transcurrido para no atarse a la velocidad el hardware
             float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
             contexto.personaje.mesh.rotateY(rotAngle);
-            GuiController.Instance.ThirdPersonCamera.rotateY(rotAngle);
-
             contexto.personaje.ActualizarEsferas();
         }
         #endregion

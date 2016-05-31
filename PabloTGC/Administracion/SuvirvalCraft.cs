@@ -35,8 +35,6 @@ namespace AlumnoEjemplos.MiGrupo
         public TgcSkyBox skyBox;
         public TgcBox piso;
         public List<Elemento> elementos;
-        public List<Elemento> elementosSinInteraccion;
-        public List<Elemento> elementosLimiteMapa;
         public Personaje personaje;
         public float tiempo;
         TgcText2d estadoJuego;
@@ -60,6 +58,8 @@ namespace AlumnoEjemplos.MiGrupo
         public ControladorEntradas controladorEntradas;
 
         public Vector3 esquina;//Con un solo punto arma el cuadrado para definir los limites del mapa
+
+        public Optimizador optimizador;
 
         TgcSprite salud;
         TgcSprite hidratacion;
@@ -238,14 +238,14 @@ namespace AlumnoEjemplos.MiGrupo
                     float z = posicionPinoZ[j] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
                     pinoNuevo.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                     fuegoMesh = fuego.createMeshInstance(fuego.Name + i + j);
-                    fuegoMesh.Effect = effect;
+                    //fuegoMesh.Effect = effect;
                     fuegoMesh.Technique = "RenderScene";
                     leniaMesh = lenia.createMeshInstance(lenia.Name + i + j);
                     fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     elementos.Add(new Elemento(1000, 2330, pinoNuevo,
                                 (new Madera(1000, 233, leniaMesh,
-                                    new Fuego(1000, 233, fuegoMesh)))));
+                                    new Fuego(1000, 233, fuegoMesh, effect.Clone(d3dDevice))))));
                 }
             }
             #endregion
@@ -375,7 +375,6 @@ namespace AlumnoEjemplos.MiGrupo
             #endregion
 
             #region Creamos las algas
-            elementosSinInteraccion = new List<Elemento>();
             //Cargar Shader personalizado para el efecto de las algas
             Microsoft.DirectX.Direct3D.Effect efectoAlgas = TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx");
             scene = loader.loadSceneFromFile(recursos
@@ -388,12 +387,12 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 for (int j = 0; j < 20; j++)
                 {
-                    algaNueva = alga.createMeshInstance(alga.Name + elementosSinInteraccion.Count.ToString());
+                    algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                     algaNueva.Scale = new Vector3(0.5f, 0.7f, 0.5f);
                     float x = (posicionesAlgasX[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(j * 10f, (j * 50f + 100)));
                     float z = (FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-9500, -8000));
                     algaNueva.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
-                    algaNueva.Effect = efectoAlgas.Clone(d3dDevice);
+                    //algaNueva.Effect = efectoAlgas.Clone(d3dDevice);
                     if (FuncionesMatematicas.Instance.NumeroAleatorioFloat() > 0.5f)
                     {
                         algaNueva.Technique = "RenderScene";
@@ -402,19 +401,19 @@ namespace AlumnoEjemplos.MiGrupo
                     {
                         algaNueva.Technique = "RenderScene2";
                     }
-                    elementosSinInteraccion.Add(new Elemento(1000, 1400, algaNueva));
+                    elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoAlgas.Clone(d3dDevice)));
                 }
             }
             for (int i = 0; i < 11; i++)
             {
                 for (int j = 0; j < 20; j++)
                 {
-                    algaNueva = alga.createMeshInstance(alga.Name + elementosSinInteraccion.Count.ToString());
+                    algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                     algaNueva.Scale = new Vector3(0.5f, 0.7f, 0.5f);
                     float x = (FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(6000, 9000));
                     float z = (posicionesAlgasZ[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(j * 10f, (j * 50f + 100)));
                     algaNueva.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
-                    algaNueva.Effect = efectoAlgas.Clone(d3dDevice);
+                    //algaNueva.Effect = efectoAlgas.Clone(d3dDevice);
                     if (FuncionesMatematicas.Instance.NumeroAleatorioFloat() > 0.5f)
                     {
                         algaNueva.Technique = "RenderScene";
@@ -423,7 +422,7 @@ namespace AlumnoEjemplos.MiGrupo
                     {
                         algaNueva.Technique = "RenderScene2";
                     }
-                    elementosSinInteraccion.Add(new Elemento(1000, 1400, algaNueva));
+                    elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoAlgas.Clone(d3dDevice)));
                 }
             }
             #endregion
@@ -472,36 +471,36 @@ namespace AlumnoEjemplos.MiGrupo
             palangreta.Position = new Vector3(-6500, terreno.CalcularAltura(-6500, 6000), 6000);
             canoa.Position = new Vector3(-6000, terreno.CalcularAltura(-6000, 6000) + 30, 6000);
             canoa.Scale = new Vector3(2f,2f,2f);
-            canoa.Effect = TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx");
-            palangreta.Effect = TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx");
+            //canoa.Effect = TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx");
+            //palangreta.Effect = TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx");
             canoa.Technique = "RenderScene";
             palangreta.Technique = "RenderScene";
             palangreta.rotateY(Geometry.DegreeToRadian(75f));
-            elementos.Add(new Elemento(10000, 10000, palangreta));
-            elementos.Add(new Elemento(10000, 10000, canoa));
+            elementos.Add(new Elemento(10000, 10000, palangreta, TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx")));
+            elementos.Add(new Elemento(10000, 10000, canoa, TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx")));
             #endregion
 
             #region Creamos las algas limitrofes del mapa
-            elementosLimiteMapa = new List<Elemento>();
+            //Creamos estos elementos para que haya más cantidad de objetos y poder probar el algoritmo de optimizacion
             int limiteX = (int)esquina.X;
             int limiteZ = (int)esquina.Z;
             for (int i = -limiteZ; i < limiteZ; i += 200)
             {
-                algaNueva = alga.createMeshInstance(alga.Name + elementosLimiteMapa.Count.ToString());
+                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                 algaNueva.Position = new Vector3(limiteX, terreno.CalcularAltura(limiteX, i), i);
-                elementosLimiteMapa.Add(new Elemento(1000, 1400, algaNueva));
-                algaNueva = alga.createMeshInstance(alga.Name + elementosLimiteMapa.Count.ToString());
+                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva));
+                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                 algaNueva.Position = new Vector3(-limiteX, terreno.CalcularAltura(-limiteX, i), i);
-                elementosLimiteMapa.Add(new Elemento(1000, 1400, algaNueva));
+                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva));
             }
             for (int i = -limiteX; i < limiteX; i += 200)
             {
-                algaNueva = alga.createMeshInstance(alga.Name + elementosLimiteMapa.Count.ToString());
+                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                 algaNueva.Position = new Vector3(i, terreno.CalcularAltura(i, limiteZ), limiteZ);
-                elementosLimiteMapa.Add(new Elemento(1000, 1400, algaNueva));
-                algaNueva = alga.createMeshInstance(alga.Name + elementosLimiteMapa.Count.ToString());
+                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva));
+                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                 algaNueva.Position = new Vector3(i, terreno.CalcularAltura(i, -limiteZ), -limiteZ);
-                elementosLimiteMapa.Add(new Elemento(1000, 1400, algaNueva));
+                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva));
             }
             #endregion
 
@@ -579,8 +578,6 @@ namespace AlumnoEjemplos.MiGrupo
             personaje.mesh.playAnimation("Parado", true);
             //Escalarlo porque es muy grande
             personaje.mesh.Position = new Vector3(0, terreno.CalcularAltura(0, 0), 0);
-            //Rotarlo 180° porque esta mirando para el otro lado
-            personaje.mesh.rotateY(Geometry.DegreeToRadian(180f));
 
             //Una vez configurado el mesh del personaje iniciamos su bounding esfera y su esfera de alcance de interacción con los elementos
             personaje.IniciarBoundingEsfera();
@@ -760,6 +757,9 @@ namespace AlumnoEjemplos.MiGrupo
             ayudaReglon2.Align = TgcText2d.TextAlign.LEFT;
             ayudaReglon2.Size = new Size(200, 50);
             //*****************Creación de menu ayuda********************************************************
+
+            //de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
+            optimizador = new Optimizador(elementos, 15, 500);
         }
 
 
@@ -782,6 +782,9 @@ namespace AlumnoEjemplos.MiGrupo
             mostrarMenuCajon = false;
             mostrarAyuda = false;
 
+            //Antes de ejecutar los comandos debemos actualizar los posibles objetos de colision
+            optimizador.Actualizar(personaje.mesh.Position);
+
             foreach (Comando comando in controladorEntradas.ProcesarEntradasTeclado())
             {
                 comando.Ejecutar(this, elapsedTime);
@@ -789,9 +792,12 @@ namespace AlumnoEjemplos.MiGrupo
 
             camara.Render(personaje);
 
-            GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
-            GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
+            //GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
+           // GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
             GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
+
+            GuiController.Instance.UserVars.setValue("x", optimizador.Elementos.Count);
+            GuiController.Instance.UserVars.setValue("y", optimizador.ElementosColision.Count);
 
             //Afectamos salud por paso de tiempo
             personaje.AfectarSaludPorTiempo(elapsedTime);
@@ -821,10 +827,6 @@ namespace AlumnoEjemplos.MiGrupo
                 }
             }
 
-            //actualizamos la posición de los animales
-            oveja.update(elapsedTime, terreno);
-            gallo.update(elapsedTime, terreno);
-
             //Render Terreno
             terreno.render();
 
@@ -832,47 +834,15 @@ namespace AlumnoEjemplos.MiGrupo
             piso.Effect.SetValue("time", tiempo);
             piso.render();
 
-            //Render personaje
-            //personaje.mesh.animateAndRender();
-
             //Actualiza los elementos
             List<Elemento> aux = new List<Elemento>();
-            aux.AddRange(elementos);//TODO. Porque sino con la actualziacion borramos elementos de la colecsion de elemetos y se rompe todo
+            aux.AddRange(elementos);//TODO. Porque sino con la actualziacion borramos elementos de la coleccion de elementos y se rompe todo
             foreach (Elemento elemento in aux)
             {
                 elemento.Actualizar(this, elapsedTime);
             }
 
-            //Render elementos
-            foreach (Elemento elemento in elementos)
-            {
-                if (elemento.EsDeTipo(Elemento.Fuego))
-                {
-                    //TODO, llevar esta responsabilidad al propio elemento
-                    elemento.Efecto().SetValue("time", tiempo);
-                }
-                if (elemento.nombre().Equals("Palangreta") || elemento.nombre().Equals("Canoa"))
-                {
-                    //TODO, llevar esta responsabilidad al propio elemento
-                    elemento.Efecto().SetValue("time", tiempo);
-                }
-                elemento.renderizar();
-                //elemento.BoundingBox().render();
-            }
-
-            //Render elementos sin interaccion
-            foreach (Elemento elemento in elementosSinInteraccion)
-            {
-                //Por ahora las algas son los unicos elementos que estan aca.
-                elemento.Efecto().SetValue("time", tiempo);
-                elemento.renderizar();
-            }
-
-            //Render elementos limite de mapa
-            foreach (Elemento elemento in elementosLimiteMapa)
-            {
-                elemento.renderizar();
-            }
+            optimizador.Renderizar();
 
             //Renderizar SkyBox
             skyBox.render();
@@ -972,14 +942,6 @@ namespace AlumnoEjemplos.MiGrupo
             terreno.dispose();
             skyBox.dispose();
             foreach (Elemento elemento in elementos)
-            {
-                elemento.destruir();
-            }
-            foreach (Elemento elemento in elementosSinInteraccion)
-            {
-                elemento.destruir();
-            }
-            foreach (Elemento elemento in elementosLimiteMapa)
             {
                 elemento.destruir();
             }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,10 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
         {
             //Hacer que la camara siga al personaje en su nueva posicion. Sumamos 100 en el posición de Y porque queremos que la cámara este un poco más alta.
             this.camaraTgc.Target = personaje.mesh.Position + new Vector3(0,100,0);
+            //Actualizamos la rotacion si es que hubo
+            this.camaraTgc.RotationY = personaje.mesh.Rotation.Y;
+            //Porque el personaje esta rotado 180 grados respecto de la camara.
+            this.camaraTgc.rotateY(Geometry.DegreeToRadian(180f));
             personaje.Renderizar();
         }
 

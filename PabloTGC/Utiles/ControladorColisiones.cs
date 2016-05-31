@@ -9,7 +9,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
 {
     public class ControladorColisiones
     {
-        public static bool isPointInsideAABB(Vector3 point, TgcBoundingBox box)
+        public static bool IsPointInsideAABB(Vector3 point, TgcBoundingBox box)
         {
             return (point.X >= box.PMin.X && point.X <= box.PMax.X) &&
                    (point.Y >= box.PMin.Y && point.Y <= box.PMax.Y) &&
@@ -23,7 +23,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             float d = 0;
 
             // Comprobamos si el centro de la esfera está dentro del AABB
-            if (ControladorColisiones.isPointInsideAABB(esfera.Position, cuadrado))
+            if (ControladorColisiones.IsPointInsideAABB(esfera.Position, cuadrado))
             {
                 return true;
             }
@@ -76,6 +76,12 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             return (cuadrado1.PMin.X <= cuadrado2.PMax.X && cuadrado1.PMax.X >= cuadrado2.PMin.X) &&
                    (cuadrado1.PMin.Y <= cuadrado2.PMax.Y && cuadrado1.PMax.Y >= cuadrado2.PMin.Y) &&
                    (cuadrado1.PMin.Z <= cuadrado2.PMax.Z && cuadrado1.PMax.Z >= cuadrado2.PMin.Z);
+        }
+
+        public static bool FrustumColisionaCuadrado(TgcFrustum frustum, TgcBoundingBox boundingBox)
+        {
+            TgcCollisionUtils.FrustumResult c = TgcCollisionUtils.classifyFrustumAABB(frustum, boundingBox);
+            return (c == TgcCollisionUtils.FrustumResult.INSIDE || c == TgcCollisionUtils.FrustumResult.INTERSECT);
         }
 
     }
