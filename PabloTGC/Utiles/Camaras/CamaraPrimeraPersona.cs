@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
 {
@@ -14,12 +15,14 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
     {
         #region Atributos
         private Microsoft.DirectX.Direct3D.Device d3dDevice;
+        private TgcFrustum frustum;
         #endregion
 
         #region Constructores
-        public CamaraPrimeraPersona(Microsoft.DirectX.Direct3D.Device d3dDevice)
+        public CamaraPrimeraPersona(TgcFrustum frustum, Microsoft.DirectX.Direct3D.Device d3dDevice)
         {
             this.d3dDevice = d3dDevice;
+            this.frustum = frustum;
         }
 
         #endregion
@@ -28,7 +31,10 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
         public void Render(Personaje personaje)
         {
             this.d3dDevice.Transform.View = Matrix.LookAtLH(personaje.PosicionAlturaCabeza(), personaje.DireccionAlturaCabeza(150), new Vector3(0, 1, 0));
-            GuiController.Instance.Frustum.updateVolume(d3dDevice.Transform.View, d3dDevice.Transform.Projection);
+
+            //Actualizar volumen del Frustum con nuevos valores de camara
+            this.frustum.updateVolume(d3dDevice.Transform.View, d3dDevice.Transform.Projection);
+
             //El personaje no debe animarse cuando se esta en primera persona
             //personaje.Renderizar();
         }

@@ -46,7 +46,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 {
                     contexto.personaje.juntar(this);
                     contexto.elementos.Remove(this);
-                    contexto.optimizador.ForzarActualizacion();
+                    contexto.optimizador.ForzarActualizacionElementosColision();
                 }
             }
             if (accion.Equals("Consumir"))
@@ -54,7 +54,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 contexto.personaje.ConsumirAlimento(this.nutricion);
                 this.liberar();
                 contexto.elementos.Remove(this);
-                contexto.optimizador.ForzarActualizacion();
+                contexto.optimizador.ForzarActualizacionElementosColision();
             }
         }
 
@@ -72,6 +72,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         public override String GetDescripcion()
         {
             return this.nombre() + " - " + this.nutricion;
+        }
+
+        public float GetNutricion()
+        {
+            return this.nutricion;
         }
 
         #endregion

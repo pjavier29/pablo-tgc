@@ -53,8 +53,6 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main( VS_INPUT Input )
 {
    VS_OUTPUT Output;
-
-   Input.Position.y += sin(time);
    
    //Proyectar posicion
    Output.Position = mul( Input.Position, matWorldViewProj);

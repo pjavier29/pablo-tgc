@@ -75,7 +75,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                             }
                             elem.liberar();
                             contexto.elementos.Remove(elem);
-                            contexto.optimizador.ForzarActualizacion();
+                            contexto.optimizador.ForzarActualizacionElementosColision();
                         }
 
                         //En principio solo se puede golpear un obstaculo a la vez.

@@ -31,11 +31,11 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
         {
             if (this.camaraElegida.Equals(PrimeraPersona))
             {
-                contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.D3dDevice);
+                contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
             }
             if (this.camaraElegida.Equals(TerceraPersona))
             {
-                contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje);
+                contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
             }
         }
         #endregion

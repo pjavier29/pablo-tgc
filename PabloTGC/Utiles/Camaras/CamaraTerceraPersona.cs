@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TgcViewer;
 using TgcViewer.Utils.Input;
+using TgcViewer.Utils.TgcGeometry;
 
 namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
 {
@@ -12,14 +14,18 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
     {
         #region Atributos
         private TgcThirdPersonCamera camaraTgc;
+        private TgcFrustum frustum;
+        private Microsoft.DirectX.Direct3D.Device d3dDevice;
         #endregion
 
         #region Constructores
-        public CamaraTerceraPersona(TgcThirdPersonCamera camaraTgc, Personaje personaje)
+        public CamaraTerceraPersona(TgcThirdPersonCamera camaraTgc, Vector3 posicion, TgcFrustum frustum, Microsoft.DirectX.Direct3D.Device d3dDevice)
         {
             this.camaraTgc = camaraTgc;
             this.camaraTgc.Enable = true;
-            this.camaraTgc.setCamera(personaje.mesh.Position, 200, -300);
+            this.camaraTgc.setCamera(posicion, 200, -300);
+            this.frustum = frustum;
+            this.d3dDevice = d3dDevice;
         }
 
         public void Render(Personaje personaje)
@@ -30,6 +36,10 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
             this.camaraTgc.RotationY = personaje.mesh.Rotation.Y;
             //Porque el personaje esta rotado 180 grados respecto de la camara.
             this.camaraTgc.rotateY(Geometry.DegreeToRadian(180f));
+
+            //Actualizar volumen del Frustum con nuevos valores de camara
+            this.frustum.updateVolume(this.d3dDevice.Transform.View, this.d3dDevice.Transform.Projection);
+
             personaje.Renderizar();
         }
 

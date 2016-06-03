@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcGeometry;
+using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.PabloTGC.Comandos
 {
@@ -97,12 +98,8 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             //Si hubo mivimiento actualizamos el centro del SkyBox para simular que es infinito, tambien el del piso
             if (!contexto.personaje.mesh.Position.Equals(lastPos))
             {
-                //Si no hubo colisiones y el personaje se movio finalmente
-                contexto.skyBox.Center += new Vector3((contexto.personaje.mesh.Position.X - lastPos.X), 0, (contexto.personaje.mesh.Position.Z - lastPos.Z));
-                contexto.skyBox.updateValues();
-                //TODO. Ver si es la mejor forma de hacer que el piso sea infinito
-                contexto.piso.Position += new Vector3((contexto.personaje.mesh.Position.X - lastPos.X), 0, (contexto.personaje.mesh.Position.Z - lastPos.Z));
-                contexto.piso.updateValues();
+                contexto.ActualizarPosicionSkyBox(new Vector3((contexto.personaje.mesh.Position.X - lastPos.X), 0, (contexto.personaje.mesh.Position.Z - lastPos.Z)));
+                contexto.ActualizarPosicionSuelo(new Vector3((contexto.personaje.mesh.Position.X - lastPos.X), 0, (contexto.personaje.mesh.Position.Z - lastPos.Z)));
             }
         }
         #endregion

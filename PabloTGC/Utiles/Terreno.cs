@@ -30,6 +30,8 @@ namespace AlumnoEjemplos.PabloTGC
         public float kj;
         public float ftex;      // factor para la textura
 
+        private Effect efecto;
+
 
         public Terreno()
         {
@@ -39,6 +41,16 @@ namespace AlumnoEjemplos.PabloTGC
             radio_1 = radio_2 = 0;
             ki = 1;
             kj = 1;
+        }
+
+        public Effect GetEfecto()
+        {
+            return this.efecto;
+        }
+
+        public void SetEfecto(Effect efecto)
+        {
+            this.efecto = efecto;
         }
 
         public void loadHeightmap(string heightmapPath, float pscaleXZ, float pscaleY, Vector3 center)

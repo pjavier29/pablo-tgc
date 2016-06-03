@@ -27,6 +27,8 @@ namespace AlumnoEjemplos.PabloTGC
         public const String Olla = "Olla";
         public const String General = "Elemento";
         public const String Copa = "Copa";
+        public const String ElementoSinInteraccion = "ElementoSinInteraccion";
+        public const String ElementoDoble = "ElementoDoble";
         #endregion
 
         #region Atributos
@@ -414,6 +416,38 @@ namespace AlumnoEjemplos.PabloTGC
         {
             return this.Mesh.Effect;
         }
+
+        /// <summary>
+        /// Debe ser confgurable de cada tipo de elemento
+        /// </summary>
+        /// <returns></returns>
+        #region Para configurar la luz
+        public virtual ColorValue ColorEmisor()
+        {
+            return ColorValue.FromColor(Color.Black);
+        }
+
+        public virtual ColorValue ColorAmbiente()
+        {
+            return ColorValue.FromColor(Color.White);
+        }
+
+        public virtual ColorValue ColorDifuso()
+        {
+            return ColorValue.FromColor(Color.White);
+        }
+
+        public virtual ColorValue ColorEspecular()
+        {
+            return ColorValue.FromColor(Color.White);
+        }
+
+        public virtual float EspecularEx()
+        {
+            return 20;
+        }
+        #endregion
+
 
         #endregion
 

@@ -23,6 +23,7 @@ using AlumnoEjemplos.PabloTGC.Comandos;
 using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
 using TgcViewer.Utils.Shaders;
+using AlumnoEjemplos.PabloTGC.Movimientos;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -32,7 +33,8 @@ namespace AlumnoEjemplos.MiGrupo
     public class SuvirvalCraft : TgcExample
     {
         public Terreno terreno;
-        public TgcSkyBox skyBox;
+        TgcSkyBox skyBox;
+        TgcSkyBox skyBoxNoche;
         public TgcBox piso;
         public List<Elemento> elementos;
         public Personaje personaje;
@@ -79,6 +81,8 @@ namespace AlumnoEjemplos.MiGrupo
         public bool mostrarAyuda;
 
         public Camara camara;
+
+        public Sol sol;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -142,12 +146,13 @@ namespace AlumnoEjemplos.MiGrupo
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "HeightmapHawaii.jpg", 400f, 3f, new Vector3(0, 0, 0));
             terreno.loadTexture(recursos
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "TerrainTextureHawaii.jpg");
+            terreno.SetEfecto(TgcShaders.loadEffect(recursos + "Shaders\\TerrenoShader.fx"));
             // ------------------------------------------------------------
 
             // *********************Crear SkyBox*********************************
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
-            skyBox.Size = new Vector3(10000, 10000, 10000);
+            skyBox.Size = new Vector3(20000, 20000, 20000);
             string texturesPath = recursos + "Texturas\\Quake\\SkyBox1\\";
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
@@ -155,8 +160,20 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
-            skyBox.SkyEpsilon = 10f;
+            skyBox.SkyEpsilon = 50f;
             skyBox.updateValues();
+            skyBoxNoche = new TgcSkyBox();
+            skyBoxNoche.Center = new Vector3(0, 0, 0);
+            skyBoxNoche.Size = new Vector3(20000, 20000, 20000);
+            texturesPath = recursos + "Texturas\\Quake\\SkyBox2\\";
+            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
+            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
+            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "phobos_lf.jpg");
+            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
+            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
+            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
+            skyBoxNoche.SkyEpsilon = 50f;
+            skyBoxNoche.updateValues();
             // *********************Crear SkyBox*********************************
 
             TgcScene scene;
@@ -238,14 +255,13 @@ namespace AlumnoEjemplos.MiGrupo
                     float z = posicionPinoZ[j] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
                     pinoNuevo.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                     fuegoMesh = fuego.createMeshInstance(fuego.Name + i + j);
-                    //fuegoMesh.Effect = effect;
-                    fuegoMesh.Technique = "RenderScene";
+                    //fuegoMesh.Technique = "RenderScene";
                     leniaMesh = lenia.createMeshInstance(lenia.Name + i + j);
                     fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     elementos.Add(new Elemento(1000, 2330, pinoNuevo,
                                 (new Madera(1000, 233, leniaMesh,
-                                    new Fuego(1000, 233, fuegoMesh, effect.Clone(d3dDevice))))));
+                                    new Fuego(1000, 233, fuegoMesh/*, effect.Clone(d3dDevice)*/)))));
                 }
             }
             #endregion
@@ -395,13 +411,13 @@ namespace AlumnoEjemplos.MiGrupo
                     //algaNueva.Effect = efectoAlgas.Clone(d3dDevice);
                     if (FuncionesMatematicas.Instance.NumeroAleatorioFloat() > 0.5f)
                     {
-                        algaNueva.Technique = "RenderScene";
+                        //algaNueva.Technique = "RenderScene";
                     }
                     else
                     {
-                        algaNueva.Technique = "RenderScene2";
+                        //algaNueva.Technique = "RenderScene2";
                     }
-                    elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoAlgas.Clone(d3dDevice)));
+                    elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva/*, efectoAlgas.Clone(d3dDevice)*/));
                 }
             }
             for (int i = 0; i < 11; i++)
@@ -413,16 +429,15 @@ namespace AlumnoEjemplos.MiGrupo
                     float x = (FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(6000, 9000));
                     float z = (posicionesAlgasZ[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(j * 10f, (j * 50f + 100)));
                     algaNueva.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
-                    //algaNueva.Effect = efectoAlgas.Clone(d3dDevice);
                     if (FuncionesMatematicas.Instance.NumeroAleatorioFloat() > 0.5f)
                     {
-                        algaNueva.Technique = "RenderScene";
+                        //algaNueva.Technique = "RenderScene";
                     }
                     else
                     {
-                        algaNueva.Technique = "RenderScene2";
+                        //algaNueva.Technique = "RenderScene2";
                     }
-                    elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoAlgas.Clone(d3dDevice)));
+                    elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva/*, efectoAlgas.Clone(d3dDevice)*/));
                 }
             }
             #endregion
@@ -471,13 +486,11 @@ namespace AlumnoEjemplos.MiGrupo
             palangreta.Position = new Vector3(-6500, terreno.CalcularAltura(-6500, 6000), 6000);
             canoa.Position = new Vector3(-6000, terreno.CalcularAltura(-6000, 6000) + 30, 6000);
             canoa.Scale = new Vector3(2f,2f,2f);
-            //canoa.Effect = TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx");
-            //palangreta.Effect = TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx");
-            canoa.Technique = "RenderScene";
-            palangreta.Technique = "RenderScene";
+            //canoa.Technique = "RenderScene";
+            //palangreta.Technique = "RenderScene";
             palangreta.rotateY(Geometry.DegreeToRadian(75f));
-            elementos.Add(new Elemento(10000, 10000, palangreta, TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx")));
-            elementos.Add(new Elemento(10000, 10000, canoa, TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx")));
+            elementos.Add(new Elemento(10000, 10000, palangreta/*, TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx")*/));
+            elementos.Add(new Elemento(10000, 10000, canoa/*, TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx")*/));
             #endregion
 
             #region Creamos las algas limitrofes del mapa
@@ -504,11 +517,52 @@ namespace AlumnoEjemplos.MiGrupo
             }
             #endregion
 
-            //Crear piso
+            #region Creamos los arboles de frutillas
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Vegetacion\\ArbolFrutilla\\ArbolFrutilla-TgcScene.xml");
+            TgcMesh arbolFrutilla = scene.Meshes[0];
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Vegetacion\\ArbolFrutillaVacio\\ArbolFrutillaVacio-TgcScene.xml");
+            TgcMesh arbolFrutillaVacio = scene.Meshes[0];
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Alimentos\\Frutas\\Frutilla\\Frutilla-TgcScene.xml");
+            TgcMesh frutilla = scene.Meshes[0];
+            TgcMesh arbolFrutillaMesh;
+            TgcMesh arbolFrutillaVacioMesh;
+            TgcMesh frutillaMesh;
+            ElementoDoble nuevoArbolFrutillaCompleto;
+
+            float[] posicionArbolFrutillaX = { 3000f, 4000f, 5000f };
+            float[] posicionArbolFrutillaZ = { -2000f, 0f, 1000f, 2000f};
+            for (int i = 0; i < posicionArbolFrutillaX.Length; i++)
+            {
+                for (int j = 0; j < posicionArbolFrutillaZ.Length; j++)
+                {
+                    arbolFrutillaMesh = arbolFrutilla.createMeshInstance(arbolFrutilla.Name + i + j);
+                    arbolFrutillaVacioMesh = arbolFrutillaVacio.createMeshInstance(arbolFrutillaVacio.Name + i + j);
+                    float x = posicionArbolFrutillaX[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
+                    float z = posicionArbolFrutillaZ[j] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
+                    arbolFrutillaMesh.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
+                    arbolFrutillaVacioMesh.Position = arbolFrutillaMesh.Position;
+                    nuevoArbolFrutillaCompleto = new ElementoDoble(1000, 2330, arbolFrutillaMesh, arbolFrutillaVacioMesh);
+                    for (int k = 0; k < 5; k++)
+                    {
+                        frutillaMesh = frutilla.createMeshInstance(frutilla.Name + i + j + k);
+                        frutillaMesh.Position = arbolFrutillaMesh.Position;
+                        frutillaMesh.Scale = new Vector3(0.1f, 0.1f, 0.1f);
+                        nuevoArbolFrutillaCompleto.agregarElemento(new Alimento(1000, 2330, frutillaMesh, 10));
+                    }
+                    elementos.Add(nuevoArbolFrutillaCompleto);
+                }
+            }
+            #endregion
+
+            #region  Crear piso
             TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\Agua.jpg");
-            piso = TgcBox.fromExtremes(new Vector3(-5000, 3, -5000), new Vector3(5000, 15, 5000), pisoTexture);
+            piso = TgcBox.fromExtremes(new Vector3(-20000, 3, -20000), new Vector3(20000, 15, 20000), pisoTexture);
             piso.Effect = TgcShaders.loadEffect(recursos + "Shaders\\AguaShader.fx");
             piso.Technique = "RenderScene";
+            #endregion
 
             //Creamos el personaje
             //Cargar personaje con animaciones
@@ -585,7 +639,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             tiempo = 0;
             controladorEntradas = new ControladorEntradas();
-            camara = new CamaraPrimeraPersona(GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
+            camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
 
             //****************Crear Sprite de la mochila y del cajon**********************************************
             Size screenSize = GuiController.Instance.Panel3d.Size;
@@ -760,16 +814,29 @@ namespace AlumnoEjemplos.MiGrupo
 
             //de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
             optimizador = new Optimizador(elementos, 15, 500);
-        }
+
+            #region SOL
+            TgcBox lightMesh = TgcBox.fromSize(new Vector3(500, 500, 500), Color.Yellow);
+            sol = new Sol();
+            sol.Mesh = lightMesh.toMesh("SOL");
+            sol.CrearMovimiento();
+            #endregion
+
+            float aspectRatio = (float)GuiController.Instance.Panel3d.Width / GuiController.Instance.Panel3d.Height;
+            float zNearPlaneDistance = 1f;
+            float zFarPlaneDistance = 20000f;
+            d3dDevice.Transform.Projection =
+                Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f), aspectRatio, zNearPlaneDistance, zFarPlaneDistance);
+    }
 
 
-        /// <summary>
-        /// Método que se llama cada vez que hay que refrescar la pantalla.
-        /// Escribir aquí todo el código referido al renderizado.
-        /// Borrar todo lo que no haga falta
-        /// </summary>
-        /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
-        public override void render(float elapsedTime)
+    /// <summary>
+    /// Método que se llama cada vez que hay que refrescar la pantalla.
+    /// Escribir aquí todo el código referido al renderizado.
+    /// Borrar todo lo que no haga falta
+    /// </summary>
+    /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
+    public override void render(float elapsedTime)
         {
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -782,9 +849,6 @@ namespace AlumnoEjemplos.MiGrupo
             mostrarMenuCajon = false;
             mostrarAyuda = false;
 
-            //Antes de ejecutar los comandos debemos actualizar los posibles objetos de colision
-            optimizador.Actualizar(personaje.mesh.Position);
-
             foreach (Comando comando in controladorEntradas.ProcesarEntradasTeclado())
             {
                 comando.Ejecutar(this, elapsedTime);
@@ -792,12 +856,11 @@ namespace AlumnoEjemplos.MiGrupo
 
             camara.Render(personaje);
 
-            //GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
-           // GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
-            GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
+            optimizador.Actualizar(personaje.mesh.Position);
 
-            GuiController.Instance.UserVars.setValue("x", optimizador.Elementos.Count);
+            GuiController.Instance.UserVars.setValue("x", elementos.Count);
             GuiController.Instance.UserVars.setValue("y", optimizador.ElementosColision.Count);
+            GuiController.Instance.UserVars.setValue("z", optimizador.ElementosRenderizacion.Count);
 
             //Afectamos salud por paso de tiempo
             personaje.AfectarSaludPorTiempo(elapsedTime);
@@ -828,11 +891,24 @@ namespace AlumnoEjemplos.MiGrupo
             }
 
             //Render Terreno
-            terreno.render();
+            terreno.GetEfecto().SetValue("time", tiempo);
+            terreno.GetEfecto().SetValue("lightIntensity", sol.IntensidadRelativa());
+            terreno.executeRender(terreno.GetEfecto());
 
             //Render piso
             piso.Effect.SetValue("time", tiempo);
+            piso.Effect.SetValue("lightIntensity", sol.IntensidadRelativa());
             piso.render();
+
+            //Renderizar SkyBox
+            if (sol.EsDeDia())
+            {
+                skyBox.render();
+            }
+            else
+            {
+                skyBoxNoche.render();
+            }
 
             //Actualiza los elementos
             List<Elemento> aux = new List<Elemento>();
@@ -842,10 +918,10 @@ namespace AlumnoEjemplos.MiGrupo
                 elemento.Actualizar(this, elapsedTime);
             }
 
-            optimizador.Renderizar();
-
-            //Renderizar SkyBox
-            skyBox.render();
+            foreach (Elemento elem in optimizador.ElementosRenderizacion)
+            {
+                elem.renderizar();
+            }
 
             //Personaje muerto
             if (personaje.estaMuerto())
@@ -929,6 +1005,35 @@ namespace AlumnoEjemplos.MiGrupo
                 ayudaReglon2.render();
             }
 
+            #region Render de Luces
+            Microsoft.DirectX.Direct3D.Effect currentShader;
+            currentShader = GuiController.Instance.Shaders.TgcMeshPointLightShader;
+
+            //Aplicar a cada mesh el shader actual
+            foreach (Elemento elem in optimizador.ElementosRenderizacion)
+            {
+                elem.Mesh.Effect = currentShader;
+                //El Technique depende del tipo RenderType del mesh
+                elem.Mesh.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(elem.Mesh.RenderType);
+            }
+
+            //Actualzar posición de la luz
+            sol.Actualizar(this, elapsedTime);
+            GuiController.Instance.UserVars.setValue("x", sol.Mesh.Position.X);
+            GuiController.Instance.UserVars.setValue("y", sol.Mesh.Position.Y);
+            GuiController.Instance.UserVars.setValue("z", sol.Mesh.Position.Z);
+
+            //Renderizar meshes
+            foreach (Elemento elem in optimizador.ElementosRenderizacion)
+            {
+                sol.Iluminar(elem, personaje);
+                elem.renderizar();
+            }
+
+            sol.Mesh.render();
+
+            #endregion
+            
         }
 
         /// <summary>
@@ -966,11 +1071,30 @@ namespace AlumnoEjemplos.MiGrupo
             ayudaReglon1.dispose();
             ayuda.dispose();
             ayudaReglon2.dispose();
+            sol.Mesh.dispose();
+            skyBoxNoche.dispose();
         }
 
         private String Version()
         {
             return "0.01.001";
+        }
+
+        public void ActualizarPosicionSkyBox(Vector3 posicion)
+        {
+            foreach (TgcMesh faces in this.skyBox.Faces)
+            {
+                faces.Position += posicion;
+            }
+            foreach (TgcMesh faces in this.skyBoxNoche.Faces)
+            {
+                faces.Position += posicion;
+            }
+        }
+
+        public void ActualizarPosicionSuelo(Vector3 posicion)
+        {
+            this.piso.Position += posicion;
         }
     }
 }

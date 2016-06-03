@@ -85,6 +85,19 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             return xp < xe && zp < ze;
 
         }
+
+        public float PorcentajeRelativo(float minimo, float maximo, float actual)
+        {
+            if (minimo > maximo)
+            {
+                throw new Exception("El número mínimo no puede ser superior la número máximo");
+            }
+            if (minimo > actual || actual > maximo)
+            {
+                throw new Exception("El número actual no puede ser superior la número máximo o inferior al número mímino");
+            }
+            return actual / (maximo - minimo);
+        }
         #endregion
     }
 }

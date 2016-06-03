@@ -74,7 +74,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
  
                 //De todas formas se procesa el tirado del elemento.
                 contexto.elementos.Add(elementoATirar);
-                contexto.optimizador.ForzarActualizacion();
+                contexto.optimizador.ForzarActualizacionElementosColision();
                 contexto.personaje.Dejar(elementoATirar);
             }
         }

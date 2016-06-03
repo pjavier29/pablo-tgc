@@ -18,12 +18,14 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         #region Propiedades
         public List<Elemento> Elementos { get; set; }
         public List<Elemento> ElementosColision { get; set; }
+        public List<Elemento> ElementosRenderizacion { get; set; }
         #endregion
 
         #region Constructores
         public Optimizador(List<Elemento> elementos, int referenciaActualizacion, float distanciaColision)
         {
             this.ElementosColision = new List<Elemento>();
+            this.ElementosRenderizacion = new List<Elemento>();
             this.Elementos = elementos;
             this.referenciaActualizacion = referenciaActualizacion;
             this.distanciaColision = distanciaColision;
@@ -32,16 +34,6 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         #endregion
 
         #region Comportamientos
-        public void Renderizar()
-        {
-            foreach (Elemento elem in this.Elementos)
-            {
-                if (ControladorColisiones.FrustumColisionaCuadrado(GuiController.Instance.Frustum, elem.BoundingBox()))
-                {
-                    elem.renderizar();
-                }
-            }
-        }
 
         public void Actualizar(Vector3 posicionActual)
         {
@@ -50,6 +42,19 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             {
                 this.cicloActual = 0;
                 this.ActualizarElementosColision(posicionActual);
+            }
+            this.ActualizarElementosRenderizacion();
+        }
+
+        private void ActualizarElementosRenderizacion()
+        {
+            this.ElementosRenderizacion.Clear();
+            foreach (Elemento elem in this.Elementos)
+            {
+                if (ControladorColisiones.FrustumColisionaCuadrado(GuiController.Instance.Frustum, elem.BoundingBox()))
+                {
+                    this.ElementosRenderizacion.Add(elem);
+                }
             }
         }
 
@@ -69,7 +74,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         /// <summary>
         /// Fuerza la actualizacion del optimizador en el próximo ciclo de ejecución
         /// </summary>
-        public void ForzarActualizacion()
+        public void ForzarActualizacionElementosColision()
         {
             this.cicloActual = this.referenciaActualizacion;
         }
