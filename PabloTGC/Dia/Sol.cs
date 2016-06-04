@@ -1,5 +1,6 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Movimientos;
+using AlumnoEjemplos.PabloTGC.Utiles;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.PabloTGC.Utiles
+namespace AlumnoEjemplos.PabloTGC.Dia
 {
     public class Sol
     {
@@ -39,9 +40,9 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             movimientoSol = new MovimientoEliptico(new Vector3(0f, 0f, 0f), new Vector3(12000f, 0f, 0f), new Vector3(0f, 5000f, 0f), this.Mesh);
         }
 
-        public virtual void Actualizar(SuvirvalCraft contexto, float elapsedTime)
+        public void Actualizar(float valor)
         {
-            this.movimientoSol.Actualizar(contexto, elapsedTime);
+            this.movimientoSol.Actualizar(valor);
         }
 
         public void Iluminar(Elemento elemento, Personaje personaje)

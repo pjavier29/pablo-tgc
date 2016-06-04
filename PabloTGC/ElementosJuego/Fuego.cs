@@ -36,7 +36,8 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         {
             if (this.distanciaA(personaje.mesh.Position) > 20)
             {
-                personaje.IncrementarTemperaturaCorporalPorTiempo(elapsedTime);
+                //Cerca del fuego se genera un anmbiente de 24 grados.
+                personaje.IncrementarTemperaturaCorporalPorTiempo(24, elapsedTime);
             }
             else
             {
@@ -49,7 +50,8 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //En el fuego no queremos que se muestre barra de estado.
             if (accion.Equals("Parado"))
             {
-                contexto.personaje.IncrementarTemperaturaCorporalPorTiempo(elapsedTime);
+                //Cerca del fuego se genera un anmbiente de 24 grados.
+                contexto.personaje.IncrementarTemperaturaCorporalPorTiempo(24, elapsedTime);
             }
         }
 

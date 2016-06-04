@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
@@ -32,27 +33,12 @@ namespace AlumnoEjemplos.PabloTGC.Movimientos
         #endregion
 
         #region Comportamientos
-        /// <summary>
-        /// Por el momento representamos el movimiento para Elipses que tienen centro en el origen y no teniendo en cuenta la Z
-        /// </summary>
-        /// <param name="contexto"></param>
-        /// <param name="elapsedTime"></param>
-        public virtual void Actualizar(SuvirvalCraft contexto, float elapsedTime)
+        public virtual void Actualizar(float valor)
         {
-            this.ActualizarPosicion(elapsedTime*0.1f);
+            this.posicionActual = valor;
             float x = this.a.X * FastMath.Cos(this.posicionActual);
             float y = this.b.Y * FastMath.Sin(this.posicionActual);
             this.mesh.Position = new Vector3(x,y, this.mesh.Position.Z);
-        }
-
-        private void ActualizarPosicion(float valor)
-        {
-            this.posicionActual += valor;
-            if (this.posicionActual > 360)
-            {
-                //Para que se mueva en el intervlor de 0 a 2pi
-                this.posicionActual = 0;
-            }
         }
 
         public float AlturaMaxima()

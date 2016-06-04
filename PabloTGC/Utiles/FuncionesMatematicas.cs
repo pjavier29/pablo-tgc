@@ -43,6 +43,20 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
             return (float) this.aleatorio.NextDouble();
         }
 
+        public int NumeroAleatorioInt()
+        {
+            return this.aleatorio.Next();
+        }
+
+        public int NumeroAleatorioIntEntre(int minimo, int maximo)
+        {
+            if (minimo > maximo)
+            {
+                throw new Exception("El número mínimo no puede ser superior la número máximo");
+            }
+            return this.aleatorio.Next(minimo, maximo);
+        }
+
         public double NumeroAleatorioDoubleEntre(double minimo, double maximo)
         {
             if (minimo > maximo)

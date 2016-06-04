@@ -30,6 +30,7 @@ namespace AlumnoEjemplos.PabloTGC
         public float ResistenciaFisica { get; set; }
         public float Hidratacion { get; set; }
         public float Alimentacion { get; set; }
+        public float TemperaturaCorporal { get; set; }
         #endregion
 
         #region Constructores
@@ -40,6 +41,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.instrumentos = new List<Arma>();
             this.tiempoCorriendo = 0;
             this.direccionVision = 0;
+            this.TemperaturaCorporal = 37;
         }
         #endregion
 
@@ -157,9 +159,9 @@ namespace AlumnoEjemplos.PabloTGC
         /// <param name="tiempoEnSegundos"></param>
         public void AfectarSaludPorTiempo(float tiempoEnSegundos)
         {
-            //Afectamos la salud de esta manera tan agresiva para que el juego sea más interactivo
-            this.AfectarHidratacion(tiempoEnSegundos);
-            this.AfectarAlimentacion(tiempoEnSegundos);
+            //Agregamos estos valores que serian como las defensas del personaje. Si en algun momento tiene traje podrian ser mas bajos (proteger más)
+            this.AfectarHidratacion(tiempoEnSegundos * 0.1f);
+            this.AfectarAlimentacion(tiempoEnSegundos * 0.3f);
         }
 
         private void AfectarHidratacion(float tiempoEnSegundos)
@@ -186,7 +188,7 @@ namespace AlumnoEjemplos.PabloTGC
 
         public bool estaMuerto()
         {
-            return this.Hidratacion + this.Alimentacion <= 0;
+            return (this.Hidratacion + this.Alimentacion <= 0) || (this.TemperaturaCorporal < 34);
         }
 
         public void ConsumirAlimento(float nutricion)
@@ -207,15 +209,33 @@ namespace AlumnoEjemplos.PabloTGC
             }
         }
 
-        public void IncrementarTemperaturaCorporalPorTiempo(float tiempoEnSegundos)
+        public void IncrementarTemperaturaCorporalPorTiempo(float temperatura, float tiempoEnSegundos)
         {
-            //TODO. Hay que implementar este método
+            this.TemperaturaCorporal += temperatura * tiempoEnSegundos * 0.05f;
+            if (this.TemperaturaCorporal > 37)
+            {
+                this.TemperaturaCorporal = 37;
+            }
+        }
+
+        public void AfectarSaludPorTemperatura(float temperatura, float tiempo)
+        {
+            if (temperatura < 24)
+            {
+                //Ese 0.001 seria la resistencia, se puede decrementar con trajes.
+                this.TemperaturaCorporal -= ((24 - temperatura) * tiempo * 0.001f);
+            }
+            if (this.TemperaturaCorporal < 31)
+            {
+                this.TemperaturaCorporal = 31;
+            }
         }
 
         public void morir()
         {
             this.Hidratacion = 0;
             this.Alimentacion = 0;
+            this.TemperaturaCorporal = 0;
         }
 
         public List<Elemento> elementosEnMochila()
@@ -343,6 +363,11 @@ namespace AlumnoEjemplos.PabloTGC
         public float PorcentajeDeCansancio()
         {
             return 1 - (this.tiempoCorriendo / this.ResistenciaFisica);
+        }
+
+        public String TemperaturaCorporalTexto()
+        {
+            return ((int)this.TemperaturaCorporal).ToString() + "°";
         }
 
         public Vector3 Direccion(float distancia)

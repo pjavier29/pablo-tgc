@@ -24,6 +24,7 @@ using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
 using TgcViewer.Utils.Shaders;
 using AlumnoEjemplos.PabloTGC.Movimientos;
+using AlumnoEjemplos.PabloTGC.Dia;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -34,7 +35,6 @@ namespace AlumnoEjemplos.MiGrupo
     {
         public Terreno terreno;
         TgcSkyBox skyBox;
-        TgcSkyBox skyBoxNoche;
         public TgcBox piso;
         public List<Elemento> elementos;
         public Personaje personaje;
@@ -74,15 +74,23 @@ namespace AlumnoEjemplos.MiGrupo
         TgcSprite objetivosIcono;
         TgcText2d mensajeObjetivo1;
         float tiempoObjetivo;
-
         TgcSprite ayuda;
         public TgcText2d ayudaReglon1;
         public TgcText2d ayudaReglon2;
         public bool mostrarAyuda;
+        TgcText2d temperaturaDia;
+        TgcText2d horaDia;
+        TgcSprite temperaturaDiaIcono;
+        TgcSprite horaDiaIcono;
+        TgcText2d temperaturaPersonaje;
+        TgcSprite temperaturaPersonajeIcono;
+        TgcSprite estadoDiaSolIcono;
+        TgcSprite estadoDiaLunaIcono;
+
 
         public Camara camara;
 
-        public Sol sol;
+        public Dia dia;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -162,18 +170,12 @@ namespace AlumnoEjemplos.MiGrupo
             skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
             skyBox.SkyEpsilon = 50f;
             skyBox.updateValues();
-            skyBoxNoche = new TgcSkyBox();
-            skyBoxNoche.Center = new Vector3(0, 0, 0);
-            skyBoxNoche.Size = new Vector3(20000, 20000, 20000);
-            texturesPath = recursos + "Texturas\\Quake\\SkyBox2\\";
-            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
-            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
-            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "phobos_lf.jpg");
-            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
-            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
-            skyBoxNoche.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
-            skyBoxNoche.SkyEpsilon = 50f;
-            skyBoxNoche.updateValues();
+            Microsoft.DirectX.Direct3D.Effect effectSkybox = TgcShaders.loadEffect(recursos + "Shaders\\SkyBoxShader.fx");
+            foreach (TgcMesh faces in this.skyBox.Faces)
+            {
+                faces.Effect = effectSkybox;
+                faces.Technique = "RenderScene";
+            }
             // *********************Crear SkyBox*********************************
 
             TgcScene scene;
@@ -709,7 +711,7 @@ namespace AlumnoEjemplos.MiGrupo
             }
             //****************Crear el texto informativo**********************************************************
 
-            //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
+            #region Creacion de barra de salud, hidratacion, alimentacion, cansancio y temperatura corporal del persobaje
             saludIcono = new TgcSprite();
             saludIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Corazon.png");
             saludIcono.Position = new Vector2(20, 20);
@@ -741,7 +743,18 @@ namespace AlumnoEjemplos.MiGrupo
             cansancio = new TgcSprite();
             cansancio.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraCansancio.png");
             cansancio.Position = new Vector2(790, 40);
-            //****************Creacion de barra de salud, hidratacion, alimentacion y cansancio*******************
+
+            temperaturaPersonajeIcono = new TgcSprite();
+            temperaturaPersonajeIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\TemperaturaPersonaje.png");
+            temperaturaPersonajeIcono.Position = new Vector2(20, 90);
+
+            temperaturaPersonaje = new TgcText2d();
+            temperaturaPersonaje.Color = Color.DarkViolet;
+            temperaturaPersonaje.Align = TgcText2d.TextAlign.LEFT;
+            temperaturaPersonaje.Position = new Point(100, 100);
+            temperaturaPersonaje.Size = new Size(100, 50);
+            temperaturaPersonaje.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            #endregion
 
             //****************************Creacion de objetivos*********************
             objetivosIcono = new TgcSprite();
@@ -749,18 +762,18 @@ namespace AlumnoEjemplos.MiGrupo
             objetivosIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Objetivos.png");
             if (screenSize.Width >= 1024)
             {
-                objetivosIcono.Position = new Vector2(screenSize.Width - 350, 25);
-                mensajeObjetivo1.Position = new Point(screenSize.Width - 250, 25);
+                objetivosIcono.Position = new Vector2(screenSize.Width - 300, 25);
+                mensajeObjetivo1.Position = new Point(screenSize.Width - 200, 25);
             }
             else
             {
-                objetivosIcono.Position = new Vector2(20, 90);
-                mensajeObjetivo1.Position = new Point(120, 90);
+                objetivosIcono.Position = new Vector2(20, 200);
+                mensajeObjetivo1.Position = new Point(100, 200);
             }
             mensajeObjetivo1.Color = Color.Red;
             mensajeObjetivo1.Align = TgcText2d.TextAlign.LEFT;
             mensajeObjetivo1.Size = new Size(200, 50);
-            mensajeObjetivo1.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
+            mensajeObjetivo1.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
             tiempoObjetivo = 1200;//Segundos que forman 20 minutos
                                   //****************************Creacion de objetivos*********************
 
@@ -812,15 +825,44 @@ namespace AlumnoEjemplos.MiGrupo
             ayudaReglon2.Size = new Size(200, 50);
             //*****************Creación de menu ayuda********************************************************
 
-            //de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
+            //*****************Creación de texto informativo de la temperatura y la hora del dia********************************
+            temperaturaDiaIcono = new TgcSprite();
+            temperaturaDiaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\TemperaturaDia.png");
+            temperaturaDiaIcono.Position = new Vector2(screenSize.Width - 85, screenSize.Height - 200);
+            temperaturaDia = new TgcText2d();
+            temperaturaDia.Color = Color.White;
+            temperaturaDia.Align = TgcText2d.TextAlign.RIGHT;
+            temperaturaDia.Position = new Point(screenSize.Width - 205, screenSize.Height -180);
+            temperaturaDia.Size = new Size(100, 100);
+            temperaturaDia.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
+            horaDiaIcono = new TgcSprite();
+            horaDiaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\HoraDelDia.png");
+            horaDiaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 100);
+            horaDia = new TgcText2d();
+            horaDia.Color = Color.White;
+            horaDia.Align = TgcText2d.TextAlign.RIGHT;
+            horaDia.Position = new Point(screenSize.Width - 210, screenSize.Height - 85);
+            horaDia.Size = new Size(100, 100);
+            horaDia.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
+            estadoDiaSolIcono = new TgcSprite();
+            estadoDiaSolIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Sol.png");
+            estadoDiaSolIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
+            estadoDiaLunaIcono = new TgcSprite();
+            estadoDiaLunaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Luna.png");
+            estadoDiaLunaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
+            //*****************Creación de texto informativo de la temperatura y la hora del dia********************************
+
+            //¿de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
             optimizador = new Optimizador(elementos, 15, 500);
 
-            #region SOL
+            #region Iluminacion
             TgcBox lightMesh = TgcBox.fromSize(new Vector3(500, 500, 500), Color.Yellow);
-            sol = new Sol();
+            Sol sol = new Sol();
             sol.Mesh = lightMesh.toMesh("SOL");
             sol.CrearMovimiento();
+            dia = new Dia(200, sol);
             #endregion
+
 
             float aspectRatio = (float)GuiController.Instance.Panel3d.Width / GuiController.Instance.Panel3d.Height;
             float zNearPlaneDistance = 1f;
@@ -862,8 +904,9 @@ namespace AlumnoEjemplos.MiGrupo
             GuiController.Instance.UserVars.setValue("y", optimizador.ElementosColision.Count);
             GuiController.Instance.UserVars.setValue("z", optimizador.ElementosRenderizacion.Count);
 
-            //Afectamos salud por paso de tiempo
+            //Afectamos salud por paso de tiempo y por la temperatura
             personaje.AfectarSaludPorTiempo(elapsedTime);
+            personaje.AfectarSaludPorTemperatura(dia.TemperaturaActual(), elapsedTime);
 
             //Actualizamos los objetos Fisicos y los renderizamos
             if (movimiento != null)
@@ -892,23 +935,29 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Render Terreno
             terreno.GetEfecto().SetValue("time", tiempo);
-            terreno.GetEfecto().SetValue("lightIntensity", sol.IntensidadRelativa());
+            terreno.GetEfecto().SetValue("lightIntensity", dia.GetSol().IntensidadRelativa());
             terreno.executeRender(terreno.GetEfecto());
 
             //Render piso
             piso.Effect.SetValue("time", tiempo);
-            piso.Effect.SetValue("lightIntensity", sol.IntensidadRelativa());
+            piso.Effect.SetValue("lightIntensity", dia.GetSol().IntensidadRelativa());
             piso.render();
 
             //Renderizar SkyBox
-            if (sol.EsDeDia())
+            // if (dia.EsDeDia())
+            // {
+            foreach (TgcMesh faces in this.skyBox.Faces)
             {
-                skyBox.render();
+                faces.Effect.SetValue("time", tiempo);
+                faces.Effect.SetValue("lightIntensity", dia.GetSol().IntensidadRelativa());
+                faces.render();
             }
-            else
-            {
-                skyBoxNoche.render();
-            }
+            //skyBox.render();
+           // }
+         //   else
+          //  {
+          //      skyBoxNoche.render();
+         //   }
 
             //Actualiza los elementos
             List<Elemento> aux = new List<Elemento>();
@@ -1005,6 +1054,29 @@ namespace AlumnoEjemplos.MiGrupo
                 ayudaReglon2.render();
             }
 
+            //Actualziamos el dia
+            dia.Actualizar(this, elapsedTime);
+
+            GuiController.Instance.Drawer2D.beginDrawSprite();
+            horaDia.Text = dia.HoraActualTexto();
+            temperaturaDia.Text = dia.TemperaturaActualTexto();
+            temperaturaPersonaje.Text = personaje.TemperaturaCorporalTexto();
+            horaDia.render();
+            temperaturaDia.render();
+            temperaturaPersonajeIcono.render();
+            temperaturaPersonaje.render();
+            temperaturaDiaIcono.render();
+            horaDiaIcono.render();
+            if (dia.EsDeDia())
+            {
+                estadoDiaSolIcono.render();
+            }
+            else
+            {
+                estadoDiaLunaIcono.render();
+            }
+            GuiController.Instance.Drawer2D.endDrawSprite();
+
             #region Render de Luces
             Microsoft.DirectX.Direct3D.Effect currentShader;
             currentShader = GuiController.Instance.Shaders.TgcMeshPointLightShader;
@@ -1017,20 +1089,14 @@ namespace AlumnoEjemplos.MiGrupo
                 elem.Mesh.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(elem.Mesh.RenderType);
             }
 
-            //Actualzar posición de la luz
-            sol.Actualizar(this, elapsedTime);
-            GuiController.Instance.UserVars.setValue("x", sol.Mesh.Position.X);
-            GuiController.Instance.UserVars.setValue("y", sol.Mesh.Position.Y);
-            GuiController.Instance.UserVars.setValue("z", sol.Mesh.Position.Z);
-
             //Renderizar meshes
             foreach (Elemento elem in optimizador.ElementosRenderizacion)
             {
-                sol.Iluminar(elem, personaje);
+                dia.GetSol().Iluminar(elem, personaje);
                 elem.renderizar();
             }
 
-            sol.Mesh.render();
+            dia.GetSol().Mesh.render();
 
             #endregion
             
@@ -1071,8 +1137,15 @@ namespace AlumnoEjemplos.MiGrupo
             ayudaReglon1.dispose();
             ayuda.dispose();
             ayudaReglon2.dispose();
-            sol.Mesh.dispose();
-            skyBoxNoche.dispose();
+            dia.GetSol().Mesh.dispose();
+            temperaturaDia.dispose();
+            horaDia.dispose();
+            temperaturaDiaIcono.dispose();
+            horaDiaIcono.dispose();
+            temperaturaPersonaje.dispose();
+            temperaturaPersonajeIcono.dispose();
+            estadoDiaSolIcono.dispose();
+            estadoDiaLunaIcono.dispose();
         }
 
         private String Version()
@@ -1083,10 +1156,6 @@ namespace AlumnoEjemplos.MiGrupo
         public void ActualizarPosicionSkyBox(Vector3 posicion)
         {
             foreach (TgcMesh faces in this.skyBox.Faces)
-            {
-                faces.Position += posicion;
-            }
-            foreach (TgcMesh faces in this.skyBoxNoche.Faces)
             {
                 faces.Position += posicion;
             }

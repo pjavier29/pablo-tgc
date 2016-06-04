@@ -80,6 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PabloTGC\Administracion\ControladorEntradas.cs" />
+    <Compile Include="PabloTGC\Dia\Dia.cs" />
+    <Compile Include="PabloTGC\Dia\Tiempo.cs" />
     <Compile Include="PabloTGC\Comandos\Ayuda.cs" />
     <Compile Include="PabloTGC\Comandos\CambiarCamara.cs" />
     <Compile Include="PabloTGC\Comandos\Comando.cs" />
@@ -117,7 +119,7 @@
     <Compile Include="PabloTGC\Utiles\FuncionesMatematicas.cs" />
     <Compile Include="PabloTGC\Utiles\MallaEnvoltura.cs" />
     <Compile Include="PabloTGC\Utiles\Optimizador.cs" />
-    <Compile Include="PabloTGC\Utiles\Sol.cs" />
+    <Compile Include="PabloTGC\Dia\Sol.cs" />
     <Compile Include="PabloTGC\Utiles\Terreno.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
