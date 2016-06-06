@@ -25,7 +25,10 @@ sampler2D diffuseMap = sampler_state
 };
 
 float time = 0;
-float lightIntensity; //Intensidad de la luz, recibimos un numero entre 0 y 1
+float lightIntensityRelitive; //Intensidad de la luz, recibimos un numero entre 0 y 1
+float colorCieloRojo; //Enviamos un flotante para calcular el color del cielo al amanecer o anochecer
+float colorCieloVerde; //Enviamos un flotante para calcular el color del cielo al amanecer o anochecer
+
 
 /**************************************************************************************/
 /* RenderScene */
@@ -75,8 +78,9 @@ float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0) : COLOR0
 	// Obtener el texel de textura
 	// diffuseMap es el sampler, Texcoord son las coordenadas interpoladas
 	float4 fvBaseColor = tex2D( diffuseMap, Texcoord );
-	// Lo multiplico por la intensidad
-	return fvBaseColor * lightIntensity;
+	float4 colorCielo = float4(colorCieloRojo, colorCieloVerde, 0, 0);
+	// Lo multiplico por la intensidad y le sumo el color
+	return (fvBaseColor + colorCielo) * lightIntensityRelitive;
 }
 
 

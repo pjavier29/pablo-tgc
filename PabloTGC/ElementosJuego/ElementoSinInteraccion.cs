@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -16,7 +17,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         {
 
         }
-        public ElementoSinInteraccion(float peso, float resistencia, TgcMesh mesh, Effect efecto) : base(peso, resistencia, mesh, efecto)
+        public ElementoSinInteraccion(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
         {
 
         }
@@ -29,11 +30,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
-            if (this.tieneEfecto)
-            {
-                //TODO. Esto debe de manejarse de otra manera para que se pueda setear el valor que corresponda de manera mas generica.
-                this.Efecto().SetValue("time", contexto.tiempo);
-            }
+
         }
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)

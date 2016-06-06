@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
     public class FuenteAgua : Elemento
     {
         #region Contructores
-        public FuenteAgua(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
+        public FuenteAgua(float peso, float resistencia, TgcMesh mesh, Efecto efecto) :base(peso, resistencia, mesh, efecto)
         {
 
         }

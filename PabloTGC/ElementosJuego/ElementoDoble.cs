@@ -1,5 +1,6 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Utiles;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         #endregion
 
         #region constructores
-        public ElementoDoble(float peso, float resistencia, TgcMesh mesh1, TgcMesh mesh2) : base(peso, resistencia, mesh1)
+        public ElementoDoble(float peso, float resistencia, TgcMesh mesh1, TgcMesh mesh2, Efecto efecto) : base(peso, resistencia, mesh1, efecto)
         {
             //Por defecto comienza mostrando el primer mesh
             this.Mesh1 = mesh1;
@@ -106,9 +107,9 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         /// <summary>
         /// Renderiza el objeto
         /// </summary>
-        public override void renderizar()
+        public override void renderizar(SuvirvalCraft contexto)
         {
-            base.renderizar();
+            base.renderizar(contexto);
             if (this.estaCreando)
             {
                 this.progresoCreacion.Render();

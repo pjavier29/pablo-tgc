@@ -1,5 +1,6 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Utiles;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -23,7 +24,7 @@ namespace AlumnoEjemplos.PabloTGC
         #endregion
 
         #region Contructores
-        public Animal(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
+        public Animal(float peso, float resistencia, TgcMesh mesh, Efecto efecto) :base(peso, resistencia, mesh, efecto)
         {
             this.tiempoEnActividad = 7;
             this.tiempoInactivo = 3;
@@ -109,11 +110,11 @@ namespace AlumnoEjemplos.PabloTGC
         /// <summary>
         /// Renderiza el objeto
         /// </summary>
-        public override void renderizar()
+        public override void renderizar(SuvirvalCraft contexto)
         {
             //Tenemos que actualizar los puntos de la barra ya que el animal se mueve por el terreno
             this.ActualizarBarraEstadoCompleta(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
-            base.renderizar();             
+            base.renderizar(contexto);             
         }
 
         public override String GetTipo()

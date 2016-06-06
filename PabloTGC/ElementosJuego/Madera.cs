@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         }
 
-        public Madera(float peso, float resistencia, TgcMesh mesh, Elemento elemento) : base(peso, resistencia, mesh, elemento)
+        public Madera(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : base(peso, resistencia, mesh, elemento, efecto)
         {
 
         }

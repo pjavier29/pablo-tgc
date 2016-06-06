@@ -19,6 +19,9 @@ namespace AlumnoEjemplos.PabloTGC.Dia
         private float intensidadDeLuz;
         private float atenuacionDeLuz;
         private MovimientoEliptico movimientoSol;
+        private float alturaPuestaSol;
+        private float atenuacionMaxima;
+        private float intesidadLuzMinima;
         #endregion
 
         #region Propiedades
@@ -29,8 +32,9 @@ namespace AlumnoEjemplos.PabloTGC.Dia
         public Sol()
         {
             this.colorDeLuz = ColorValue.FromColor(Color.White);
-            this.intensidadDeLuz = 3;
-            this.atenuacionDeLuz = 0.5f;
+            this.intensidadDeLuz = 15000f;
+            this.atenuacionDeLuz = 0.1f;
+            this.alturaPuestaSol = 0;
         }
         #endregion
 
@@ -38,7 +42,12 @@ namespace AlumnoEjemplos.PabloTGC.Dia
         public void CrearMovimiento()
         {
             movimientoSol = new MovimientoEliptico(new Vector3(0f, 0f, 0f), new Vector3(12000f, 0f, 0f), new Vector3(0f, 5000f, 0f), this.Mesh);
-        }
+            this.alturaPuestaSol = (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) / 2;
+            //Lo colocamos en atributos porque son valores fijos, de esta forma nos evitamos hacer la cuenta en cada render
+            //De un calculo que siempre dara igual.
+            this.atenuacionMaxima = (this.atenuacionDeLuz * this.movimientoSol.AlturaMaxima()) / this.alturaPuestaSol; ;
+            this.intesidadLuzMinima = (this.intensidadDeLuz * this.alturaPuestaSol) / this.movimientoSol.AlturaMaxima();
+    }
 
         public void Actualizar(float valor)
         {
@@ -47,35 +56,25 @@ namespace AlumnoEjemplos.PabloTGC.Dia
 
         public void Iluminar(Elemento elemento, Personaje personaje)
         {
-            elemento.Mesh.Effect.SetValue("lightColor", this.colorDeLuz);
-            elemento.Mesh.Effect.SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(this.Mesh.Position));
-            elemento.Mesh.Effect.SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(personaje.mesh.Position));
-            elemento.Mesh.Effect.SetValue("lightIntensity", this.IntensidadDeLuz());
-            elemento.Mesh.Effect.SetValue("lightAttenuation", this.Atenuacion());
-
-            elemento.Mesh.Effect.SetValue("materialEmissiveColor", elemento.ColorEmisor());
-            elemento.Mesh.Effect.SetValue("materialAmbientColor", elemento.ColorAmbiente());
-            elemento.Mesh.Effect.SetValue("materialDiffuseColor", elemento.ColorDifuso());
-            elemento.Mesh.Effect.SetValue("materialSpecularColor", elemento.ColorEspecular());
-            elemento.Mesh.Effect.SetValue("materialSpecularExp", elemento.EspecularEx());
+            //elemento.ActualizarParametrosEfectoIluminacion(this.colorDeLuz, this.Mesh.Position, this.IntensidadDeLuz(), this.Atenuacion());
         }
 
-        private float Atenuacion()
+        public float Atenuacion()
         {
-            if (this.Mesh.Position.Y < 350)
+            if (this.EsDeNoche())
             {
-                return 2f;
+                return this.atenuacionMaxima;
             }
-            return this.atenuacionDeLuz;
+            return (this.atenuacionDeLuz * this.movimientoSol.AlturaMaxima()) / this.Mesh.Position.Y;
         }
 
-        private float IntensidadDeLuz()
+        public float IntensidadDeLuz()
         {
-            if (this.Mesh.Position.Y < 350)
+            if (this.EsDeNoche())
             {
-                return 1000f;
+                return this.intesidadLuzMinima;
             }
-            return this.intensidadDeLuz * this.Mesh.Position.Y;
+            return (this.intensidadDeLuz * this.Mesh.Position.Y) / this.movimientoSol.AlturaMaxima();
         }
 
         /// <summary>
@@ -84,13 +83,44 @@ namespace AlumnoEjemplos.PabloTGC.Dia
         /// <returns></returns>
         public float IntensidadRelativa()
         {
-            return FuncionesMatematicas.Instance.PorcentajeRelativo(1000f, this.intensidadDeLuz * this.movimientoSol.AlturaMaxima(), this.IntensidadDeLuz());
+            return FuncionesMatematicas.Instance.PorcentajeRelativo(this.intesidadLuzMinima, this.intensidadDeLuz, this.IntensidadDeLuz());
         }
 
         public bool EsDeDia()
         {
-            return this.Mesh.Position.Y > 350;
+            return this.Mesh.Position.Y > this.alturaPuestaSol;
         }
+
+        public bool EsDeNoche()
+        {
+            return ! this.EsDeDia();
+        }
+
+        public ColorValue GetColorAmanecerAnochecer()
+        {
+            ColorValue color = new ColorValue();
+            if (this.Mesh.BoundingBox.PMax.Y > 0 && this.EsDeNoche())
+            {
+                color.Red = 1f;
+                color.Green = 0f;
+                color.Blue = 0f;
+                return color;
+            }
+            float aux = this.Mesh.Position.Y - this.alturaPuestaSol;
+            //Si despues de salir el sol su altura no supera mas de 200 la puesta del sol
+            if (aux > 0 && aux < 300f)
+            {
+                color.Red = 1f;
+                color.Green = 1f;
+                color.Blue = 0f;
+                return color;
+            }
+            color.Red = 0f;
+            color.Green = 0f;
+            color.Blue = 0f;
+            return color;
+        }
+
         #endregion
 
     }

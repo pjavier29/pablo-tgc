@@ -1,5 +1,6 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Utiles;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         #endregion
 
         #region Contructores
-        public Cajon(float peso, float resistencia, TgcMesh mesh) : base(peso, resistencia, mesh)
+        public Cajon(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
         {
             this.estaAbierto = false;
             this.progresoApertura = null;
@@ -109,9 +110,9 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         /// <summary>
         /// Renderiza el objeto
         /// </summary>
-        public override void renderizar()
+        public override void renderizar(SuvirvalCraft contexto)
         {
-            base.renderizar();
+            base.renderizar(contexto);
             if (this.SeEstaAbriendo())
             {
                 this.progresoApertura.Render();

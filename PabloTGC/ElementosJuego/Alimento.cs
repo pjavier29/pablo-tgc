@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,12 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         #endregion
 
         #region Contructores
-        public Alimento(float peso, float resistencia, TgcMesh mesh, float nutricion) :base(peso, resistencia, mesh)
+        public Alimento(float peso, float resistencia, TgcMesh mesh, float nutricion, Efecto efecto) :base(peso, resistencia, mesh, efecto)
         {
             this.nutricion = nutricion;
         }
 
-        public Alimento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, float nutricion) : base(peso, resistencia, mesh, elemento)
+        public Alimento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, float nutricion, Efecto efecto) : base(peso, resistencia, mesh, elemento, efecto)
         {
             this.nutricion = nutricion;
         }

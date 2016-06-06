@@ -1,5 +1,6 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Utiles;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 
@@ -36,7 +38,7 @@ namespace AlumnoEjemplos.PabloTGC
         private float resistenciaTotal;
         private bool hayInteraccion;
         private float momentoUltimoGolpe;
-        public bool tieneEfecto;
+        private Efecto efecto;
         #endregion
 
         #region Propiedades
@@ -62,13 +64,13 @@ namespace AlumnoEjemplos.PabloTGC
             this.barraEstado = null;
             this.hayInteraccion = false;
             this.momentoUltimoGolpe = 0;
+            //this.CrearEfectoIluminacion();
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
         {
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
-            this.tieneEfecto = false;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
@@ -76,10 +78,9 @@ namespace AlumnoEjemplos.PabloTGC
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
             this.agregarElemento(elemento);
-            this.tieneEfecto = false;
         }
 
-        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Effect efecto) : this(mesh, resistencia)
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : this(mesh, resistencia)
         {
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
@@ -87,7 +88,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.SetEfecto(efecto);
         }
 
-        public Elemento(float peso, float resistencia, TgcMesh mesh, Effect efecto) : this(mesh, resistencia)
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : this(mesh, resistencia)
         {
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
@@ -126,11 +127,6 @@ namespace AlumnoEjemplos.PabloTGC
 
         public virtual void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
-            if (this.tieneEfecto)
-            {
-                //TODO. Esto debe de manejarse de otra manera para que se pueda setear el valor que corresponda de manera mas generica.
-                this.Efecto().SetValue("time", contexto.tiempo);
-            }
             if (this.hayInteraccion)
             {
                 if (this.barraEstado != null)
@@ -219,8 +215,12 @@ namespace AlumnoEjemplos.PabloTGC
         /// <summary>
         /// Renderiza el objeto
         /// </summary>
-        public virtual void renderizar()
+        public virtual void renderizar(SuvirvalCraft contexto)
         {
+            if (this.Efecto() != null)
+            {
+                this.Efecto().Actualizar(contexto, this);
+            }
             this.Mesh.render();
             if (this.barraEstado != null)
             {
@@ -406,15 +406,16 @@ namespace AlumnoEjemplos.PabloTGC
             return tiempoActual - this.momentoUltimoGolpe > 5;
         }
 
-        public void SetEfecto(Effect efecto)
+        public void SetEfecto(Efecto efecto)
         {
-            this.Mesh.Effect = efecto;
-            this.tieneEfecto = true;
+           // efecto.AgregarParametrosAlPrincipio(this.ParametrosIluminacion());
+            this.efecto = efecto;
+            efecto.Aplicar(this.Mesh);
         }
 
-        public Effect Efecto()
+        public Efecto Efecto()
         {
-            return this.Mesh.Effect;
+            return this.efecto;
         }
 
         /// <summary>
@@ -446,6 +447,55 @@ namespace AlumnoEjemplos.PabloTGC
         {
             return 20;
         }
+
+       /* private void CrearEfectoIluminacion()
+        {
+            this.efecto = new Efecto(GuiController.Instance.Shaders.TgcMeshPointLightShader,
+                GuiController.Instance.Shaders.getTgcMeshTechnique(this.Mesh.RenderType));
+            this.efecto.AgregarParametros(this.ParametrosIluminacion());
+            //La primera vez lo tenemos que aplicar
+            this.efecto.Aplicar(this.Mesh);
+        }
+
+        public List<ParametroEfecto> ParametrosIluminacion()
+        {
+            List<ParametroEfecto> parametros = new List<ParametroEfecto>();
+            //Ponemos un color de inicializacion, luego se actualizará con el parámetro del solor del sol.
+            parametros.Add(new ParametroEfectoColor("lightColor", ColorValue.FromColor(Color.White)));
+            //Luego lo actualizaremos con la posicion del sol
+            parametros.Add(new ParametroEfectoVector3("lightPosition", this.Mesh.Position));
+            parametros.Add(new ParametroEfectoVector3("eyePosition", this.Mesh.Position));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroFlotante("lightIntensity", 0));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroFlotante("lightAttenuation", 0));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroEfectoColor("materialEmissiveColor", this.ColorEmisor()));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroEfectoColor("materialAmbientColor", this.ColorEmisor()));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroEfectoColor("materialDiffuseColor", this.ColorAmbiente()));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroEfectoColor("materialSpecularColor", this.ColorEspecular()));
+            //Luego lo actualizaremos con los valores del sol
+            parametros.Add(new ParametroFlotante("materialSpecularExp", this.EspecularEx()));
+
+            return parametros;
+        }
+
+        public void ActualizarParametrosEfectoIluminacion(ColorValue colorDeLuz, Vector3 posicionLuz, float intensidadDeLuz, float atenuacion)
+        {
+            this.efecto.GetParametrosEfecto()[0].ActualizarValor(colorDeLuz);
+            this.efecto.GetParametrosEfecto()[1].ActualizarValor(posicionLuz);
+            this.efecto.GetParametrosEfecto()[2].ActualizarValor(this.Mesh.Position);
+            this.efecto.GetParametrosEfecto()[3].ActualizarValor(intensidadDeLuz);
+            this.efecto.GetParametrosEfecto()[4].ActualizarValor(atenuacion);
+            this.efecto.GetParametrosEfecto()[5].ActualizarValor(this.ColorEmisor());
+            this.efecto.GetParametrosEfecto()[6].ActualizarValor(this.ColorAmbiente());
+            this.efecto.GetParametrosEfecto()[7].ActualizarValor(this.ColorDifuso());
+            this.efecto.GetParametrosEfecto()[8].ActualizarValor(this.ColorEspecular());
+            this.efecto.GetParametrosEfecto()[9].ActualizarValor(this.EspecularEx());
+        }*/
         #endregion
 
 

@@ -8,6 +8,7 @@ using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer;
 using TgcViewer.Utils;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 
 namespace AlumnoEjemplos.PabloTGC
 {
@@ -30,7 +31,7 @@ namespace AlumnoEjemplos.PabloTGC
         public float kj;
         public float ftex;      // factor para la textura
 
-        private Effect efecto;
+        private Efecto efecto;
 
 
         public Terreno()
@@ -43,12 +44,12 @@ namespace AlumnoEjemplos.PabloTGC
             kj = 1;
         }
 
-        public Effect GetEfecto()
+        public Efecto GetEfecto()
         {
             return this.efecto;
         }
 
-        public void SetEfecto(Effect efecto)
+        public void SetEfecto(Efecto efecto)
         {
             this.efecto = efecto;
         }

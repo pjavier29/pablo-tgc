@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
     {
         #region Constructores
 
-        public Copa(float peso, float resistencia, TgcMesh mesh) :base(peso, resistencia, mesh)
+        public Copa(float peso, float resistencia, TgcMesh mesh, Efecto efecto) :base(peso, resistencia, mesh, efecto)
         {
 
         }

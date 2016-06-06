@@ -54,36 +54,11 @@ VS_OUTPUT vs_main( VS_INPUT Input )
 {
    VS_OUTPUT Output;
 
-   //Animamos la posicion
-   if(Input.Position.y < 5)
-   {
-       Input.Position.x += sin(time*1)*sign(Input.Position.x);
-       Input.Position.z += cos(time*1)*sign(Input.Position.z);
-   }
+	float y = Input.Position.y;
+	float valor = (y + 137) / 142;
 
-   if(Input.Position.y < 50 && Input.Position.y > 5)
-   {
-       Input.Position.x += sin(time*5)*2*sign(Input.Position.x);
-       Input.Position.z += cos(time*5)*2*sign(Input.Position.z);
-   }
-
-   if(Input.Position.y < 100 && Input.Position.y > 50)
-   {
-       Input.Position.x += sin(time*10)*4*sign(Input.Position.x);
-       Input.Position.z += cos(time*10)*4*sign(Input.Position.z);
-   }
-
-   if(Input.Position.y < 150 && Input.Position.y > 100)
-   {
-       Input.Position.x += sin(time*15)*6*sign(Input.Position.x);
-       Input.Position.z += cos(time*15)*6*sign(Input.Position.z);
-   }
-
-   if(Input.Position.y < 1000 && Input.Position.y > 150)
-   {
-       Input.Position.x += sin(time*20)*8*sign(Input.Position.x);
-       Input.Position.z += cos(time*20)*8*sign(Input.Position.z);
-   }
+       Input.Position.x += sin((time*valor*valor)+5)*valor*sign(Input.Position.x);
+       Input.Position.z += cos((time*valor*valor)+5)*valor*sign(Input.Position.z);
    
    //Proyectar posicion
    Output.Position = mul( Input.Position, matWorldViewProj);
