@@ -24,9 +24,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
             this.GetEfectoShader().SetValue("time", contexto.tiempo);
             this.GetEfectoShader().SetValue("lightIntensityRelitive", contexto.dia.GetSol().IntensidadRelativa());
             //Necesitamos rojo y verde para formar el rojo en si mismo y tambien el amarillo
-            ColorValue color = contexto.dia.GetSol().GetColorAmanecerAnochecer();
-            this.GetEfectoShader().SetValue("colorCieloRojo", color.Red);
-            this.GetEfectoShader().SetValue("colorCieloVerde", color.Green);
+            this.GetEfectoShader().SetValue("colorCielo", contexto.dia.GetSol().GetColorAmanecerAnochecer());
         }
         #endregion
     }

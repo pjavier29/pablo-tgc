@@ -59,12 +59,9 @@ namespace AlumnoEjemplos.PabloTGC
             this.Mesh = mesh;
             this.Resistencia = resistencia;
             this.resistenciaTotal = resistencia;
-            /*this.barraEstado = new BarraEstado(this.Mesh.BoundingBox.PMin, 
-                new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z), resistencia);*/
             this.barraEstado = null;
             this.hayInteraccion = false;
             this.momentoUltimoGolpe = 0;
-            //this.CrearEfectoIluminacion();
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
@@ -448,54 +445,6 @@ namespace AlumnoEjemplos.PabloTGC
             return 20;
         }
 
-       /* private void CrearEfectoIluminacion()
-        {
-            this.efecto = new Efecto(GuiController.Instance.Shaders.TgcMeshPointLightShader,
-                GuiController.Instance.Shaders.getTgcMeshTechnique(this.Mesh.RenderType));
-            this.efecto.AgregarParametros(this.ParametrosIluminacion());
-            //La primera vez lo tenemos que aplicar
-            this.efecto.Aplicar(this.Mesh);
-        }
-
-        public List<ParametroEfecto> ParametrosIluminacion()
-        {
-            List<ParametroEfecto> parametros = new List<ParametroEfecto>();
-            //Ponemos un color de inicializacion, luego se actualizará con el parámetro del solor del sol.
-            parametros.Add(new ParametroEfectoColor("lightColor", ColorValue.FromColor(Color.White)));
-            //Luego lo actualizaremos con la posicion del sol
-            parametros.Add(new ParametroEfectoVector3("lightPosition", this.Mesh.Position));
-            parametros.Add(new ParametroEfectoVector3("eyePosition", this.Mesh.Position));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroFlotante("lightIntensity", 0));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroFlotante("lightAttenuation", 0));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroEfectoColor("materialEmissiveColor", this.ColorEmisor()));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroEfectoColor("materialAmbientColor", this.ColorEmisor()));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroEfectoColor("materialDiffuseColor", this.ColorAmbiente()));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroEfectoColor("materialSpecularColor", this.ColorEspecular()));
-            //Luego lo actualizaremos con los valores del sol
-            parametros.Add(new ParametroFlotante("materialSpecularExp", this.EspecularEx()));
-
-            return parametros;
-        }
-
-        public void ActualizarParametrosEfectoIluminacion(ColorValue colorDeLuz, Vector3 posicionLuz, float intensidadDeLuz, float atenuacion)
-        {
-            this.efecto.GetParametrosEfecto()[0].ActualizarValor(colorDeLuz);
-            this.efecto.GetParametrosEfecto()[1].ActualizarValor(posicionLuz);
-            this.efecto.GetParametrosEfecto()[2].ActualizarValor(this.Mesh.Position);
-            this.efecto.GetParametrosEfecto()[3].ActualizarValor(intensidadDeLuz);
-            this.efecto.GetParametrosEfecto()[4].ActualizarValor(atenuacion);
-            this.efecto.GetParametrosEfecto()[5].ActualizarValor(this.ColorEmisor());
-            this.efecto.GetParametrosEfecto()[6].ActualizarValor(this.ColorAmbiente());
-            this.efecto.GetParametrosEfecto()[7].ActualizarValor(this.ColorDifuso());
-            this.efecto.GetParametrosEfecto()[8].ActualizarValor(this.ColorEspecular());
-            this.efecto.GetParametrosEfecto()[9].ActualizarValor(this.EspecularEx());
-        }*/
         #endregion
 
 

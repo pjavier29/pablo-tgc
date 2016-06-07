@@ -48,6 +48,12 @@ namespace AlumnoEjemplos.MiGrupo
         TgcMesh palo;
 
         TgcSprite mochila;
+        TgcSprite miniMapa;
+        TgcText2d referenciaMiniMapa;
+        TgcSprite linea;
+        Elemento cajonReal, cajonOlla, fuenteAgua;
+        Point coordenadaSuperiorDerecha;
+        Point coordenadaInferiorIzquierda;
         TgcSprite cajon;
         TgcText2d mochilaReglon1;
         public TgcText2d cajonReglon1;
@@ -95,6 +101,7 @@ namespace AlumnoEjemplos.MiGrupo
 
         Efecto pisoEfecto;
         Efecto skyboxEfecto;
+
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -153,35 +160,16 @@ namespace AlumnoEjemplos.MiGrupo
 
             this.tiempo = 0;
 
-            #region Administracion de efectos y parametros de los efectos
-            //tiempoEfecto = new ParametroFlotante("time", 0);
-           // intensidadLuzEfecto = new ParametroFlotante("lightIntensityRelitive", 0);
-
+            #region Administracion de efectos
             Efecto efectoTerreno = new EfectoTerreno(TgcShaders.loadEffect(recursos + "Shaders\\TerrenoShader.fx"), "RenderScene");
-            //efectoTerreno.AgregarParametro(tiempoEfecto);
-            //efectoTerreno.AgregarParametro(intensidadLuzEfecto);
-
             pisoEfecto = new EfectoAgua(TgcShaders.loadEffect(recursos + "Shaders\\AguaShader.fx"), "RenderScene");
-            //pisoEfecto.AgregarParametro(tiempoEfecto);
-            //pisoEfecto.AgregarParametro(intensidadLuzEfecto);
-
             skyboxEfecto = new EfectoSkyBox(TgcShaders.loadEffect(recursos + "Shaders\\SkyBoxShader.fx"), "RenderScene");
-           // skyboxEfecto.AgregarParametro(tiempoEfecto);
-           // skyboxEfecto.AgregarParametro(intensidadLuzEfecto);
-
             //Cargar Shader personalizado para el efecto del fuego
             Efecto efectoFuego = new EfectoFuego(TgcShaders.loadEffect(recursos + "Shaders\\FuegoShader.fx"), "RenderScene");
-           // efectoFuego.AgregarParametro(tiempoEfecto);
-
             //Cargar Shader personalizado para el efecto de las algas
             Efecto efectoAlgas = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene");
             Efecto efectoAlgas2 = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene2");
-         //   efectoAlgas.AgregarParametro(tiempoEfecto);
-         //   efectoAlgas2.AgregarParametro(tiempoEfecto);
-
             Efecto efectoBotes = new EfectoBote(TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx"), "RenderScene");
-            //   efectoBotes.AgregarParametro(tiempoEfecto);
-
             Efecto efectoLuz = new EfectoLuz(GuiController.Instance.Shaders.TgcMeshPointLightShader);
             #endregion
 
@@ -200,7 +188,7 @@ namespace AlumnoEjemplos.MiGrupo
             Sol sol = new Sol();
             sol.Mesh = lightMesh.toMesh("SOL");
             sol.CrearMovimiento();
-            dia = new Dia(200, sol);
+            dia = new Dia(2, sol, 28800);
             #endregion
 
             #region Crear SkyBox
@@ -357,8 +345,8 @@ namespace AlumnoEjemplos.MiGrupo
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Cajon\\cajon-TgcScene.xml");
             TgcMesh cajonRealMesh = scene.Meshes[0].createMeshInstance("Cajon_Manzanas");
-            Elemento cajonReal = new Cajon(5000, 1000, cajonRealMesh, efectoLuz);
-            cajonRealMesh.Position = new Vector3(1600, terreno.CalcularAltura(1600, 8500), 8500);
+            cajonReal = new Cajon(5000, 1000, cajonRealMesh, efectoLuz);
+            cajonRealMesh.Position = new Vector3(600, terreno.CalcularAltura(600, 7200), 7200);
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Alimentos\\Frutas\\ManzanaVerde\\manzanaverde-TgcScene.xml");
             TgcMesh manzanaVerde = scene.Meshes[0].createMeshInstance("Manzana Verde");
@@ -376,7 +364,7 @@ namespace AlumnoEjemplos.MiGrupo
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Cajon\\cajon-TgcScene.xml");
             TgcMesh cajonOllaMesh = scene.Meshes[0].createMeshInstance("Cajon_Olla");
-            Elemento cajonOlla = new Cajon(5000, 1000, cajonOllaMesh, efectoLuz);
+            cajonOlla = new Cajon(5000, 1000, cajonOllaMesh, efectoLuz);
             cajonOllaMesh.Position = new Vector3(-9500, terreno.CalcularAltura(-9500, -4950), -4950);
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Olla\\Olla-TgcScene.xml");
@@ -429,7 +417,8 @@ namespace AlumnoEjemplos.MiGrupo
             TgcMesh fuente = scene.Meshes[0].createMeshInstance("Fuente de Agua");
             fuente.Scale = new Vector3(1.5f, 2.5f, 1.5f);
             fuente.Position = new Vector3(2400, terreno.CalcularAltura(2400, -3160), -3160);
-            elementos.Add(new FuenteAgua(1000, 1400, fuente, efectoLuz));
+            fuenteAgua = new FuenteAgua(1000, 1400, fuente, efectoLuz);
+            elementos.Add(fuenteAgua);
             #endregion
 
             #region Creamos las algas
@@ -727,6 +716,31 @@ namespace AlumnoEjemplos.MiGrupo
 
             //****************Crear Sprite de la mochila y del cajon**********************************************
 
+            #region Creacion del mini mapa
+            miniMapa = new TgcSprite();
+            miniMapa.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\MiniMapa.png");
+            miniMapa.Scaling = new Vector2(0.25f, 0.4f);
+            miniMapa.Position = new Vector2(0, screenSize.Height - (miniMapa.Texture.Size.Height * 0.4f));
+            //Me guardo las coordenada para que se faciliten los cálculos
+            coordenadaSuperiorDerecha = new Point((int)(miniMapa.Texture.Size.Width * 0.25f), (int)(screenSize.Height - (miniMapa.Texture.Size.Height * 0.4f)));
+            //Multiplicamos por 0.18 porque aproximadamente el 18% de la imagen es la barra de costado
+            coordenadaInferiorIzquierda = new Point((int)(miniMapa.Texture.Size.Width * 0.25f * 0.18f), screenSize.Height);
+            referenciaMiniMapa = new TgcText2d();
+            referenciaMiniMapa.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold));
+            referenciaMiniMapa.Position = new Point(0,0);
+            referenciaMiniMapa.Color = Color.White;
+            referenciaMiniMapa.Text = ".";
+            referenciaMiniMapa.Align = TgcText2d.TextAlign.CENTER;
+            referenciaMiniMapa.Size = new Size(20, 20);
+
+            linea = new TgcSprite();
+            linea.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Flecha.png");
+            linea.Scaling = new Vector2(0.25f, 0.4f);
+            linea.Position = new Vector2(coordenadaInferiorIzquierda.X - 20, coordenadaInferiorIzquierda.Y - 48);
+            linea.RotationCenter = new Vector2(0, 13);
+
+            #endregion
+
             //****************Crear el texto informativo**********************************************************
             informativo = new TgcText2d();
             informativo.Color = Color.Yellow;
@@ -893,16 +907,17 @@ namespace AlumnoEjemplos.MiGrupo
             float zFarPlaneDistance = 20000f;
             d3dDevice.Transform.Projection =
                 Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f), aspectRatio, zNearPlaneDistance, zFarPlaneDistance);
-    }
+
+        }
 
 
-    /// <summary>
-    /// Método que se llama cada vez que hay que refrescar la pantalla.
-    /// Escribir aquí todo el código referido al renderizado.
-    /// Borrar todo lo que no haga falta
-    /// </summary>
-    /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
-    public override void render(float elapsedTime)
+        /// <summary>
+        /// Método que se llama cada vez que hay que refrescar la pantalla.
+        /// Escribir aquí todo el código referido al renderizado.
+        /// Borrar todo lo que no haga falta
+        /// </summary>
+        /// <param name="elapsedTime">Tiempo en segundos transcurridos desde el último frame</param>
+        public override void render(float elapsedTime)
         {
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
@@ -924,9 +939,13 @@ namespace AlumnoEjemplos.MiGrupo
 
             optimizador.Actualizar(personaje.mesh.Position);
 
-            GuiController.Instance.UserVars.setValue("x", elementos.Count);
-            GuiController.Instance.UserVars.setValue("y", optimizador.ElementosColision.Count);
-            GuiController.Instance.UserVars.setValue("z", optimizador.ElementosRenderizacion.Count);
+            //GuiController.Instance.UserVars.setValue("x", elementos.Count);
+            //GuiController.Instance.UserVars.setValue("y", optimizador.ElementosColision.Count);
+            //GuiController.Instance.UserVars.setValue("z", optimizador.ElementosRenderizacion.Count);
+
+            GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
+            GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
+            GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
 
             //Afectamos salud por paso de tiempo y por la temperatura
             personaje.AfectarSaludPorTiempo(elapsedTime);
@@ -959,11 +978,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Actualizamos el dia
             dia.Actualizar(this, elapsedTime);
-
-            //**Actualizamos los parametros comunes de los efectos**
-            //tiempoEfecto.ActualizarValor(tiempo);
-            //intensidadLuzEfecto.ActualizarValor(dia.GetSol().IntensidadRelativa());
-            //**Actualizamos los parametros de los efectos**
 
             //Render Terreno
             terreno.GetEfecto().Actualizar(this);
@@ -1027,56 +1041,30 @@ namespace AlumnoEjemplos.MiGrupo
             cansancio.Scaling = new Vector2(personaje.PorcentajeDeCansancio() * 0.5f, 0.3f);
             cansancio.render();
             objetivosIcono.render();
+            miniMapa.render();
             GuiController.Instance.Drawer2D.endDrawSprite();
+
+            referenciaMiniMapa.Position = this.PosicionarReferencia(personaje.mesh.Position);
+            referenciaMiniMapa.Color = Color.Orange;
+            referenciaMiniMapa.render();
+            referenciaMiniMapa.Position = this.PosicionarReferencia(fuenteAgua.posicion());
+            referenciaMiniMapa.Color = Color.Blue;
+            referenciaMiniMapa.render();
+            referenciaMiniMapa.Position = this.PosicionarReferencia(cajonReal.posicion());
+            referenciaMiniMapa.Color = Color.Brown;
+            referenciaMiniMapa.render();
+            referenciaMiniMapa.Position = this.PosicionarReferencia(cajonOlla.posicion());
+            referenciaMiniMapa.Color = Color.Brown;
+            referenciaMiniMapa.render();
+
             mensajeObjetivo1.Text = "Sobrevivir " + System.Environment.NewLine + TimeSpan.FromSeconds(this.tiempoObjetivo - this.tiempo).ToString(@"hh\:mm\:ss");
             mensajeObjetivo1.render();
 
-            if (mostrarMenuMochila)
-            { 
-                //Iniciar dibujado de todos los Sprites de la escena (en este caso es solo uno)
-                GuiController.Instance.Drawer2D.beginDrawSprite();
-                //Dibujar sprite (si hubiese mas, deberian ir todos aquí)
-                mochila.render();
-                if (mostrarMenuCajon)
-                {
-                    //El cajon se muestra siempre junto con la mochila
-                    cajon.render();
-                }
-                //Finalizar el dibujado de Sprites
-                GuiController.Instance.Drawer2D.endDrawSprite();
-                //TODO. Por el momento podemos mantener todo en un renglon ya que no imprimimos ninguna imagen de los elementos en cuestion
-                mochilaReglon1.Text = "";
-                for (int i = 0; i < 9; i++)
-                {
-                    if (personaje.ContieneElementoEnPosicionDeMochila(i))
-                    {
-                     mochilaReglon1.Text = mochilaReglon1.Text + (i+1).ToString() + "    " + personaje.DarElementoEnPosicionDeMochila(i).GetDescripcion() + System.Environment.NewLine;
-                    }
-                    else
-                    {
-                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    "  + "Disponible" + System.Environment.NewLine;
-                    }
-                }
-                mochilaReglon1.render();
-                if (mostrarMenuCajon)
-                {
-                    //En texto que va en el renglon lo completa el cajon cuando hay una interaccion.
-                    cajonReglon1.render();
-                }
-            }
-
-            if (mostrarAyuda)
-            {
-                //TODO poner todos los Sprite dentro de una sola apertura y cierre del controlador
-                GuiController.Instance.Drawer2D.beginDrawSprite();
-                ayuda.render();
-                GuiController.Instance.Drawer2D.endDrawSprite();
-                ayudaReglon1.Position = new Point(((int)(ayuda.Position.X)) + 40 , ((int)(ayuda.Position.Y)) + 130);
-                ayudaReglon1.render();
-                ayudaReglon2.render();
-            }
-
             GuiController.Instance.Drawer2D.beginDrawSprite();
+
+            linea.Rotation = personaje.mesh.Rotation.Y;
+            linea.render();
+
             horaDia.Text = dia.HoraActualTexto();
             temperaturaDia.Text = dia.TemperaturaActualTexto();
             temperaturaPersonaje.Text = personaje.TemperaturaCorporalTexto();
@@ -1094,30 +1082,55 @@ namespace AlumnoEjemplos.MiGrupo
             {
                 estadoDiaLunaIcono.render();
             }
+
             GuiController.Instance.Drawer2D.endDrawSprite();
 
-            #region Render de Luces
-            Microsoft.DirectX.Direct3D.Effect currentShader;
-            currentShader = GuiController.Instance.Shaders.TgcMeshPointLightShader;
-
-    /*        //Aplicar a cada mesh el shader actual
-            foreach (Elemento elem in optimizador.ElementosRenderizacion)
+            if (mostrarMenuMochila)
             {
-                elem.Mesh.Effect = currentShader;
-                //El Technique depende del tipo RenderType del mesh
-                elem.Mesh.Technique = GuiController.Instance.Shaders.getTgcMeshTechnique(elem.Mesh.RenderType);
+                //Iniciar dibujado de todos los Sprites de la escena (en este caso es solo uno)
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                //Dibujar sprite (si hubiese mas, deberian ir todos aquí)
+                mochila.render();
+                if (mostrarMenuCajon)
+                {
+                    //El cajon se muestra siempre junto con la mochila
+                    cajon.render();
+                }
+                //Finalizar el dibujado de Sprites
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                //TODO. Por el momento podemos mantener todo en un renglon ya que no imprimimos ninguna imagen de los elementos en cuestion
+                mochilaReglon1.Text = "";
+                for (int i = 0; i < 9; i++)
+                {
+                    if (personaje.ContieneElementoEnPosicionDeMochila(i))
+                    {
+                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    " + personaje.DarElementoEnPosicionDeMochila(i).GetDescripcion() + System.Environment.NewLine;
+                    }
+                    else
+                    {
+                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    " + "Disponible" + System.Environment.NewLine;
+                    }
+                }
+                mochilaReglon1.render();
+                if (mostrarMenuCajon)
+                {
+                    //En texto que va en el renglon lo completa el cajon cuando hay una interaccion.
+                    cajonReglon1.render();
+                }
             }
 
-            //Renderizar meshes
-            foreach (Elemento elem in optimizador.ElementosRenderizacion)
+            if (mostrarAyuda)
             {
-                dia.GetSol().Iluminar(elem, personaje);
-                elem.renderizar();
-            }*/
+                //TODO poner todos los Sprite dentro de una sola apertura y cierre del controlador
+                GuiController.Instance.Drawer2D.beginDrawSprite();
+                ayuda.render();
+                GuiController.Instance.Drawer2D.endDrawSprite();
+                ayudaReglon1.Position = new Point(((int)(ayuda.Position.X)) + 40, ((int)(ayuda.Position.Y)) + 130);
+                ayudaReglon1.render();
+                ayudaReglon2.render();
+            }
 
             dia.GetSol().Mesh.render();
-
-            #endregion
             
         }
 
@@ -1165,6 +1178,9 @@ namespace AlumnoEjemplos.MiGrupo
             temperaturaPersonajeIcono.dispose();
             estadoDiaSolIcono.dispose();
             estadoDiaLunaIcono.dispose();
+            miniMapa.dispose();
+            referenciaMiniMapa.dispose();
+            linea.dispose();
         }
 
         private String Version()
@@ -1183,6 +1199,26 @@ namespace AlumnoEjemplos.MiGrupo
         public void ActualizarPosicionSuelo(Vector3 posicion)
         {
             this.piso.Position += posicion;
+        }
+
+        private Point PosicionarReferencia(Vector3 posicion)
+        {
+            float porcentajeX;
+            float porcentajeY;
+            int coordenadaRelativaX;
+            int coordenadaRelativaY;
+            int factorCorreccionX = 0;
+            int factorCorreccionY = -50;
+            //Necesitamos calcular el porcentaje de x que esta recorrido sobre el total del mapa.
+            porcentajeX = (esquina.X + posicion.X) / (2 * esquina.X);
+            //Necesitamos calcular el porcentaje de Z que esta recorrido sobre el total del mapa.
+            porcentajeY = (esquina.Z + posicion.Z) / (2 * esquina.Z);
+
+            //En este caso Y seria Z
+            coordenadaRelativaX = (int)(porcentajeX * (coordenadaSuperiorDerecha.X - coordenadaInferiorIzquierda.X));
+            coordenadaRelativaY = (int)(porcentajeY * (coordenadaInferiorIzquierda.Y - coordenadaSuperiorDerecha.Y));
+
+            return new Point(coordenadaInferiorIzquierda.X + coordenadaRelativaX + factorCorreccionX, coordenadaInferiorIzquierda.Y - coordenadaRelativaY + factorCorreccionY);
         }
     }
 }

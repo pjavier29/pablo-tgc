@@ -31,7 +31,7 @@ namespace AlumnoEjemplos.PabloTGC.Dia
         #region Constructores
         public Sol()
         {
-            this.colorDeLuz = ColorValue.FromColor(Color.White);
+            this.colorDeLuz = ColorValue.FromColor(Color.LightYellow);
             this.intensidadDeLuz = 15000f;
             this.atenuacionDeLuz = 0.1f;
             this.alturaPuestaSol = 0;
@@ -86,6 +86,11 @@ namespace AlumnoEjemplos.PabloTGC.Dia
             return FuncionesMatematicas.Instance.PorcentajeRelativo(this.intesidadLuzMinima, this.intensidadDeLuz, this.IntensidadDeLuz());
         }
 
+        public ColorValue GetColorLuz()
+        {
+            return this.colorDeLuz;
+        }
+
         public bool EsDeDia()
         {
             return this.Mesh.Position.Y > this.alturaPuestaSol;
@@ -110,8 +115,8 @@ namespace AlumnoEjemplos.PabloTGC.Dia
             //Si despues de salir el sol su altura no supera mas de 200 la puesta del sol
             if (aux > 0 && aux < 300f)
             {
-                color.Red = 1f;
-                color.Green = 1f;
+                color.Red = 0.7f;
+                color.Green = 0.7f;
                 color.Blue = 0f;
                 return color;
             }

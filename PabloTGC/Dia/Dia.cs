@@ -29,6 +29,14 @@ namespace AlumnoEjemplos.PabloTGC.Dia
             this.relojInterno = 0;
             this.sol = sol;
         }
+        public Dia(float velocidadTiempo, Sol sol, float relojInterno)
+        {
+            this.velocidadTiempo = velocidadTiempo;
+            this.tiempo = new Tiempo();
+            this.tiempo.CalcularTemperaturaDeDia();
+            this.relojInterno = relojInterno;
+            this.sol = sol;
+        }
         #endregion
 
         #region Comportamientos

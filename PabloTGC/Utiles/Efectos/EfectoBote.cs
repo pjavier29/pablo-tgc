@@ -25,7 +25,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         {
             //TODO. Refactorizar los parametros que recibe!!!!
             this.GetEfectoShader().SetValue("time", contexto.tiempo);
-            this.GetEfectoShader().SetValue("lightColor", ColorValue.FromColor(Color.White));
+            this.GetEfectoShader().SetValue("lightColor", contexto.dia.GetSol().GetColorLuz());
             this.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(contexto.dia.GetSol().Mesh.Position));
             this.GetEfectoShader().SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(contexto.personaje.mesh.Position));
             this.GetEfectoShader().SetValue("lightIntensity", contexto.dia.GetSol().IntensidadDeLuz());
