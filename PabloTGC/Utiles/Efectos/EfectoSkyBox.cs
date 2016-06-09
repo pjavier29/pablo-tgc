@@ -1,4 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
 using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;

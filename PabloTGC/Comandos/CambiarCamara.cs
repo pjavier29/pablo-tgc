@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
 using TgcViewer;
 
@@ -24,6 +24,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
         {
             this.camaraElegida = camera;
         }
+
         #endregion
 
         #region Comportamientos

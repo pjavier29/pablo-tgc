@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlumnoEjemplos.PabloTGC.Dia
+namespace AlumnoEjemplos.PabloTGC.ElementosDia
 {
     public class Tiempo
     {

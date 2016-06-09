@@ -9,7 +9,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer;
 using TgcViewer.Utils;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
-using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Administracion;
 
 namespace AlumnoEjemplos.PabloTGC
 {

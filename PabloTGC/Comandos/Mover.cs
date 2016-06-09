@@ -1,5 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
-using AlumnoEjemplos.PabloTGC.Utiles;
+﻿using AlumnoEjemplos.PabloTGC.Utiles;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Text;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.PabloTGC.Administracion;
 
 namespace AlumnoEjemplos.PabloTGC.Comandos
 {
@@ -102,6 +102,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 contexto.ActualizarPosicionSuelo(new Vector3((contexto.personaje.mesh.Position.X - lastPos.X), 0, (contexto.personaje.mesh.Position.Z - lastPos.Z)));
             }
         }
+
         #endregion
     }
 }

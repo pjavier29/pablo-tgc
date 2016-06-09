@@ -1,8 +1,8 @@
-﻿using AlumnoEjemplos.MiGrupo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using AlumnoEjemplos.PabloTGC.Administracion;
 
 namespace AlumnoEjemplos.PabloTGC.Comandos
 {
@@ -47,5 +47,6 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             }
             #endregion
         }
+
     }
 }

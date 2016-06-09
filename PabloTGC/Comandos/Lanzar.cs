@@ -1,5 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
-using AlumnoEjemplos.PabloTGC.Utiles;
+﻿using AlumnoEjemplos.PabloTGC.Utiles;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcSceneLoader;
+using AlumnoEjemplos.PabloTGC.Administracion;
 
 namespace AlumnoEjemplos.PabloTGC.Comandos
 {

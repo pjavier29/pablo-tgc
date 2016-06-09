@@ -23,11 +23,11 @@ using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
 using TgcViewer.Utils.Shaders;
 using AlumnoEjemplos.PabloTGC.Movimientos;
-using AlumnoEjemplos.PabloTGC.Dia;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos;
+using AlumnoEjemplos.PabloTGC.ElementosDia;
 
-namespace AlumnoEjemplos.MiGrupo
+namespace AlumnoEjemplos.PabloTGC.Administracion
 {
     /// <summary>
     /// Ejemplo del alumno
@@ -131,7 +131,19 @@ namespace AlumnoEjemplos.MiGrupo
         /// </summary>
         public override string getDescription()
         {
-            return "MiIdea - Descripcion de la idea";
+            return "Juego de supervivencia en donde un personaje debe sobrevivir durante un tiempo determinado."
+                + System.Environment.NewLine + 
+                "Para ello debe hidratarse, y consumir alimentos. Puede eliminar animales y crear su propia hamburguesa, a ver si descubre cómo hacerlo."
+                + System.Environment.NewLine +
+                "Tambien puede comer frutas desde los árboles."
+                + System.Environment.NewLine +
+                "Tenga cuidado con la temperatura del dia y de su personaje, si la temperatura del personaje llega a 34° morirá."
+                + System.Environment.NewLine +
+                "Podría ser últil crear algún fuego para evitar esto."
+                + System.Environment.NewLine +
+                "Busque los cajones indicados en el mini mapa, encontrará algunas sorpresas."
+                + System.Environment.NewLine +
+                "Buena Suerte!!!!";
         }
 
         /// <summary>
@@ -151,13 +163,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Crear loader
             TgcSceneLoader loader = new TgcSceneLoader();
-
-            ///////////////USER VARS//////////////////
-
-            //Crear una UserVar
-            GuiController.Instance.UserVars.addVar("x");
-            GuiController.Instance.UserVars.addVar("y");
-            GuiController.Instance.UserVars.addVar("z");
 
             //***********Inicializamos las esquinas************************************
             //Crear objeto propio para manejar los limites.
@@ -945,10 +950,6 @@ namespace AlumnoEjemplos.MiGrupo
             camara.Render(personaje);
 
             optimizador.Actualizar(personaje.mesh.Position);
-
-            GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
-            GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
-            GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
 
             //Afectamos salud por paso de tiempo y por la temperatura
             personaje.AfectarSaludPorTiempo(elapsedTime);

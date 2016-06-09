@@ -1,4 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
 using System;
 using System.Collections.Generic;
 using System.Linq;

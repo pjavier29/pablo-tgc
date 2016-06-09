@@ -1,4 +1,5 @@
-﻿using Microsoft.DirectX;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
+using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
 using System.Linq;

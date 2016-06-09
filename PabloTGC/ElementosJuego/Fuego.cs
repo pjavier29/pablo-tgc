@@ -1,4 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;

@@ -1,4 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using System;
 using System.Collections.Generic;

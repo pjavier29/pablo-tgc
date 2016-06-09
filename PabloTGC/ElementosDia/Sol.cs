@@ -1,5 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
-using AlumnoEjemplos.PabloTGC.Movimientos;
+﻿using AlumnoEjemplos.PabloTGC.Movimientos;
 using AlumnoEjemplos.PabloTGC.Utiles;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
@@ -11,7 +10,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.PabloTGC.Dia
+namespace AlumnoEjemplos.PabloTGC.ElementosDia
 {
     public class Sol
     {

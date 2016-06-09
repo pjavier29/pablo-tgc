@@ -1,11 +1,11 @@
-﻿using AlumnoEjemplos.MiGrupo;
-using Microsoft.DirectX.Direct3D;
+﻿using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TgcViewer;
 using TgcViewer.Utils.Terrain;
+using AlumnoEjemplos.PabloTGC.Administracion;
 
 namespace AlumnoEjemplos.PabloTGC.Comandos
 {

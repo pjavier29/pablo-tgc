@@ -8,7 +8,7 @@ using System.Text;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 
-namespace AlumnoEjemplos.PabloTGC
+namespace AlumnoEjemplos.PabloTGC.Administracion
 {
     public class Personaje
     {

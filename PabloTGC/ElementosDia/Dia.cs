@@ -1,4 +1,4 @@
-﻿using AlumnoEjemplos.MiGrupo;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using TgcViewer;
 using TgcViewer.Utils.TgcGeometry;
 
-namespace AlumnoEjemplos.PabloTGC.Dia
+namespace AlumnoEjemplos.PabloTGC.ElementosDia
 {
     public class Dia
     {
