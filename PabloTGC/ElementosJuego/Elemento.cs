@@ -216,9 +216,13 @@ namespace AlumnoEjemplos.PabloTGC
         {
             if (this.Efecto() != null)
             {
-                this.Efecto().Actualizar(contexto, this);
+                //Delego en el efecto la responsabilidad del renderizado.
+                this.Efecto().ActualizarRenderizar(contexto, this);
             }
-            this.Mesh.render();
+            else
+            {
+                this.Mesh.render();
+            }
             if (this.barraEstado != null)
             {
                 this.barraEstado.Render();
@@ -443,6 +447,12 @@ namespace AlumnoEjemplos.PabloTGC
         public virtual float EspecularEx()
         {
             return 20;
+        }
+
+        public virtual void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor, ColorValue colorAmbiente,
+            ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
+        {
+
         }
 
         #endregion

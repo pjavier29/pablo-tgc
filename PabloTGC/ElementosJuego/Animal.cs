@@ -68,6 +68,8 @@ namespace AlumnoEjemplos.PabloTGC
                     }
                 }
             }
+            //Tenemos que actualizar los puntos de la barra ya que el animal se mueve por el terreno
+            this.ActualizarBarraEstadoCompleta(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
         }
 
         private void simularMovimiento(float elapsedTime, Terreno terreno)
@@ -105,16 +107,6 @@ namespace AlumnoEjemplos.PabloTGC
             float rotAngle = Geometry.DegreeToRadian(direccion * velocidadRotar * elapsedTime);
             this.Mesh.rotateY(rotAngle);
             this.moverse(elapsedTime, terreno);
-        }
-
-        /// <summary>
-        /// Renderiza el objeto
-        /// </summary>
-        public override void renderizar(SuvirvalCraft contexto)
-        {
-            //Tenemos que actualizar los puntos de la barra ya que el animal se mueve por el terreno
-            this.ActualizarBarraEstadoCompleta(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
-            base.renderizar(contexto);             
         }
 
         public override String GetTipo()

@@ -4,6 +4,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
@@ -88,6 +89,21 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         public override String GetTipo()
         {
             return Fuego;
+        }
+
+        public override void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor, ColorValue colorAmbiente,
+            ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
+        {
+            efecto.GetEfectoShader().SetValue("lightColor", ColorValue.FromColor(Color.LightYellow));
+            efecto.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(this.Mesh.Position));
+            efecto.GetEfectoShader().SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(posicionVision));
+            efecto.GetEfectoShader().SetValue("lightIntensity", 100f);
+            efecto.GetEfectoShader().SetValue("lightAttenuation", 0.5f);
+            efecto.GetEfectoShader().SetValue("materialEmissiveColor", colorEmisor);
+            efecto.GetEfectoShader().SetValue("materialAmbientColor", colorAmbiente);
+            efecto.GetEfectoShader().SetValue("materialDiffuseColor", colorDifuso);
+            efecto.GetEfectoShader().SetValue("materialSpecularColor", colorEspecular);
+            efecto.GetEfectoShader().SetValue("materialSpecularExp", especularEx);
         }
 
         #endregion

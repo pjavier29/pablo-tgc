@@ -9,6 +9,7 @@ using TgcViewer.Utils.TgcSceneLoader;
 using TgcViewer;
 using TgcViewer.Utils;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
+using AlumnoEjemplos.MiGrupo;
 
 namespace AlumnoEjemplos.PabloTGC
 {
@@ -52,6 +53,19 @@ namespace AlumnoEjemplos.PabloTGC
         public void SetEfecto(Efecto efecto)
         {
             this.efecto = efecto;
+        }
+
+        public void Renderizar(SuvirvalCraft contexto)
+        {
+            if (this.GetEfecto() != null)
+            {
+                //Si tiene un efecto delegamos en este la responsabilidad de renderizar el terreno
+                this.GetEfecto().ActualizarRenderizar(contexto, this);
+            }
+            else
+            {
+                this.render();
+            }
         }
 
         public void loadHeightmap(string heightmapPath, float pscaleXZ, float pscaleY, Vector3 center)

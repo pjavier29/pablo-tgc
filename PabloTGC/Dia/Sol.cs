@@ -1,6 +1,7 @@
 ﻿using AlumnoEjemplos.MiGrupo;
 using AlumnoEjemplos.PabloTGC.Movimientos;
 using AlumnoEjemplos.PabloTGC.Utiles;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -54,9 +55,19 @@ namespace AlumnoEjemplos.PabloTGC.Dia
             this.movimientoSol.Actualizar(valor);
         }
 
-        public void Iluminar(Elemento elemento, Personaje personaje)
+        public void Iluminar(Vector3 posicionVision, Efecto efecto, ColorValue colorEmisor, ColorValue colorAmbiente, 
+            ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
         {
-            //elemento.ActualizarParametrosEfectoIluminacion(this.colorDeLuz, this.Mesh.Position, this.IntensidadDeLuz(), this.Atenuacion());
+            efecto.GetEfectoShader().SetValue("lightColor", this.GetColorLuz());
+            efecto.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(this.Mesh.Position));
+            efecto.GetEfectoShader().SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(posicionVision));
+            efecto.GetEfectoShader().SetValue("lightIntensity", this.IntensidadDeLuz());
+            efecto.GetEfectoShader().SetValue("lightAttenuation", this.Atenuacion());
+            efecto.GetEfectoShader().SetValue("materialEmissiveColor", colorEmisor);
+            efecto.GetEfectoShader().SetValue("materialAmbientColor", colorAmbiente);
+            efecto.GetEfectoShader().SetValue("materialDiffuseColor", colorDifuso);
+            efecto.GetEfectoShader().SetValue("materialSpecularColor", colorEspecular);
+            efecto.GetEfectoShader().SetValue("materialSpecularExp", especularEx);
         }
 
         public float Atenuacion()

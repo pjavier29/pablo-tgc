@@ -1,9 +1,11 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
@@ -13,6 +15,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         #region Atributos
         private Effect efectoShader;
         private String tecnica;
+        private List<ElementoIluminacion> elementosIluminacion;
         #endregion
 
         #region Constructores
@@ -20,15 +23,75 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         {
             this.efectoShader = efectoShader;
             this.tecnica = tecnica;
+            this.elementosIluminacion = new List<ElementoIluminacion>();
         }
 
         public Efecto(Effect efectoShader)
         {
             this.efectoShader = efectoShader;
+            this.elementosIluminacion = new List<ElementoIluminacion>();
         }
         #endregion
 
         #region Comportamientos
+        public void AgregarElementoDeIluminacion(ElementoIluminacion elemento)
+        {
+          /*  foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            {
+                float distanciaSeguridad = elem.Distancia + elemento.Distancia;
+                float distanciaReal = elem.Elemento.distanciaA(elemento.Elemento);
+                if (distanciaReal < distanciaSeguridad)
+                {
+                    //Si hay algun conflico con la distancia, calculamos una nueva distancia para ambos elementos
+                    elem.Distancia = distanciaReal / 2;
+                    elemento.Distancia = distanciaReal / 2;
+                }
+            }*/
+            this.elementosIluminacion.Add(elemento);
+        }
+
+        public List<ElementoIluminacion> GetElementosIluminacion()
+        {
+            return this.elementosIluminacion;
+        }
+
+        public virtual ElementoIluminacion AlguienIluminaAElemento(Elemento elemento)
+        {
+            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            {
+                if (elem.IluminoAElemento(elemento))
+                {
+                    return elem;
+                }
+            }
+            return null;
+        }
+
+        public virtual ElementoIluminacion IluminadorMasCercanoA(Vector3 posicion, SuvirvalCraft contexto)
+        {
+            ElementoIluminacion elemIlumActual = this.elementosIluminacion[0];
+            List<ElementoIluminacion> aux = new List<ElementoIluminacion>();
+            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            {
+                if (contexto.optimizador.ElementosRenderizacion.Contains(elem.Elemento))
+                {
+                    aux.Add(elem);
+                }
+            }
+            if (aux.Count != 0)
+            {
+                elemIlumActual = aux[0];
+                foreach (ElementoIluminacion elem in aux)
+                {
+                    if (elem.Elemento.distanciaA(posicion) < elemIlumActual.Elemento.distanciaA(posicion))
+                    {
+                        elemIlumActual = elem;
+                    }
+                }
+            }
+            return elemIlumActual;
+        }
+
         public virtual Effect GetEfectoShader()
         {
             return this.efectoShader;
@@ -58,6 +121,10 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         public void Aplicar(TgcMesh mesh)
         {
             mesh.Effect = this.efectoShader;
+            if (this.tecnica == null)
+            {
+                this.tecnica = GuiController.Instance.Shaders.getTgcMeshTechnique(mesh.RenderType);
+            }
             mesh.Technique = this.tecnica;
         }
 
@@ -67,6 +134,20 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
 
         public virtual void Actualizar(SuvirvalCraft contexto, Elemento elemento)
         {
+        }
+
+        public virtual void ActualizarRenderizar(SuvirvalCraft contexto, Elemento elemento)
+        {
+        }
+
+        public virtual void ActualizarRenderizar(SuvirvalCraft contexto, Terreno terreno)
+        {
+
+        }
+
+        public virtual bool HayQueIluminarConElementos(SuvirvalCraft contexto)
+        {
+            return ((! contexto.dia.EsDeDia()) && this.GetElementosIluminacion().Count > 0);
         }
         #endregion
     }

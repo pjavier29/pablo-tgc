@@ -21,20 +21,39 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         #endregion
 
         #region Comportamientos
-        public override void Actualizar(SuvirvalCraft contexto, Elemento elemento)
+        /// <summary>
+        /// //TODO. Refactorizar los parametros que recibe!!!!
+        /// </summary>
+        /// <param name="contexto"></param>
+        /// <param name="elemento"></param>
+        public override void ActualizarRenderizar(SuvirvalCraft contexto, Elemento elemento)
         {
-            //TODO. Refactorizar los parametros que recibe!!!!
-            this.GetEfectoShader().SetValue("time", contexto.tiempo);
-            this.GetEfectoShader().SetValue("lightColor", contexto.dia.GetSol().GetColorLuz());
-            this.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(contexto.dia.GetSol().Mesh.Position));
-            this.GetEfectoShader().SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(contexto.personaje.mesh.Position));
-            this.GetEfectoShader().SetValue("lightIntensity", contexto.dia.GetSol().IntensidadDeLuz());
-            this.GetEfectoShader().SetValue("lightAttenuation", contexto.dia.GetSol().Atenuacion());
-            this.GetEfectoShader().SetValue("materialEmissiveColor", elemento.ColorEmisor());
-            this.GetEfectoShader().SetValue("materialAmbientColor", elemento.ColorEmisor());
-            this.GetEfectoShader().SetValue("materialDiffuseColor", elemento.ColorAmbiente());
-            this.GetEfectoShader().SetValue("materialSpecularColor", elemento.ColorEspecular());
-            this.GetEfectoShader().SetValue("materialSpecularExp", elemento.EspecularEx());
+            if (this.HayQueIluminarConElementos(contexto))
+            {
+                ElementoIluminacion iluminador = this.AlguienIluminaAElemento(elemento);
+                if (iluminador != null)
+                {
+                    //Setea primero aquellos parámetros que son propios del efecto en cuestión.
+                    this.GetEfectoShader().SetValue("time", contexto.tiempo);
+                    iluminador.Iluminar(this, contexto.personaje.mesh.Position, elemento.ColorEmisor(), elemento.ColorAmbiente(),
+                    elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
+                    elemento.Mesh.render();
+                }
+                else
+                {
+                    this.GetEfectoShader().SetValue("time", contexto.tiempo);
+                    contexto.dia.GetSol().Iluminar(contexto.personaje.mesh.Position, this, elemento.ColorEmisor(), elemento.ColorAmbiente(),
+                        elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
+                    elemento.Mesh.render();
+                }
+            }
+            else
+            {
+                this.GetEfectoShader().SetValue("time", contexto.tiempo);
+                contexto.dia.GetSol().Iluminar(contexto.personaje.mesh.Position, this, elemento.ColorEmisor(), elemento.ColorAmbiente(),
+                    elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
+                elemento.Mesh.render();
+            }
         }
         #endregion
     }

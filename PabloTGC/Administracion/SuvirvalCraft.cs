@@ -99,8 +99,14 @@ namespace AlumnoEjemplos.MiGrupo
 
         public Dia dia;
 
+        //TODO. Ver si no conviente tener un administrador de efectos
         Efecto pisoEfecto;
         Efecto skyboxEfecto;
+        public Efecto efectoTerreno;
+        public Efecto efectoLuz;
+        public Efecto efectoAlgas;
+        public Efecto efectoAlgas2;
+        public Efecto efectoBotes;
 
 
         /// <summary>
@@ -161,16 +167,16 @@ namespace AlumnoEjemplos.MiGrupo
             this.tiempo = 0;
 
             #region Administracion de efectos
-            Efecto efectoTerreno = new EfectoTerreno(TgcShaders.loadEffect(recursos + "Shaders\\TerrenoShader.fx"), "RenderScene");
+            efectoTerreno = new EfectoTerreno(TgcShaders.loadEffect(recursos + "Shaders\\TerrenoShader.fx"), "RenderScene");
             pisoEfecto = new EfectoAgua(TgcShaders.loadEffect(recursos + "Shaders\\AguaShader.fx"), "RenderScene");
             skyboxEfecto = new EfectoSkyBox(TgcShaders.loadEffect(recursos + "Shaders\\SkyBoxShader.fx"), "RenderScene");
             //Cargar Shader personalizado para el efecto del fuego
             Efecto efectoFuego = new EfectoFuego(TgcShaders.loadEffect(recursos + "Shaders\\FuegoShader.fx"), "RenderScene");
             //Cargar Shader personalizado para el efecto de las algas
-            Efecto efectoAlgas = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene");
-            Efecto efectoAlgas2 = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene2");
-            Efecto efectoBotes = new EfectoBote(TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx"), "RenderScene");
-            Efecto efectoLuz = new EfectoLuz(GuiController.Instance.Shaders.TgcMeshPointLightShader);
+            efectoAlgas = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene");
+            efectoAlgas2 = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene2");
+            efectoBotes = new EfectoBote(TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx"), "RenderScene");
+            efectoLuz = new EfectoLuz(GuiController.Instance.Shaders.TgcMeshPointLightShader);
             #endregion
 
             // ------------------------------------------------------------
@@ -181,6 +187,7 @@ namespace AlumnoEjemplos.MiGrupo
             terreno.loadTexture(recursos
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "TerrainTextureHawaii.jpg");
             terreno.SetEfecto(efectoTerreno);
+
             // ------------------------------------------------------------
 
             #region Iluminacion
@@ -188,7 +195,7 @@ namespace AlumnoEjemplos.MiGrupo
             Sol sol = new Sol();
             sol.Mesh = lightMesh.toMesh("SOL");
             sol.CrearMovimiento();
-            dia = new Dia(2, sol, 28800);
+            dia = new Dia(400, sol, 56800);
             #endregion
 
             #region Crear SkyBox
@@ -519,7 +526,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             #region Creamos las algas limitrofes del mapa
             //Creamos estos elementos para que haya más cantidad de objetos y poder probar el algoritmo de optimizacion
-            int limiteX = (int)esquina.X;
+        /*    int limiteX = (int)esquina.X;
             int limiteZ = (int)esquina.Z;
             for (int i = -limiteZ; i < limiteZ; i += 200)
             {
@@ -538,7 +545,7 @@ namespace AlumnoEjemplos.MiGrupo
                 algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
                 algaNueva.Position = new Vector3(i, terreno.CalcularAltura(i, -limiteZ), -limiteZ);
                 elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoLuz));
-            }
+            }*/
             #endregion
 
             #region Creamos los arboles de frutillas
@@ -939,10 +946,6 @@ namespace AlumnoEjemplos.MiGrupo
 
             optimizador.Actualizar(personaje.mesh.Position);
 
-            //GuiController.Instance.UserVars.setValue("x", elementos.Count);
-            //GuiController.Instance.UserVars.setValue("y", optimizador.ElementosColision.Count);
-            //GuiController.Instance.UserVars.setValue("z", optimizador.ElementosRenderizacion.Count);
-
             GuiController.Instance.UserVars.setValue("x", personaje.mesh.Position.X);
             GuiController.Instance.UserVars.setValue("y", personaje.mesh.Position.Y);
             GuiController.Instance.UserVars.setValue("z", personaje.mesh.Position.Z);
@@ -980,8 +983,7 @@ namespace AlumnoEjemplos.MiGrupo
             dia.Actualizar(this, elapsedTime);
 
             //Render Terreno
-            terreno.GetEfecto().Actualizar(this);
-            terreno.executeRender(terreno.GetEfecto().GetEfectoShader());
+            terreno.Renderizar(this);
 
             //Render piso
             pisoEfecto.Actualizar(this);
@@ -996,7 +998,7 @@ namespace AlumnoEjemplos.MiGrupo
 
             //Actualiza los elementos
             List<Elemento> aux = new List<Elemento>();
-            aux.AddRange(elementos);//TODO. Porque sino con la actualziacion borramos elementos de la coleccion de elementos y se rompe todo
+            aux.AddRange(elementos);//TODO. Porque sino con la actualizacion borramos o agregamos elementos de la coleccion y se rompe todo
             foreach (Elemento elemento in aux)
             {
                 elemento.Actualizar(this, elapsedTime);
@@ -1004,9 +1006,10 @@ namespace AlumnoEjemplos.MiGrupo
 
             foreach (Elemento elem in optimizador.ElementosRenderizacion)
             {
-                dia.GetSol().Iluminar(elem, personaje);
                 elem.renderizar(this);
             }
+
+            dia.GetSol().Mesh.render();
 
             //Personaje muerto
             if (personaje.estaMuerto())
@@ -1130,8 +1133,6 @@ namespace AlumnoEjemplos.MiGrupo
                 ayudaReglon2.render();
             }
 
-            dia.GetSol().Mesh.render();
-            
         }
 
         /// <summary>

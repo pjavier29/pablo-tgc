@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.MiGrupo;
+using AlumnoEjemplos.PabloTGC.Utiles;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using System;
@@ -56,6 +57,13 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     elem.posicion(this.posicion());
                     elem.Mesh.BoundingBox.scaleTranslate(this.posicion(), new Vector3(2f, 0.25f, 2f));
                     contexto.elementos.Add(elem);
+                    //TODO. ver si es la mejor forma de manejar los elementos de iluminacion
+                    contexto.efectoTerreno.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    contexto.efectoLuz.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    contexto.efectoAlgas.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    contexto.efectoAlgas2.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    contexto.efectoBotes.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    //TODO+++++++++++++++++++++++++++++++++
                 }
                 this.liberar();
                 contexto.elementos.Remove(this);
