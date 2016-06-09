@@ -329,7 +329,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
 
             //Lanza un elemento con fuerza
-            if (d3dInput.keyDown(Key.L))
+            if (d3dInput.keyDown(Key.P))
             {
                 if (lanzar == null)
                 {
@@ -367,6 +367,13 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 return this.comandosSeleccionados;
             }
 
+            //Encender una antorcha
+            if (d3dInput.keyDown(Key.L))
+            {
+                this.comandosSeleccionados.Add(new EncenderAntorcha());
+                return this.comandosSeleccionados;
+            }
+
             this.comandosSeleccionados.Add(new Interactuar(Interactuar.Parado));
             return this.comandosSeleccionados;
 
@@ -396,10 +403,10 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             comandos += "- Presione Control Izquierdo para golpear con una patada" + System.Environment.NewLine;
             comandos += "- Presione la Barra Espaciadora para saltar" + System.Environment.NewLine;
             comandos += "- Presione Z para saltar hacia adelante" + System.Environment.NewLine;
-            comandos += "- Presione L para lanzar una piedra" + System.Environment.NewLine;
+            comandos += "- Presione P para lanzar una piedra" + System.Environment.NewLine;
+            comandos += "- Presione L para encender una antorcha" + System.Environment.NewLine;
             comandos += "- Presione M para mostrar la mochila" + System.Environment.NewLine;
-            comandos += "- Presione F5 para bajar la cámara" + System.Environment.NewLine;
-            comandos += "- Presione F6 para subir la cámara" + System.Environment.NewLine;
+            comandos += "- Presione F5 para bajar la cámara, F6 para subir la cámara" + System.Environment.NewLine;
             comandos += "- Presione F7 para acercar la cámara (Válido solo para cámara en tercera persona)"+ System.Environment.NewLine;
             comandos += "- Presione F8 para alejar la cámara (Válido solo para cámara en tercera persona)" + System.Environment.NewLine;
             return comandos;

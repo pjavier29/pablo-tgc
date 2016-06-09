@@ -1,4 +1,4 @@
-﻿using AlumnoEjemplos.PabloTGC.Instrumentos;
+﻿using AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos;
 using Microsoft.DirectX;
 using System;
 using System.Collections.Generic;
@@ -20,6 +20,7 @@ namespace AlumnoEjemplos.PabloTGC
         private float tiempoCorriendo;
         private Arma instrumentoManoDerecha;//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
         private List<Arma> instrumentos;//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
+        public Antorcha antorcha;
         #endregion
 
         #region Propiedades
@@ -42,6 +43,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.tiempoCorriendo = 0;
             this.direccionVision = 0;
             this.TemperaturaCorporal = 37;
+            antorcha = null;
         }
         #endregion
 
@@ -78,6 +80,12 @@ namespace AlumnoEjemplos.PabloTGC
                 (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y) / 2, -(float)Math.Cos((float)this.mesh.Rotation.Y) * 50);
             alcanceInteraccionEsfera.Position = direccionEsferaGolpe;
             alcanceInteraccionEsfera.updateValues();
+
+            //TODO. Esto esta muy mal
+            if (this.antorcha != null)
+            {
+                this.antorcha.SetPosicion(this.Direccion(50) + new Vector3(0,20,0));
+            }
         }
 
         public TgcSphere GetBoundingEsfera()

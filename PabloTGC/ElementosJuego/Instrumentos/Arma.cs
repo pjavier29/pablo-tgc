@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer.Utils.TgcSceneLoader;
 
-namespace AlumnoEjemplos.PabloTGC.Instrumentos
+namespace AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos
 {
     public class Arma
     {

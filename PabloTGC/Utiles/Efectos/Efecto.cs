@@ -36,17 +36,6 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         #region Comportamientos
         public void AgregarElementoDeIluminacion(ElementoIluminacion elemento)
         {
-          /*  foreach (ElementoIluminacion elem in this.elementosIluminacion)
-            {
-                float distanciaSeguridad = elem.Distancia + elemento.Distancia;
-                float distanciaReal = elem.Elemento.distanciaA(elemento.Elemento);
-                if (distanciaReal < distanciaSeguridad)
-                {
-                    //Si hay algun conflico con la distancia, calculamos una nueva distancia para ambos elementos
-                    elem.Distancia = distanciaReal / 2;
-                    elemento.Distancia = distanciaReal / 2;
-                }
-            }*/
             this.elementosIluminacion.Add(elemento);
         }
 
@@ -90,6 +79,18 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
                 }
             }
             return elemIlumActual;
+        }
+
+        public virtual bool ContieneElementoDeTipo(String tipo)
+        {
+            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            {
+                if (elem.Elemento.EsDeTipo(tipo))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public virtual Effect GetEfectoShader()

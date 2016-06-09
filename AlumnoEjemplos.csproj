@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PabloTGC\Administracion\ControladorEntradas.cs" />
+    <Compile Include="PabloTGC\Comandos\EncenderAntorcha.cs" />
     <Compile Include="PabloTGC\Dia\Dia.cs" />
     <Compile Include="PabloTGC\Dia\Tiempo.cs" />
     <Compile Include="PabloTGC\Comandos\Ayuda.cs" />
@@ -103,9 +104,10 @@
     <Compile Include="PabloTGC\ElementosJuego\ElementoSinInteraccion.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Fuego.cs" />
     <Compile Include="PabloTGC\ElementosJuego\FuenteAgua.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\Instrumentos\Antorcha.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Madera.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Olla.cs" />
-    <Compile Include="PabloTGC\Instrumentos\Arma.cs" />
+    <Compile Include="PabloTGC\ElementosJuego\Instrumentos\Arma.cs" />
     <Compile Include="PabloTGC\Movimientos\MovimientoEliptico.cs" />
     <Compile Include="PabloTGC\Movimientos\MovimientoParabolico.cs" />
     <Compile Include="PabloTGC\ElementosJuego\Elemento.cs" />

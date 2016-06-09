@@ -38,6 +38,7 @@ namespace AlumnoEjemplos.PabloTGC
         #region Comportamientos
         public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
+            base.Actualizar(contexto, elapsedTime);
             tiempo += elapsedTime;
             if (tiempo < tiempoEnActividad)
             {

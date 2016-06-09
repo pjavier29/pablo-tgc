@@ -31,6 +31,7 @@ namespace AlumnoEjemplos.PabloTGC
         public const String Copa = "Copa";
         public const String ElementoSinInteraccion = "ElementoSinInteraccion";
         public const String ElementoDoble = "ElementoDoble";
+        public const String Antorcha = "Antorcha";
         #endregion
 
         #region Atributos
@@ -251,7 +252,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Mesh.move(movimiento.X, movimiento.Y, movimiento.Z);
         }
 
-        public Vector3 posicion()
+        public virtual Vector3 posicion()
         {
             return this.Mesh.Position;
         }

@@ -17,7 +17,6 @@ using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.TgcKeyFrameLoader;
 using AlumnoEjemplos.PabloTGC.ElementosJuego;
-using AlumnoEjemplos.PabloTGC.Instrumentos;
 using AlumnoEjemplos.PabloTGC.Utiles;
 using AlumnoEjemplos.PabloTGC.Comandos;
 using AlumnoEjemplos.PabloTGC.Administracion;
@@ -26,6 +25,7 @@ using TgcViewer.Utils.Shaders;
 using AlumnoEjemplos.PabloTGC.Movimientos;
 using AlumnoEjemplos.PabloTGC.Dia;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
+using AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos;
 
 namespace AlumnoEjemplos.MiGrupo
 {
@@ -195,7 +195,7 @@ namespace AlumnoEjemplos.MiGrupo
             Sol sol = new Sol();
             sol.Mesh = lightMesh.toMesh("SOL");
             sol.CrearMovimiento();
-            dia = new Dia(400, sol, 56800);
+            dia = new Dia(200, sol, 0);
             #endregion
 
             #region Crear SkyBox
@@ -598,7 +598,7 @@ namespace AlumnoEjemplos.MiGrupo
             //Creamos el personaje
             //Cargar personaje con animaciones
             personaje = new Personaje();
-            personaje.VelocidadCaminar = 1500f;
+            personaje.VelocidadCaminar = 150f;
             personaje.VelocidadRotacion = 50f;
             personaje.Fuerza = 1f;
             personaje.ResistenciaFisica = 30f;

@@ -52,6 +52,12 @@ float lightAttenuation; //Factor de atenuacion de la luz
 
 float time = 0;
 float lightIntensityRelitive; //Intensidad de la luz, recibimos un numero entre 0 y 1
+float segundaLuz = 0;
+float4 lightPosition2; //Posicion de la segunda luz, toma todos los parametros de la luz general para iluminar
+float terceraLuz = 0;
+float4 lightPosition3;
+float cuartaLuz = 0;
+float4 lightPosition4;
 
 /**************************************************************************************/
 /* DIFFUSE_MAP */
@@ -139,13 +145,25 @@ float4 ps_DiffuseMap(PS_DIFFUSE_MAP input) : COLOR0
 	float distAtten = length(lightPosition.xyz - input.WorldPosition) * lightAttenuation;
 	float intensity = lightIntensity / distAtten; //Dividimos intensidad sobre distancia (lo hacemos lineal pero tambien podria ser i/d^2)
 
+	float3 ambientLight2 = segundaLuz == 0.0
+			? float3(0.0, 0.0, 0.0)
+			: (lightIntensity / (length(lightPosition2.xyz - input.WorldPosition) * lightAttenuation)) * lightColor * materialAmbientColor;
+
+	float3 ambientLight3 = terceraLuz == 0.0
+			? float3(0.0, 0.0, 0.0)
+			: (lightIntensity / (length(lightPosition3.xyz - input.WorldPosition) * lightAttenuation)) * lightColor * materialAmbientColor;
+
+	float3 ambientLight4 = cuartaLuz == 0.0
+			? float3(0.0, 0.0, 0.0)
+			: (lightIntensity / (length(lightPosition4.xyz - input.WorldPosition) * lightAttenuation)) * lightColor * materialAmbientColor;
+
 	//Obtener texel de la textura
 	float4 texelColor = tex2D(diffuseMap, input.Texcoord);
 	
 	//Componente Ambient
 	float3 ambientLight = intensity * lightColor * materialAmbientColor;
 
-	float4 finalColor = float4(saturate(ambientLight) * texelColor, materialDiffuseColor.a);
+	float4 finalColor = float4(saturate(ambientLight + ambientLight2 + ambientLight3 + ambientLight4) * texelColor, materialDiffuseColor.a);
 
 	return finalColor * lightIntensityRelitive;
 
@@ -162,4 +180,3 @@ technique RenderScene
    }
 
 }
-
