@@ -16,8 +16,8 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
     {
         #region Atributos
         private ColorValue colorDeLuz;
-        private float intensidadDeLuz;
         private float atenuacionDeLuz;
+        public float intensidadDeLuzSol;
         private MovimientoEliptico movimientoSol;
         private float alturaPuestaSol;
         private float atenuacionMaxima;
@@ -32,7 +32,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         public Sol()
         {
             this.colorDeLuz = ColorValue.FromColor(Color.LightYellow);
-            this.intensidadDeLuz = 15000f;
+            this.intensidadDeLuzSol = 15000f;
             this.atenuacionDeLuz = 0.1f;
             this.alturaPuestaSol = 0;
         }
@@ -46,7 +46,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
             //Lo colocamos en atributos porque son valores fijos, de esta forma nos evitamos hacer la cuenta en cada render
             //De un calculo que siempre dara igual.
             this.atenuacionMaxima = (this.atenuacionDeLuz * this.movimientoSol.AlturaMaxima()) / this.alturaPuestaSol; ;
-            this.intesidadLuzMinima = (this.intensidadDeLuz * this.alturaPuestaSol) / this.movimientoSol.AlturaMaxima();
+            this.intesidadLuzMinima = (this.intensidadDeLuzSol * this.alturaPuestaSol) / this.movimientoSol.AlturaMaxima();
     }
 
         public void Actualizar(float valor)
@@ -84,7 +84,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
             {
                 return this.intesidadLuzMinima;
             }
-            return (this.intensidadDeLuz * this.Mesh.Position.Y) / this.movimientoSol.AlturaMaxima();
+            return (this.intensidadDeLuzSol * this.Mesh.Position.Y) / this.movimientoSol.AlturaMaxima();
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         /// <returns></returns>
         public float IntensidadRelativa()
         {
-            return FuncionesMatematicas.Instance.PorcentajeRelativo(this.intesidadLuzMinima, this.intensidadDeLuz, this.IntensidadDeLuz());
+            return FuncionesMatematicas.Instance.PorcentajeRelativo(this.intesidadLuzMinima, this.intensidadDeLuzSol, this.IntensidadDeLuz());
         }
 
         public ColorValue GetColorLuz()
@@ -109,6 +109,12 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         public bool EsDeNoche()
         {
             return ! this.EsDeDia();
+        }
+
+        public void ActualizarIntensidadMaximaLuz(float nuevaIntensidad)
+        {
+            this.intensidadDeLuzSol = nuevaIntensidad;
+            this.intesidadLuzMinima = (this.intensidadDeLuzSol * this.alturaPuestaSol) / this.movimientoSol.AlturaMaxima();
         }
 
         public ColorValue GetColorAmanecerAnochecer()

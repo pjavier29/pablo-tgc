@@ -13,6 +13,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         #region Atributos
         private Tiempo tiempo;
         private Sol sol;
+        private Lluvia lluvia;
         private float velocidadTiempo;
         private double relojInterno;//Son segundos virtuales
         #endregion
@@ -21,21 +22,23 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         #endregion
 
         #region Constructores
-        public Dia(float velocidadTiempo, Sol sol)
+        public Dia(float velocidadTiempo, Sol sol, Lluvia lluvia)
         {
             this.velocidadTiempo = velocidadTiempo;
             this.tiempo = new Tiempo();
             this.tiempo.CalcularTemperaturaDeDia();
             this.relojInterno = 0;
             this.sol = sol;
+            this.lluvia = lluvia;
         }
-        public Dia(float velocidadTiempo, Sol sol, float relojInterno)
+        public Dia(float velocidadTiempo, Sol sol, float relojInterno, Lluvia lluvia)
         {
             this.velocidadTiempo = velocidadTiempo;
             this.tiempo = new Tiempo();
             this.tiempo.CalcularTemperaturaDeDia();
             this.relojInterno = relojInterno;
             this.sol = sol;
+            this.lluvia = lluvia;
         }
         #endregion
 
@@ -78,13 +81,33 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
 
         private void ActualizarRelojInterno(float elapsedTime)
         {
-            //El reloj interno lo interpretamos en segundos
-            this.relojInterno += elapsedTime * this.velocidadTiempo;
+            //Si el elapsedTime es mayor de 2 segundos, solo tenemos en cuenta 2 segundos sino el reloj se torna inestable
+            //Esto viene muy bien en la etapa de configuración, que viene un elapsedTime muy grande.
+            if (elapsedTime > 1f)
+            {
+                //El reloj interno lo interpretamos en segundos
+                this.relojInterno += 1f * this.velocidadTiempo;
+            }
+            else
+            {
+                //El reloj interno lo interpretamos en segundos
+                this.relojInterno += elapsedTime * this.velocidadTiempo;
+            }
+
             //Si pasaron mas de 86400 segundos quiere decir que el dia termino.
             if (this.relojInterno > 86400)
             {
                 this.relojInterno = 0;
                 this.tiempo.CalcularTemperaturaDeDia();
+                this.lluvia.Actualizar();
+                if (this.lluvia.EstaLloviendo())
+                {
+                    this.sol.ActualizarIntensidadMaximaLuz(8000f);
+                }
+                else
+                {
+                    this.sol.ActualizarIntensidadMaximaLuz(15000f);
+                }
             }
         }
 
@@ -96,6 +119,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         public bool EsDeDia()
         {
             return this.sol.EsDeDia();
+        }
+
+        public Lluvia GetLluvia()
+        {
+            return this.lluvia;
         }
         #endregion
     }

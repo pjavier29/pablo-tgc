@@ -1,31 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using TgcViewer.Example;
 using TgcViewer;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing;
 using Microsoft.DirectX;
-using TgcViewer.Utils.Modifiers;
-using AlumnoEjemplos.PabloTGC;
 using TgcViewer.Utils.TgcSceneLoader;
-using TgcViewer.Utils.TgcGeometry;
-using TgcViewer.Utils.TgcSkeletalAnimation;
-using Microsoft.DirectX.DirectInput;
-using TgcViewer.Utils.Input;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils._2D;
-using TgcViewer.Utils.TgcKeyFrameLoader;
-using AlumnoEjemplos.PabloTGC.ElementosJuego;
 using AlumnoEjemplos.PabloTGC.Utiles;
 using AlumnoEjemplos.PabloTGC.Comandos;
-using AlumnoEjemplos.PabloTGC.Administracion;
 using AlumnoEjemplos.PabloTGC.Utiles.Camaras;
 using TgcViewer.Utils.Shaders;
-using AlumnoEjemplos.PabloTGC.Movimientos;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
-using AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos;
 using AlumnoEjemplos.PabloTGC.ElementosDia;
+using TgcViewer.Utils;
 
 namespace AlumnoEjemplos.PabloTGC.Administracion
 {
@@ -35,27 +24,27 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
     public class SuvirvalCraft : TgcExample
     {
         public Terreno terreno;
-        TgcSkyBox skyBox;
+        public TgcSkyBox skyBox;
         public TgcMesh piso;
         public List<Elemento> elementos;
         public Personaje personaje;
         public float tiempo;
-        TgcText2d estadoJuego;
+        public TgcText2d estadoJuego;
         public TgcText2d informativo;
-        Animal oveja;
-        Animal gallo;
-        TgcMesh hachaMesh;
-        TgcMesh palo;
+        public Animal oveja;
+        public Animal gallo;
+        public Elemento cajonReal;
+        public Elemento cajonOlla;
+        public Elemento fuenteAgua;
 
-        TgcSprite mochila;
-        TgcSprite miniMapa;
-        TgcText2d referenciaMiniMapa;
-        TgcSprite linea;
-        Elemento cajonReal, cajonOlla, fuenteAgua;
-        Point coordenadaSuperiorDerecha;
-        Point coordenadaInferiorIzquierda;
-        TgcSprite cajon;
-        TgcText2d mochilaReglon1;
+        public TgcSprite mochila;
+        public TgcSprite miniMapa;
+        public TgcText2d referenciaMiniMapa;
+        public TgcSprite linea;
+        public Point coordenadaSuperiorDerecha;
+        public Point coordenadaInferiorIzquierda;
+        public TgcSprite cajon;
+        public TgcText2d mochilaReglon1;
         public TgcText2d cajonReglon1;
         public bool mostrarMenuMochila;
         public bool mostrarMenuCajon;
@@ -70,29 +59,30 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
 
         public Optimizador optimizador;
 
-        TgcSprite salud;
-        TgcSprite hidratacion;
-        TgcSprite alimentacion;
-        TgcSprite cansancio;
-        TgcSprite saludIcono;
-        TgcSprite hidratacionIcono;
-        TgcSprite alimentacionIcono;
-        TgcSprite cansancioIcono;
-        TgcSprite objetivosIcono;
-        TgcText2d mensajeObjetivo1;
-        float tiempoObjetivo;
-        TgcSprite ayuda;
+        public TgcSprite salud;
+        public TgcSprite hidratacion;
+        public TgcSprite alimentacion;
+        public TgcSprite cansancio;
+        public TgcSprite saludIcono;
+        public TgcSprite hidratacionIcono;
+        public TgcSprite alimentacionIcono;
+        public TgcSprite cansancioIcono;
+        public TgcSprite objetivosIcono;
+        public TgcText2d mensajeObjetivo1;
+        public float tiempoObjetivo;
+        public TgcSprite ayuda;
         public TgcText2d ayudaReglon1;
         public TgcText2d ayudaReglon2;
         public bool mostrarAyuda;
-        TgcText2d temperaturaDia;
-        TgcText2d horaDia;
-        TgcSprite temperaturaDiaIcono;
-        TgcSprite horaDiaIcono;
-        TgcText2d temperaturaPersonaje;
-        TgcSprite temperaturaPersonajeIcono;
-        TgcSprite estadoDiaSolIcono;
-        TgcSprite estadoDiaLunaIcono;
+        public TgcText2d temperaturaDia;
+        public TgcText2d horaDia;
+        public TgcSprite temperaturaDiaIcono;
+        public TgcSprite horaDiaIcono;
+        public TgcText2d temperaturaPersonaje;
+        public TgcSprite temperaturaPersonajeIcono;
+        public TgcSprite estadoDiaSolIcono;
+        public TgcSprite estadoDiaLunaIcono;
+        public TgcSprite estadoDiaLluviaIcono;
 
 
         public Camara camara;
@@ -100,14 +90,20 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public Dia dia;
 
         //TODO. Ver si no conviente tener un administrador de efectos
-        Efecto pisoEfecto;
-        Efecto skyboxEfecto;
+        public Efecto pisoEfecto;
+        public Efecto skyboxEfecto;
         public Efecto efectoTerreno;
         public Efecto efectoLuz;
         public Efecto efectoAlgas;
         public Efecto efectoAlgas2;
         public Efecto efectoBotes;
+        public Efecto efectoFuego;
 
+        public VertexBuffer screenQuadVB;
+        public Texture renderTarget2D;
+        Surface pOldRT;
+        Surface pSurf;
+        public Microsoft.DirectX.Direct3D.Effect efectoLluvia;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -153,25 +149,26 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         /// </summary>
         public override void init()
         {
-            //GuiController.Instance: acceso principal a todas las herramientas del Framework
+            Configuracion con = new Configuracion(new ConfiguracionModel(this));
+            con.ShowDialog();
 
             //Device de DirectX para crear primitivas
-            Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+            //Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
             //Carpeta de acceso a los recursos
-            string recursos = GuiController.Instance.AlumnoEjemplosDir + "PabloTGC\\Recursos\\";
+            //string recursos = GuiController.Instance.AlumnoEjemplosDir + "PabloTGC\\Recursos\\";
 
             //Crear loader
-            TgcSceneLoader loader = new TgcSceneLoader();
+           // TgcSceneLoader loader = new TgcSceneLoader();
 
             //***********Inicializamos las esquinas************************************
             //Crear objeto propio para manejar los limites.
-            esquina = new Vector3(10000, 0, 10000);
+           // esquina = new Vector3(10000, 0, 10000);
             //***********Inicializamos las esquinas************************************
 
-            this.tiempo = 0;
+           // this.tiempo = 0;
 
-            #region Administracion de efectos
+          /*  #region Administracion de efectos
             efectoTerreno = new EfectoTerreno(TgcShaders.loadEffect(recursos + "Shaders\\TerrenoShader.fx"), "RenderScene");
             pisoEfecto = new EfectoAgua(TgcShaders.loadEffect(recursos + "Shaders\\AguaShader.fx"), "RenderScene");
             skyboxEfecto = new EfectoSkyBox(TgcShaders.loadEffect(recursos + "Shaders\\SkyBoxShader.fx"), "RenderScene");
@@ -182,28 +179,28 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             efectoAlgas2 = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene2");
             efectoBotes = new EfectoBote(TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx"), "RenderScene");
             efectoLuz = new EfectoLuz(GuiController.Instance.Shaders.TgcMeshPointLightShader);
-            #endregion
+            #endregion*/
 
             // ------------------------------------------------------------
             // Creo el Heightmap para el terreno:
-            terreno = new Terreno();
+         /*   terreno = new Terreno();
             terreno.loadHeightmap(recursos
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "HeightmapHawaii.jpg", 400f, 3f, new Vector3(0, 0, 0));
             terreno.loadTexture(recursos
                     + "Shaders\\WorkshopShaders\\Heighmaps\\" + "TerrainTextureHawaii.jpg");
-            terreno.SetEfecto(efectoTerreno);
+            terreno.SetEfecto(efectoTerreno);*/
 
             // ------------------------------------------------------------
 
-            #region Iluminacion
+          /*  #region Iluminacion
             TgcBox lightMesh = TgcBox.fromSize(new Vector3(500, 500, 500), Color.Yellow);
             Sol sol = new Sol();
             sol.Mesh = lightMesh.toMesh("SOL");
             sol.CrearMovimiento();
-            dia = new Dia(200, sol, 0);
-            #endregion
+            dia = new Dia(2000, sol, 30000, new Lluvia(1));
+            #endregion*/
 
-            #region Crear SkyBox
+         /*   #region Crear SkyBox
             skyBox = new TgcSkyBox();
             skyBox.Center = new Vector3(0, 0, 0);
             skyBox.Size = new Vector3(20000, 20000, 20000);
@@ -220,12 +217,12 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             {
                 skyboxEfecto.Aplicar(faces, this);
             }
-            #endregion
+            #endregion*/
 
-            TgcScene scene;
-            elementos = new List<Elemento>();
+            //TgcScene scene;
+            //elementos = new List<Elemento>();
 
-            #region Creamos las palmeras comunes
+          /*  #region Creamos las palmeras comunes
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Palmera\\Palmera-TgcScene.xml");
             TgcMesh palmera = scene.Meshes[0];
@@ -244,9 +241,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     elementos.Add(new Elemento(1000, 1400, palmeraNueva, efectoLuz));
                 }
             }
-            #endregion
+            #endregion*/
 
-            #region Creamos los arboles de Banana
+        /*    #region Creamos los arboles de Banana
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\ArbolBananas\\ArbolBananas-TgcScene.xml");
             TgcMesh arbolBanana = scene.Meshes[0];
@@ -271,9 +268,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     elementos.Add(new Elemento(1000, 1300, arbolBananaNuevo, new Alimento(1000, 1000, bananaMeshNueva, 20, efectoLuz), efectoLuz));
                 }
             }
-            #endregion
+            #endregion*/
 
-            #region Creamos los arboles que van a proveer leña para luego hacer fuego
+         /*   #region Creamos los arboles que van a proveer leña para luego hacer fuego
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Pino\\Pino-TgcScene.xml");
             TgcMesh pino = scene.Meshes[0];
@@ -306,16 +303,16 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                                     new Fuego(1000, 233, fuegoMesh, efectoFuego), efectoLuz)), efectoLuz));
                 }
             }
-            #endregion
+            #endregion*/
 
-            #region Creamos la piedra para tirar
+        /*    #region Creamos la piedra para tirar
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Roca\\Roca-TgcScene.xml");
             TgcMesh piedraMesh = scene.Meshes[0].createMeshInstance("Piedra");
             puebaFisica = new Elemento(100, 300, piedraMesh);
-            #endregion
+            #endregion*/
 
-            #region Creamos la oveja
+           /* #region Creamos la oveja
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Oveja\\Ovelha-TgcScene.xml");
             TgcMesh ovejaMesh = scene.Meshes[0].createMeshInstance("Oveja");
@@ -335,9 +332,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             alimento.BoundingBox().scaleTranslate(alimento.posicion(), new Vector3(2f, 2f, 2f));
             oveja.agregarElemento(alimento);
             elementos.Add(oveja);
-            #endregion
+            #endregion*/
 
-            #region Creamos el gallo
+          /*  #region Creamos el gallo
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
             TgcMesh galloMesh = scene.Meshes[0].createMeshInstance("Gallo");
@@ -351,9 +348,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             alimento.BoundingBox().scaleTranslate(alimento.posicion(), new Vector3(2f, 2f, 2f));
             gallo.agregarElemento(alimento);
             elementos.Add(gallo);
-            #endregion
+            #endregion*/
 
-            #region Creamos el cajon con las manzanas
+            /*#region Creamos el cajon con las manzanas
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Cajon\\cajon-TgcScene.xml");
             TgcMesh cajonRealMesh = scene.Meshes[0].createMeshInstance("Cajon_Manzanas");
@@ -389,9 +386,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             cajonOlla.agregarElemento(new Olla(1000, 1000, ollaMesh, efectoLuz));
             cajonOlla.agregarElemento(new Copa(1000, 1000, copaMesh, efectoLuz));
             elementos.Add(cajonOlla);
-            #endregion
+            #endregion*/
 
-            #region Creamos los arboles generales
+          /*  #region Creamos los arboles generales
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Arbol\\Arbol-TgcScene.xml");
             TgcMesh arbol = scene.Meshes[0];
@@ -421,9 +418,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     elementos.Add(new Elemento(1000, 1400, arbolNuevo, efectoLuz));
                 }
             }
-            #endregion
+            #endregion*/
 
-            #region Creamos la fuente de agua
+          /**  #region Creamos la fuente de agua
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\FuenteAgua\\FuenteAgua-TgcScene.xml");
             TgcMesh fuente = scene.Meshes[0].createMeshInstance("Fuente de Agua");
@@ -431,9 +428,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             fuente.Position = new Vector3(2400, terreno.CalcularAltura(2400, -3160), -3160);
             fuenteAgua = new FuenteAgua(1000, 1400, fuente, efectoLuz);
             elementos.Add(fuenteAgua);
-            #endregion
+            #endregion*/
 
-            #region Creamos las algas
+          /*  #region Creamos las algas
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\Alga\\alga-TgcScene.xml");
             TgcMesh alga = scene.Meshes[0];
@@ -478,9 +475,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     }
                 }
             }
-            #endregion
+            #endregion*/
 
-            #region Creamos algunas piedras sobre el agua
+      /*      #region Creamos algunas piedras sobre el agua
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Roca\\Roca-TgcScene.xml");
             TgcMesh piedraAguaMesh = scene.Meshes[0];
@@ -512,9 +509,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 piedraAguaNuevaMesh.Position = new Vector3(x, terreno.CalcularAltura(x, z), z);
                 elementos.Add(new Elemento(10000, 10000, piedraAguaNuevaMesh, efectoLuz));
             }
-            #endregion
+            #endregion*/
 
-            #region Creamos las canoas sobre el agua
+            /*#region Creamos las canoas sobre el agua
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Botes\\Palangreta\\Palangreta-TgcScene.xml");
             TgcMesh palangreta = scene.Meshes[0].createMeshInstance("Palangreta");
@@ -527,33 +524,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             palangreta.rotateY(Geometry.DegreeToRadian(75f));
             elementos.Add(new Elemento(10000, 10000, palangreta, efectoBotes));
             elementos.Add(new Elemento(10000, 10000, canoa, efectoBotes));
-            #endregion
+            #endregion*/
 
-            #region Creamos las algas limitrofes del mapa
-            //Creamos estos elementos para que haya más cantidad de objetos y poder probar el algoritmo de optimizacion
-        /*    int limiteX = (int)esquina.X;
-            int limiteZ = (int)esquina.Z;
-            for (int i = -limiteZ; i < limiteZ; i += 200)
-            {
-                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
-                algaNueva.Position = new Vector3(limiteX, terreno.CalcularAltura(limiteX, i), i);
-                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoLuz));
-                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
-                algaNueva.Position = new Vector3(-limiteX, terreno.CalcularAltura(-limiteX, i), i);
-                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoLuz));
-            }
-            for (int i = -limiteX; i < limiteX; i += 200)
-            {
-                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
-                algaNueva.Position = new Vector3(i, terreno.CalcularAltura(i, limiteZ), limiteZ);
-                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoLuz));
-                algaNueva = alga.createMeshInstance(alga.Name + elementos.Count.ToString());
-                algaNueva.Position = new Vector3(i, terreno.CalcularAltura(i, -limiteZ), -limiteZ);
-                elementos.Add(new ElementoSinInteraccion(1000, 1400, algaNueva, efectoLuz));
-            }*/
-            #endregion
-
-            #region Creamos los arboles de frutillas
+         /*   #region Creamos los arboles de frutillas
             scene = loader.loadSceneFromFile(recursos
                 + "MeshCreator\\Meshes\\Vegetacion\\ArbolFrutilla\\ArbolFrutilla-TgcScene.xml");
             TgcMesh arbolFrutilla = scene.Meshes[0];
@@ -591,16 +564,16 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     elementos.Add(nuevoArbolFrutillaCompleto);
                 }
             }
-            #endregion
+            #endregion*/
 
-            #region  Crear piso
+         /*   #region  Crear piso
             TgcTexture pisoTexture = TgcTexture.createTexture(d3dDevice, recursos + "Texturas\\Agua.jpg");
             TgcBox pisoCaja = TgcBox.fromExtremes(new Vector3(-20000, 3, -20000), new Vector3(20000, 15, 20000), pisoTexture);
             piso = pisoCaja.toMesh("Piso");
             pisoEfecto.Aplicar(piso, this);
-            #endregion
+            #endregion*/
 
-            //Creamos el personaje
+         /*   //Creamos el personaje
             //Cargar personaje con animaciones
             personaje = new Personaje();
             personaje.VelocidadCaminar = 150f;
@@ -672,13 +645,14 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Una vez configurado el mesh del personaje iniciamos su bounding esfera y su esfera de alcance de interacción con los elementos
             personaje.IniciarBoundingEsfera();
             personaje.IniciarAlcanceInteraccionEsfera();
+            */
 
-            tiempo = 0;
-            controladorEntradas = new ControladorEntradas();
-            camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
+            //tiempo = 0;
+           // controladorEntradas = new ControladorEntradas();
+           // camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
 
             //****************Crear Sprite de la mochila y del cajon**********************************************
-            Size screenSize = GuiController.Instance.Panel3d.Size;
+   /*         Size screenSize = GuiController.Instance.Panel3d.Size;
 
             mochila = new TgcSprite();
             mochilaReglon1 = new TgcText2d();
@@ -909,16 +883,57 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             estadoDiaLunaIcono = new TgcSprite();
             estadoDiaLunaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Luna.png");
             estadoDiaLunaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
+            estadoDiaLluviaIcono = new TgcSprite();
+            estadoDiaLluviaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Lluvia.png");
+            estadoDiaLluviaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
             //*****************Creación de texto informativo de la temperatura y la hora del dia********************************
-
+*/
             //¿de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
-            optimizador = new Optimizador(elementos, 15, 500);
+         /*   optimizador = new Optimizador(elementos, 15, 500);
 
             float aspectRatio = (float)GuiController.Instance.Panel3d.Width / GuiController.Instance.Panel3d.Height;
             float zNearPlaneDistance = 1f;
             float zFarPlaneDistance = 20000f;
             d3dDevice.Transform.Projection =
-                Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f), aspectRatio, zNearPlaneDistance, zFarPlaneDistance);
+                Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f), aspectRatio, zNearPlaneDistance, zFarPlaneDistance);*/
+
+
+           /* #region Post Porcesado
+            //Activamos el renderizado customizado. De esta forma el framework nos delega control total sobre como dibujar en pantalla
+            //La responsabilidad cae toda de nuestro lado
+            GuiController.Instance.CustomRenderEnabled = true;
+
+
+            //Se crean 2 triangulos (o Quad) con las dimensiones de la pantalla con sus posiciones ya transformadas
+            // x = -1 es el extremo izquiedo de la pantalla, x = 1 es el extremo derecho
+            // Lo mismo para la Y con arriba y abajo
+            // la Z en 1 simpre
+            CustomVertex.PositionTextured[] screenQuadVertices = new CustomVertex.PositionTextured[]
+            {
+                new CustomVertex.PositionTextured( -1, 1, 1, 0,0),
+                new CustomVertex.PositionTextured(1,  1, 1, 1,0),
+                new CustomVertex.PositionTextured(-1, -1, 1, 0,1),
+                new CustomVertex.PositionTextured(1,-1, 1, 1,1)
+            };
+            //vertex buffer de los triangulos
+            screenQuadVB = new VertexBuffer(typeof(CustomVertex.PositionTextured),
+                    4, d3dDevice, Usage.Dynamic | Usage.WriteOnly,
+                        CustomVertex.PositionTextured.Format, Pool.Default);
+            screenQuadVB.SetData(screenQuadVertices, 0, LockFlags.None);
+
+            //Creamos un Render Targer sobre el cual se va a dibujar la pantalla
+            renderTarget2D = new Texture(d3dDevice, d3dDevice.PresentationParameters.BackBufferWidth
+                    , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
+                        Format.X8R8G8B8, Pool.Default);
+
+
+            //Cargar shader con efectos de Post-Procesado
+            effect = TgcShaders.loadEffect(recursos + "Shaders\\PostProcess.fx");
+
+            //Configurar Technique dentro del shader
+            effect.Technique = "RainTechnique";
+
+            #endregion*/
 
         }
 
@@ -933,6 +948,20 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         {
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+
+            //Actualizamos el dia
+            dia.Actualizar(this, elapsedTime);
+
+            //Surface pSurf = null;
+            if (dia.GetLluvia().EstaLloviendo())
+            {
+                pOldRT = d3dDevice.GetRenderTarget(0);
+                pSurf = renderTarget2D.GetSurfaceLevel(0);
+                d3dDevice.SetRenderTarget(0, pSurf);
+                d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+            }
+
+            d3dDevice.BeginScene();
 
             //TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
             tiempo += elapsedTime;
@@ -980,9 +1009,6 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 }
             }
 
-            //Actualizamos el dia
-            dia.Actualizar(this, elapsedTime);
-
             //Render Terreno
             terreno.Renderizar(this);
 
@@ -1010,7 +1036,41 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 elem.renderizar(this);
             }
 
-            dia.GetSol().Mesh.render();
+            //dia.GetSol().Mesh.render();
+
+            d3dDevice.EndScene();
+
+            if (dia.GetLluvia().EstaLloviendo())
+             {
+                 //Liberar memoria de surface de Render Target
+                 pSurf.Dispose();
+                 //Ahora volvemos a restaurar el Render Target original (osea dibujar a la pantalla)
+                 d3dDevice.SetRenderTarget(0, pOldRT);
+
+                 //Arrancamos la escena
+                 d3dDevice.BeginScene();
+
+                 //Cargamos para renderizar el unico modelo que tenemos, un Quad que ocupa toda la pantalla, con la textura de todo lo dibujado antes
+                 d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
+                 d3dDevice.SetStreamSource(0, screenQuadVB, 0);
+
+                //Cargamos parametros en el shader de Post-Procesado
+                efectoLluvia.SetValue("render_target2D", renderTarget2D);
+                efectoLluvia.SetValue("intensidad_ancho", dia.GetLluvia().AnchoLluvia());
+                efectoLluvia.SetValue("intensidad_alto", dia.GetLluvia().AltoLluvia());
+                efectoLluvia.SetValue("lightIntensityRelitive", dia.GetSol().IntensidadRelativa());
+
+                 //Limiamos la pantalla y ejecutamos el render del shader
+                 d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+                efectoLluvia.Begin(FX.None);
+                efectoLluvia.BeginPass(0);
+                 d3dDevice.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+                efectoLluvia.EndPass();
+                efectoLluvia.End();
+
+                 //Terminamos el renderizado de la escena
+                 d3dDevice.EndScene();
+             }
 
             //Personaje muerto
             if (personaje.estaMuerto())
@@ -1078,13 +1138,20 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             temperaturaPersonaje.render();
             temperaturaDiaIcono.render();
             horaDiaIcono.render();
-            if (dia.EsDeDia())
+            if (dia.GetLluvia().EstaLloviendo())
             {
-                estadoDiaSolIcono.render();
+                estadoDiaLluviaIcono.render();
             }
             else
-            {
-                estadoDiaLunaIcono.render();
+            { 
+                if (dia.EsDeDia())
+                {
+                    estadoDiaSolIcono.render();
+                }
+                else
+                {
+                    estadoDiaLunaIcono.render();
+                }
             }
 
             GuiController.Instance.Drawer2D.endDrawSprite();
@@ -1133,6 +1200,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 ayudaReglon1.render();
                 ayudaReglon2.render();
             }
+
+            //Como estamos en modo CustomRenderEnabled, tenemos que dibujar todo nosotros, incluso el contador de FPS
+            GuiController.Instance.Text3d.drawText("FPS: " + HighResolutionTimer.Instance.FramesPerSecond, 0, 0, Color.Yellow);
 
         }
 
@@ -1183,11 +1253,10 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             miniMapa.dispose();
             referenciaMiniMapa.dispose();
             linea.dispose();
-        }
-
-        private String Version()
-        {
-            return "0.01.001";
+            efectoLluvia.Dispose();
+            screenQuadVB.Dispose();
+            renderTarget2D.Dispose();
+            estadoDiaLluviaIcono.dispose();
         }
 
         public void ActualizarPosicionSkyBox(Vector3 posicion)

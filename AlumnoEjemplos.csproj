@@ -79,9 +79,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PabloTGC\Administracion\Configuracion.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PabloTGC\Administracion\Configuracion.Designer.cs">
+      <DependentUpon>Configuracion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PabloTGC\Administracion\ConfiguracionModel.cs" />
     <Compile Include="PabloTGC\Administracion\ControladorEntradas.cs" />
     <Compile Include="PabloTGC\Comandos\EncenderAntorcha.cs" />
     <Compile Include="PabloTGC\ElementosDia\Dia.cs" />
+    <Compile Include="PabloTGC\ElementosDia\Lluvia.cs" />
     <Compile Include="PabloTGC\ElementosDia\Tiempo.cs" />
     <Compile Include="PabloTGC\Comandos\Ayuda.cs" />
     <Compile Include="PabloTGC\Comandos\CambiarCamara.cs" />
@@ -156,6 +164,11 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PabloTGC\Administracion\Configuracion.resx">
+      <DependentUpon>Configuracion.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
