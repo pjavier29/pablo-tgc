@@ -24,7 +24,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
         {
             this.camaraTgc = camaraTgc;
             this.camaraTgc.Enable = true;
-            this.camaraTgc.setCamera(posicion, 200, -300);
+            this.camaraTgc.setCamera(posicion, 0, -300);
             this.frustum = frustum;
             this.d3dDevice = d3dDevice;
         }

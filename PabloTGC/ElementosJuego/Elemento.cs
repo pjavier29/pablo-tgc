@@ -47,6 +47,7 @@ namespace AlumnoEjemplos.PabloTGC
         public float Resistencia { get; set; }
         private List<Elemento> ElementosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
         public TgcMesh Mesh { get; set; }
+        public float Flexibilidad { get; set; }
         #endregion
 
         #region Contructores
@@ -63,12 +64,14 @@ namespace AlumnoEjemplos.PabloTGC
             this.barraEstado = null;
             this.hayInteraccion = false;
             this.momentoUltimoGolpe = 0;
+            this.Flexibilidad = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
         {
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
+            this.Flexibilidad = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
@@ -76,6 +79,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
             this.agregarElemento(elemento);
+            this.Flexibilidad = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : this(mesh, resistencia)
@@ -84,6 +88,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.ElementosComposicion = new List<Elemento>();
             this.agregarElemento(elemento);
             this.SetEfecto(efecto);
+            this.Flexibilidad = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : this(mesh, resistencia)
@@ -91,6 +96,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
             this.SetEfecto(efecto);
+            this.Flexibilidad = 0;
         }
 
         #endregion
@@ -410,7 +416,6 @@ namespace AlumnoEjemplos.PabloTGC
 
         public void SetEfecto(Efecto efecto)
         {
-           // efecto.AgregarParametrosAlPrincipio(this.ParametrosIluminacion());
             this.efecto = efecto;
             efecto.Aplicar(this.Mesh);
         }
@@ -458,6 +463,12 @@ namespace AlumnoEjemplos.PabloTGC
 
         #endregion
 
+
+        public float ObtenerPuntoMedio()
+        {
+            //Sabemos que la altura de los elementos las estamos manejando sobre el eje Y
+            return this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y;
+        }
 
         #endregion
 

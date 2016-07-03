@@ -40,7 +40,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
 
         #region Comportamientos
 
-        public void IniciarCreacion(int tiempoObjetivo)
+        public void IniciarCreacion(int tiempoObjetivo, bool ejecutarPantallaCompleta)
         { 
             //Device de DirectX para crear primitivas
             d3dDevice = GuiController.Instance.D3dDevice;
@@ -63,7 +63,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             contexto.elementos = new List<Elemento>();
 
             contexto.controladorEntradas = new ControladorEntradas();
-            contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
+            //contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
 
             //¿de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
             contexto.optimizador = new Optimizador(contexto.elementos, 15, 500);
@@ -75,6 +75,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f), aspectRatio, zNearPlaneDistance, zFarPlaneDistance);
 
             contexto.tiempoObjetivo = tiempoObjetivo;
+
+            GuiController.Instance.FullScreenEnable = ejecutarPantallaCompleta;
         }
 
         public void AdministracionDeEfectos()
@@ -87,6 +89,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Cargar Shader personalizado para el efecto de las algas
             contexto.efectoAlgas = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene");
             contexto.efectoAlgas2 = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene2");
+            contexto.efectoArbol = new EfectoArbol(TgcShaders.loadEffect(recursos + "Shaders\\ArbolShader.fx"), "RenderScene");
+            contexto.efectoArbol2 = new EfectoArbol(TgcShaders.loadEffect(recursos + "Shaders\\ArbolShader.fx"), "RenderScene2");
             contexto.efectoBotes = new EfectoBote(TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx"), "RenderScene");
             contexto.efectoLuz = new EfectoLuz(GuiController.Instance.Shaders.TgcMeshPointLightShader);
         }
@@ -150,7 +154,18 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     float x = posicionPalmerasX[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
                     float z = posicionPalmerasZ[j] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
                     palmeraNueva.Position = new Vector3(x, contexto.terreno.CalcularAltura(x, z), z);
-                    contexto.elementos.Add(new Elemento(1000, 1400, palmeraNueva, contexto.efectoLuz));
+
+                    Elemento elemNuevo;
+                    if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.5)
+                    {
+                        elemNuevo = new Elemento(1000, 1400, palmeraNueva, contexto.efectoArbol);
+                    }
+                    else
+                    {
+                        elemNuevo = new Elemento(1000, 1400, palmeraNueva, contexto.efectoArbol2);
+                    }
+                    elemNuevo.Flexibilidad = FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, 0.15F);
+                    contexto.elementos.Add(elemNuevo);
                 }
             }
         }
@@ -178,7 +193,17 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     arbolBananaNuevo.Position = new Vector3(x, contexto.terreno.CalcularAltura(x, z), z);
                     bananaMeshNueva = bananaMesh.createMeshInstance("Banana");
                     bananaMeshNueva.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                    contexto.elementos.Add(new Elemento(1000, 1300, arbolBananaNuevo, new Alimento(1000, 1000, bananaMeshNueva, 20, contexto.efectoLuz), contexto.efectoLuz));
+                    Elemento elemNuevo;
+                    if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.5)
+                    {
+                        elemNuevo = new Elemento(1000, 1300, arbolBananaNuevo, new Alimento(1000, 1000, bananaMeshNueva, 20, contexto.efectoLuz), contexto.efectoArbol);
+                    }
+                    else
+                    {
+                        elemNuevo = new Elemento(1000, 1300, arbolBananaNuevo, new Alimento(1000, 1000, bananaMeshNueva, 20, contexto.efectoLuz), contexto.efectoArbol2);
+                    }
+                    elemNuevo.Flexibilidad = FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, 0.15F);
+                    contexto.elementos.Add(elemNuevo);
                 }
             }
         }
@@ -212,9 +237,21 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     leniaMesh = lenia.createMeshInstance(lenia.Name + i + j);
                     fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
-                    contexto.elementos.Add(new Elemento(1000, 2330, pinoNuevo,
+                    Elemento elementoNuevo;
+                    if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.5)
+                    {
+                        elementoNuevo = new Elemento(1000, 2330, pinoNuevo,
                                 (new Madera(1000, 233, leniaMesh,
-                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego), contexto.efectoLuz)), contexto.efectoLuz));
+                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego), contexto.efectoLuz)), contexto.efectoArbol);
+                    }
+                    else
+                    {
+                        elementoNuevo = new Elemento(1000, 2330, pinoNuevo,
+                                (new Madera(1000, 233, leniaMesh,
+                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego), contexto.efectoLuz)), contexto.efectoArbol2);
+                    }
+                    elementoNuevo.Flexibilidad = FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, 0.08F);
+                    contexto.elementos.Add(elementoNuevo);
                 }
             }
         }
@@ -337,7 +374,17 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     float x = posicionesArbolesX[i] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
                     float z = posicionesArbolesZ[j] + FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(-250, 250);
                     arbolNuevo.Position = new Vector3(x, contexto.terreno.CalcularAltura(x, z), z);
-                    contexto.elementos.Add(new Elemento(1000, 1400, arbolNuevo, contexto.efectoLuz));
+                    Elemento elemNuevo;
+                    if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.5)
+                    {
+                        elemNuevo = new Elemento(1000, 1400, arbolNuevo, contexto.efectoArbol);
+                    }
+                    else
+                    {
+                        elemNuevo = new Elemento(1000, 1400, arbolNuevo, contexto.efectoArbol2);
+                    }
+                    elemNuevo.Flexibilidad = FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, 0.07F);
+                    contexto.elementos.Add(elemNuevo);
                 }
             }
         }
@@ -502,7 +549,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             contexto.pisoEfecto.Aplicar(contexto.piso, contexto);
         }
 
-        public void CrearPersonaje(float velocidadCaminar, float velocidadRotacion, float fuerza)
+        public void CrearPersonaje(float velocidadCaminar, float velocidadRotacion, float fuerza, Color color)
         {
             TgcMesh hachaMesh;
             TgcMesh palo;
@@ -549,7 +596,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             TgcSkeletalLoader skeletalLoader = new TgcSkeletalLoader();
             personaje.mesh = skeletalLoader.loadMeshAndAnimationsFromFile(pathMesh, mediaPath, animationsPath);
             //Le cambiamos la textura para diferenciarlo un poco
-            personaje.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, recursos + "SkeletalAnimations\\Robot\\Textures\\" + "uvwGreen.jpg") });
+            personaje.mesh.changeDiffuseMaps(new TgcTexture[] { TgcTexture.createTexture(d3dDevice, recursos + "SkeletalAnimations\\Robot\\Textures\\" + "uvw.jpg") });
             personaje.mesh.Scale = new Vector3(1f, 1f, 1f);
             //****************************************************
 
@@ -580,6 +627,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Una vez configurado el mesh del personaje iniciamos su bounding esfera y su esfera de alcance de interacción con los elementos
             personaje.IniciarBoundingEsfera();
             personaje.IniciarAlcanceInteraccionEsfera();
+
+            personaje.mesh.setColor(color);
 
             contexto.personaje = personaje;
         }
@@ -901,6 +950,16 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             contexto.screenQuadVB = screenQuadVB;
             contexto.renderTarget2D = renderTarget2D;
             contexto.efectoLluvia = effect;
+        }
+
+        public void IniciarCamaraPrimeraPersona()
+        {
+            contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
+        }
+
+        public void IniciarCamaraTerceraPersona()
+        {
+            contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
         }
 
         private String Version()

@@ -63,6 +63,8 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     contexto.efectoAlgas.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                     contexto.efectoAlgas2.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                     contexto.efectoBotes.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    contexto.efectoArbol.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                    contexto.efectoArbol2.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                     //TODO+++++++++++++++++++++++++++++++++
                 }
                 this.liberar();

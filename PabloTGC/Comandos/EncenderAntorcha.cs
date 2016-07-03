@@ -24,6 +24,8 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 contexto.efectoAlgas.AgregarElementoDeIluminacion(new ElementoIluminacion(antorcha, 1500));
                 contexto.efectoAlgas2.AgregarElementoDeIluminacion(new ElementoIluminacion(antorcha, 1500));
                 contexto.efectoBotes.AgregarElementoDeIluminacion(new ElementoIluminacion(antorcha, 1500));
+                contexto.efectoArbol.AgregarElementoDeIluminacion(new ElementoIluminacion(antorcha, 1500));
+                contexto.efectoArbol2.AgregarElementoDeIluminacion(new ElementoIluminacion(antorcha, 1500));
                 //TODO+++++++++++++++++++++++++++++++++
 
             }

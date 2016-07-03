@@ -81,12 +81,12 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
 
         private void ActualizarRelojInterno(float elapsedTime)
         {
-            //Si el elapsedTime es mayor de 2 segundos, solo tenemos en cuenta 2 segundos sino el reloj se torna inestable
+            //Si el elapsedTime es mayor de 0.5 segundos, solo tenemos en cuenta 0,5 segundos sino el reloj se torna inestable
             //Esto viene muy bien en la etapa de configuración, que viene un elapsedTime muy grande.
-            if (elapsedTime > 1f)
+            if (elapsedTime > 0.5f)
             {
                 //El reloj interno lo interpretamos en segundos
-                this.relojInterno += 1f * this.velocidadTiempo;
+                this.relojInterno += 0.5f * this.velocidadTiempo;
             }
             else
             {

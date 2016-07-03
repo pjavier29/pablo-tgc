@@ -4,13 +4,13 @@ using System;
 
 namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
 {
-    public class EfectoAlga : Efecto
+    public class EfectoArbol : Efecto
     {
         #region Atributos
         #endregion
 
         #region Constructores
-        public EfectoAlga(Effect efectoShader, String tecnica): base(efectoShader, tecnica)
+        public EfectoArbol(Effect efectoShader, String tecnica) : base(efectoShader, tecnica)
         {
         }
         #endregion
@@ -30,6 +30,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
                 {
                     //Setea primero aquellos parámetros que son propios del efecto en cuestión.
                     this.GetEfectoShader().SetValue("time", contexto.tiempo);
+                    this.GetEfectoShader().SetValue("distanciaAnimacion", elemento.Flexibilidad);
                     iluminador.Iluminar(this, contexto.personaje.mesh.Position, elemento.ColorEmisor(), elemento.ColorAmbiente(),
                     elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
                     elemento.Mesh.render();
@@ -37,6 +38,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
                 else
                 {
                     this.GetEfectoShader().SetValue("time", contexto.tiempo);
+                    this.GetEfectoShader().SetValue("distanciaAnimacion", elemento.Flexibilidad);
                     contexto.dia.GetSol().Iluminar(contexto.personaje.mesh.Position, this, elemento.ColorEmisor(), elemento.ColorAmbiente(),
                         elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
                     elemento.Mesh.render();
@@ -45,6 +47,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
             else
             {
                 this.GetEfectoShader().SetValue("time", contexto.tiempo);
+                this.GetEfectoShader().SetValue("distanciaAnimacion", elemento.Flexibilidad);
                 contexto.dia.GetSol().Iluminar(contexto.personaje.mesh.Position, this, elemento.ColorEmisor(), elemento.ColorAmbiente(),
                     elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
                 elemento.Mesh.render();

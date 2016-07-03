@@ -29,11 +29,12 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             comboBoxDificultad.Items.Add("Difícil");
             comboBoxDificultad.Items.Add("Muy Difícil");
             comboBoxDificultad.SelectedIndex = 0;
+            radioButtonPrimeraPersona.Checked = true;
         }
 
         private void botonAceptar_Click(object sender, EventArgs e)
         {
-            this.modelo.IniciarCreacion(this.ObtenerValorDificultad());
+            this.modelo.IniciarCreacion(this.ObtenerValorDificultad(), checkBoxPantallaCompleta.Checked);
             progressBarCreacion.Increment(5);
             this.modelo.AdministracionDeEfectos();
             progressBarCreacion.Increment(5);
@@ -70,11 +71,21 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             progressBarCreacion.Increment(5);
             this.modelo.CrearPiso();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPersonaje(this.ObtenerVelocidadCaminar(), this.ObtenerVelocidadRotar(), this.ObtenerFuerza());
+            this.modelo.CrearPersonaje(this.ObtenerVelocidadCaminar(), this.ObtenerVelocidadRotar(), this.ObtenerFuerza(),
+                pictureBoxColorPersonaje.BackColor);
             progressBarCreacion.Increment(5);
             this.modelo.CrearHud();
             progressBarCreacion.Increment(5);
             this.modelo.CrearPostProcesado();
+            progressBarCreacion.Increment(5);
+            if (radioButtonPrimeraPersona.Checked)
+            {
+                this.modelo.IniciarCamaraPrimeraPersona();
+            }
+            else
+            {
+                this.modelo.IniciarCamaraTerceraPersona();
+            }
             progressBarCreacion.Increment(5);
 
             this.Close();
@@ -150,6 +161,16 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         private float ObtenerVelocidadCaminar()
         {
             return (float) numericUpDownVelocidadCaminar.Value;
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            ColorDialog color = new ColorDialog();
+            color.AllowFullOpen = false;
+            color.ShowHelp = true;
+            color.Color = pictureBoxColorPersonaje.BackColor;
+            if (color.ShowDialog() == DialogResult.OK)
+                pictureBoxColorPersonaje.BackColor = color.Color;
         }
     }
 }

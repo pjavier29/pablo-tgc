@@ -129,6 +129,7 @@
     <Compile Include="PabloTGC\Utiles\Efectos\Efecto.cs" />
     <Compile Include="PabloTGC\Utiles\Efectos\EfectoAgua.cs" />
     <Compile Include="PabloTGC\Utiles\Efectos\EfectoAlga.cs" />
+    <Compile Include="PabloTGC\Utiles\Efectos\EfectoArbol.cs" />
     <Compile Include="PabloTGC\Utiles\Efectos\EfectoBote.cs" />
     <Compile Include="PabloTGC\Utiles\Efectos\EfectoFuego.cs" />
     <Compile Include="PabloTGC\Utiles\Efectos\EfectoLuz.cs" />
