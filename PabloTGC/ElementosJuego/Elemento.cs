@@ -40,6 +40,7 @@ namespace AlumnoEjemplos.PabloTGC
         private bool hayInteraccion;
         private float momentoUltimoGolpe;
         private Efecto efecto;
+        private float vibracion;
         #endregion
 
         #region Propiedades
@@ -65,6 +66,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.hayInteraccion = false;
             this.momentoUltimoGolpe = 0;
             this.Flexibilidad = 0;
+            this.vibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
@@ -72,6 +74,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Peso = peso;
             this.ElementosComposicion = new List<Elemento>();
             this.Flexibilidad = 0;
+            this.vibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
@@ -80,6 +83,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.ElementosComposicion = new List<Elemento>();
             this.agregarElemento(elemento);
             this.Flexibilidad = 0;
+            this.vibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : this(mesh, resistencia)
@@ -89,6 +93,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.agregarElemento(elemento);
             this.SetEfecto(efecto);
             this.Flexibilidad = 0;
+            this.vibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : this(mesh, resistencia)
@@ -97,6 +102,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.ElementosComposicion = new List<Elemento>();
             this.SetEfecto(efecto);
             this.Flexibilidad = 0;
+            this.vibracion = 0;
         }
 
         #endregion
@@ -180,6 +186,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.hayInteraccion = true;
             this.momentoUltimoGolpe = tiempoDeGolpe;
             this.Resistencia -= danio;
+            this.vibracion = 1;
         }
 
         public bool estaDestruido()
@@ -468,6 +475,19 @@ namespace AlumnoEjemplos.PabloTGC
         {
             //Sabemos que la altura de los elementos las estamos manejando sobre el eje Y
             return this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y;
+        }
+
+        public float ObtenerVibracion(float tiempo)
+        {
+            if (this.vibracion != 0)
+            {
+                this.vibracion -= (tiempo - this.momentoUltimoGolpe);
+                if (this.vibracion < 0)
+                {
+                    this.vibracion = 0;
+                }
+            }
+            return this.vibracion;
         }
 
         #endregion

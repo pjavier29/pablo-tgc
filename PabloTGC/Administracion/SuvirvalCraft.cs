@@ -15,6 +15,7 @@ using TgcViewer.Utils.Shaders;
 using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using AlumnoEjemplos.PabloTGC.ElementosDia;
 using TgcViewer.Utils;
+using TgcViewer.Utils.Sound;
 
 namespace AlumnoEjemplos.PabloTGC.Administracion
 {
@@ -23,6 +24,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
     /// </summary>
     public class SuvirvalCraft : TgcExample
     {
+        //TODO. Refactorizar esta lógica, hay demasiados atributos publicos en la apicacion principal.
         public Terreno terreno;
         public TgcSkyBox skyBox;
         public TgcMesh piso;
@@ -107,6 +109,11 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         Surface pSurf;
         public Microsoft.DirectX.Direct3D.Effect efectoLluvia;
 
+
+        public TgcStaticSound sonidoGolpePatada;
+        public TgcStaticSound sonidoGolpe;
+        public List<String> musicas;
+
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
         /// Influye en donde se va a haber en el árbol de la derecha de la pantalla.
@@ -166,6 +173,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         {
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
+
+            this.ReproducirMusica();
 
             //Actualizamos el dia
             dia.Actualizar(this, elapsedTime);
@@ -475,6 +484,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             screenQuadVB.Dispose();
             renderTarget2D.Dispose();
             estadoDiaLluviaIcono.dispose();
+            sonidoGolpe.dispose();
+            sonidoGolpePatada.dispose();
         }
 
         public void ActualizarPosicionSkyBox(Vector3 posicion)
@@ -508,6 +519,18 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             coordenadaRelativaY = (int)(porcentajeY * (coordenadaInferiorIzquierda.Y - coordenadaSuperiorDerecha.Y));
 
             return new Point(coordenadaInferiorIzquierda.X + coordenadaRelativaX + factorCorreccionX, coordenadaInferiorIzquierda.Y - coordenadaRelativaY + factorCorreccionY);
+        }
+
+        private void ReproducirMusica()
+        {
+            TgcMp3Player player = GuiController.Instance.Mp3Player;
+            TgcMp3Player.States currentState = player.getStatus();
+            if (currentState == TgcMp3Player.States.Open || currentState == TgcMp3Player.States.Stopped)
+            {
+                player.closeFile();
+                player.FileName = this.musicas[FuncionesMatematicas.Instance.NumeroAleatorioIntEntre(0,this.musicas.Count - 1)];
+                player.play(false);
+            }
         }
     }
 }

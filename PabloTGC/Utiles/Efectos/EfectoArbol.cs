@@ -31,6 +31,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
                     //Setea primero aquellos parámetros que son propios del efecto en cuestión.
                     this.GetEfectoShader().SetValue("time", contexto.tiempo);
                     this.GetEfectoShader().SetValue("distanciaAnimacion", elemento.Flexibilidad);
+                    this.GetEfectoShader().SetValue("vibracionPorGolpe", elemento.ObtenerVibracion(contexto.tiempo));
                     iluminador.Iluminar(this, contexto.personaje.mesh.Position, elemento.ColorEmisor(), elemento.ColorAmbiente(),
                     elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
                     elemento.Mesh.render();
@@ -39,6 +40,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
                 {
                     this.GetEfectoShader().SetValue("time", contexto.tiempo);
                     this.GetEfectoShader().SetValue("distanciaAnimacion", elemento.Flexibilidad);
+                    this.GetEfectoShader().SetValue("vibracionPorGolpe", elemento.ObtenerVibracion(contexto.tiempo));
                     contexto.dia.GetSol().Iluminar(contexto.personaje.mesh.Position, this, elemento.ColorEmisor(), elemento.ColorAmbiente(),
                         elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
                     elemento.Mesh.render();
@@ -48,6 +50,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
             {
                 this.GetEfectoShader().SetValue("time", contexto.tiempo);
                 this.GetEfectoShader().SetValue("distanciaAnimacion", elemento.Flexibilidad);
+                this.GetEfectoShader().SetValue("vibracionPorGolpe", elemento.ObtenerVibracion(contexto.tiempo));
                 contexto.dia.GetSol().Iluminar(contexto.personaje.mesh.Position, this, elemento.ColorEmisor(), elemento.ColorAmbiente(),
                     elemento.ColorDifuso(), elemento.ColorEspecular(), elemento.EspecularEx());
                 elemento.Mesh.render();

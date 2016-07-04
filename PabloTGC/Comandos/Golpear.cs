@@ -12,6 +12,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
     {
         #region Atributo;
         private float momentoUltimoGolpe;
+        private Elemento elementoEnColision;
         #endregion
 
         #region Propiedades
@@ -28,6 +29,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
         {
             this.GolpeActual = tipoDeGolpe;
             this.momentoUltimoGolpe = 0;
+            this.elementoEnColision = null;
         }
         #endregion
 
@@ -37,8 +39,14 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
             float alcance = 0;
             float fuerzaGolpe = 0;
 
+            this.BuscarColisionConGolpe(contexto);
+
             if (this.GolpeActual.Equals(Patear))
             {
+                if (this.elementoEnColision != null)
+                {
+                    contexto.sonidoGolpePatada.play(false);
+                }
                 contexto.personaje.mesh.playAnimation("Patear", true);
                 alcance = contexto.personaje.alcancePatada();
                 fuerzaGolpe = contexto.personaje.fuerzaPatada();
@@ -46,42 +54,46 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
 
             if (this.GolpeActual.Equals(Pegar))
             {
+                if (this.elementoEnColision != null)
+                {
+                    contexto.sonidoGolpe.play(false);
+                }
                 contexto.personaje.mesh.playAnimation("Pegar", true);
                 alcance = contexto.personaje.alcanceGolpe();
                 fuerzaGolpe = contexto.personaje.fuerzaGolpe();
             }
 
             //Si golpeo un obstáculo deberé esperar 2 segundos para poder golpearlo nuevamente
-            if (this.PuedeGolpear(contexto.tiempo))
+            if (this.PuedeGolpear(contexto.tiempo) && this.elementoEnColision != null)
             {
                 //Buscamos si esta al alcance alguno de los obstáculos
-                foreach (Elemento elem in contexto.optimizador.ElementosColision)
-                {
-                    if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
-                    {
+                //foreach (Elemento elem in contexto.optimizador.ElementosColision)
+                //{
+                    //if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
+                    //{
                         //Si golpeo actualizamos el tiempo local
                         this.momentoUltimoGolpe = contexto.tiempo;
-                        elem.recibirDanio(fuerzaGolpe, contexto.tiempo);
-                        if (elem.estaDestruido())
+                        this.elementoEnColision.recibirDanio(fuerzaGolpe, contexto.tiempo);
+                        if (this.elementoEnColision.estaDestruido())
                         {
-                            if (!elem.destruccionTotal())
+                            if (!this.elementoEnColision.destruccionTotal())
                             {
-                                foreach (Elemento obs in elem.elementosQueContiene())
+                                foreach (Elemento obs in this.elementoEnColision.elementosQueContiene())
                                 {
                                     //TODO. Aplicar algun algoritmo de dispersion copado
-                                    obs.posicion(elem.posicion());
+                                    obs.posicion(this.elementoEnColision.posicion());
                                     contexto.elementos.Add(obs);
                                 }
                             }
-                            elem.liberar();
-                            contexto.elementos.Remove(elem);
+                            this.elementoEnColision.liberar();
+                            contexto.elementos.Remove(this.elementoEnColision);
                             contexto.optimizador.ForzarActualizacionElementosColision();
                         }
 
                         //En principio solo se puede golpear un obstaculo a la vez.
-                        break;
-                    }
-                }
+                       // break;
+                    //}
+                //}
             }
         }
 
@@ -89,6 +101,21 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
         {
             if (this.momentoUltimoGolpe == 0) { return true; }
             return (tiempo - this.momentoUltimoGolpe) > 1.5f;
+        }
+
+        private void BuscarColisionConGolpe(SuvirvalCraft contexto)
+        {
+            this.elementoEnColision = null;
+            //Buscamos si esta al alcance alguno de los obstáculos
+            foreach (Elemento elem in contexto.optimizador.ElementosColision)
+            {
+                if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
+                {
+                    this.elementoEnColision = elem;
+                    //En principio solo se puede golpear un obstaculo a la vez.
+                    break;
+                }
+            }
         }
         #endregion
     }

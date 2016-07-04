@@ -30,6 +30,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             comboBoxDificultad.Items.Add("Muy Difícil");
             comboBoxDificultad.SelectedIndex = 0;
             radioButtonPrimeraPersona.Checked = true;
+            this.modelo.IniciarMusicaConfiguracion();
         }
 
         private void botonAceptar_Click(object sender, EventArgs e)
@@ -87,7 +88,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 this.modelo.IniciarCamaraTerceraPersona();
             }
             progressBarCreacion.Increment(5);
-
+            this.modelo.IniciarMusicasYSonidos();
             this.Close();
         }
 

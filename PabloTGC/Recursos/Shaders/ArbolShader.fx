@@ -43,6 +43,7 @@ float lightAttenuation; //Factor de atenuacion de la luz
 
 float time;
 float distanciaAnimacion;
+float vibracionPorGolpe = 0;
 
 /**************************************************************************************/
 /* DIFFUSE_MAP */
@@ -75,6 +76,9 @@ VS_OUTPUT_DIFFUSE_MAP vs_DiffuseMap(VS_INPUT_DIFFUSE_MAP input)
 	VS_OUTPUT_DIFFUSE_MAP output;
 
 	input.Position.x += sin(time) * input.Position.y * distanciaAnimacion;
+
+	input.Position.x += sin(time * 100) * vibracionPorGolpe;
+	input.Position.z += cos(time * 100) * vibracionPorGolpe;
 
 	//Proyectar posicion
 	output.Position = mul(input.Position, matWorldViewProj);
@@ -109,6 +113,9 @@ VS_OUTPUT_DIFFUSE_MAP vs_DiffuseMap2(VS_INPUT_DIFFUSE_MAP input)
 
 	input.Position.x += sin(time) * input.Position.y * distanciaAnimacion;
 	input.Position.z += cos(time) * input.Position.y * distanciaAnimacion;
+
+	input.Position.x += sin(time * 100) * vibracionPorGolpe;
+	input.Position.z += cos(time * 100) * vibracionPorGolpe;
 
 	//Proyectar posicion
 	output.Position = mul(input.Position, matWorldViewProj);

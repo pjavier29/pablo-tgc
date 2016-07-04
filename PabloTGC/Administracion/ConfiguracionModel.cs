@@ -14,6 +14,7 @@ using System.Text;
 using TgcViewer;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Shaders;
+using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.Terrain;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSceneLoader;
@@ -35,19 +36,26 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public ConfiguracionModel(SuvirvalCraft contexto)
         {
             this.contexto = contexto;
+
+            //Device de DirectX para crear primitivas
+            d3dDevice = GuiController.Instance.D3dDevice;
+            //Carpeta de acceso a los recursos
+            recursos = GuiController.Instance.AlumnoEjemplosDir + "PabloTGC\\Recursos\\";
         }
         #endregion
 
         #region Comportamientos
 
+        public void IniciarMusicaConfiguracion()
+        {
+            GuiController.Instance.Mp3Player.closeFile();
+            GuiController.Instance.Mp3Player.FileName = recursos + "Sonidos\\Musicas\\01 - Risen Title Theme.mp3";
+            TgcMp3Player player = GuiController.Instance.Mp3Player;
+            player.play(true);
+        }
+
         public void IniciarCreacion(int tiempoObjetivo, bool ejecutarPantallaCompleta)
         { 
-            //Device de DirectX para crear primitivas
-            d3dDevice = GuiController.Instance.D3dDevice;
-
-            //Carpeta de acceso a los recursos
-            recursos = GuiController.Instance.AlumnoEjemplosDir + "PabloTGC\\Recursos\\";
-
             //Crear loader
             loader = new TgcSceneLoader();
 
@@ -960,6 +968,30 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public void IniciarCamaraTerceraPersona()
         {
             contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
+        }
+
+        public void IniciarMusicasYSonidos()
+        {
+            TgcStaticSound sonidoGolpe = new TgcStaticSound();
+            sonidoGolpe.loadSound(recursos + "Sonidos\\Golpe.wav");
+            contexto.sonidoGolpe = sonidoGolpe;
+
+            TgcStaticSound sonidoGolpePatada = new TgcStaticSound();
+            sonidoGolpePatada.loadSound(recursos + "Sonidos\\GolpePatada.wav");
+            contexto.sonidoGolpePatada = sonidoGolpePatada;
+
+            List<String> musicas = new List<string>();
+            musicas.Add(recursos + "Sonidos\\Musicas\\02 - The Beach.mp3");
+            musicas.Add(recursos + "Sonidos\\Musicas\\03 - The Beach - Fight.mp3");
+            musicas.Add(recursos + "Sonidos\\Musicas\\04 - The Island.mp3");
+            musicas.Add(recursos + "Sonidos\\Musicas\\05 - The Island At Night.mp3");
+            musicas.Add(recursos + "Sonidos\\Musicas\\06 - The Harbor City.mp3");
+            musicas.Add(recursos + "Sonidos\\Musicas\\07 - The Harbor City At Night.mp3");
+            contexto.musicas = musicas;
+
+            TgcMp3Player player = GuiController.Instance.Mp3Player;
+            player.closeFile();
+            player.stop();
         }
 
         private String Version()
