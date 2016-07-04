@@ -41,6 +41,7 @@ namespace AlumnoEjemplos.PabloTGC
         private float momentoUltimoGolpe;
         private Efecto efecto;
         private float vibracion;
+        private float momentoUltimaVibracion;
         #endregion
 
         #region Propiedades
@@ -67,6 +68,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.momentoUltimoGolpe = 0;
             this.Flexibilidad = 0;
             this.vibracion = 0;
+            this.momentoUltimaVibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
@@ -75,6 +77,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.ElementosComposicion = new List<Elemento>();
             this.Flexibilidad = 0;
             this.vibracion = 0;
+            this.momentoUltimaVibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
@@ -84,6 +87,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.agregarElemento(elemento);
             this.Flexibilidad = 0;
             this.vibracion = 0;
+            this.momentoUltimaVibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : this(mesh, resistencia)
@@ -94,6 +98,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.SetEfecto(efecto);
             this.Flexibilidad = 0;
             this.vibracion = 0;
+            this.momentoUltimaVibracion = 0;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : this(mesh, resistencia)
@@ -103,6 +108,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.SetEfecto(efecto);
             this.Flexibilidad = 0;
             this.vibracion = 0;
+            this.momentoUltimaVibracion = 0;
         }
 
         #endregion
@@ -476,16 +482,17 @@ namespace AlumnoEjemplos.PabloTGC
             return this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y;
         }
 
-        public void GenerarVivracion()
+        public void GenerarVibracion(float tiempo)
         {
             this.vibracion = 1;
+            this.momentoUltimaVibracion = tiempo;
         }
 
         public float ObtenerVibracion(float tiempo)
         {
             if (this.vibracion != 0)
             {
-                this.vibracion -= (tiempo - this.momentoUltimoGolpe);
+                this.vibracion -= (tiempo - this.momentoUltimaVibracion);
                 if (this.vibracion < 0)
                 {
                     this.vibracion = 0;

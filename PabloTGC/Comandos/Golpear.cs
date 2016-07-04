@@ -46,7 +46,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 if (this.elementoEnColision != null)
                 {
                     contexto.sonidoGolpePatada.play(false);
-                    this.elementoEnColision.GenerarVivracion();
+                    this.elementoEnColision.GenerarVibracion(contexto.tiempo);
                 }
                 contexto.personaje.mesh.playAnimation("Patear", true);
                 alcance = contexto.personaje.alcancePatada();
@@ -58,7 +58,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 if (this.elementoEnColision != null)
                 {
                     contexto.sonidoGolpe.play(false);
-                    this.elementoEnColision.GenerarVivracion();
+                    this.elementoEnColision.GenerarVibracion(contexto.tiempo);
                 }
                 contexto.personaje.mesh.playAnimation("Pegar", true);
                 alcance = contexto.personaje.alcanceGolpe();

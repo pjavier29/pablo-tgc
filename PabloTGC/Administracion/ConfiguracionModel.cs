@@ -299,7 +299,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
             TgcMesh galloMesh = scene.Meshes[0].createMeshInstance("Gallo");
             Animal gallo = new Animal(5000, 20, galloMesh, contexto.efectoLuz);
-            galloMesh.Position = new Vector3(0, contexto.terreno.CalcularAltura(0, 0), 0);
+            galloMesh.Position = new Vector3(20, contexto.terreno.CalcularAltura(20, 20), 20);
             alimento = new Alimento(1000, 1000, carneCruda.createMeshInstance("Carne Cruda"), 10, contexto.efectoLuz);
             alimento.posicion(galloMesh.Position);
             TgcMesh hamburguesaGallo = hamburguesa.createMeshInstance("Hambur Gallo");
