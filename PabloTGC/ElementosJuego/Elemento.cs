@@ -186,7 +186,6 @@ namespace AlumnoEjemplos.PabloTGC
             this.hayInteraccion = true;
             this.momentoUltimoGolpe = tiempoDeGolpe;
             this.Resistencia -= danio;
-            this.vibracion = 1;
         }
 
         public bool estaDestruido()
@@ -475,6 +474,11 @@ namespace AlumnoEjemplos.PabloTGC
         {
             //Sabemos que la altura de los elementos las estamos manejando sobre el eje Y
             return this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y;
+        }
+
+        public void GenerarVivracion()
+        {
+            this.vibracion = 1;
         }
 
         public float ObtenerVibracion(float tiempo)
