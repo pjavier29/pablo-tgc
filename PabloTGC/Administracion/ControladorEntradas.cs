@@ -221,6 +221,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Seleccion de Arma palo
             if (d3dInput.keyDown(Key.D1))
             {
+                this.comandosSeleccionados.Add(new ApagarAntorcha());
                 Comando accion = new Seleccionar(Seleccionar.NumeroUno);
                 this.comandosSeleccionados.Add(accion);
                 return this.comandosSeleccionados;
@@ -229,6 +230,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Seleccion de Arma Hacha
             if (d3dInput.keyDown(Key.D2))
             {
+                this.comandosSeleccionados.Add(new ApagarAntorcha());
                 Comando accion = new Seleccionar(Seleccionar.NumeroDos);
                 this.comandosSeleccionados.Add(accion);
                 return this.comandosSeleccionados;

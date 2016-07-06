@@ -94,6 +94,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             contexto.skyboxEfecto = new EfectoSkyBox(TgcShaders.loadEffect(recursos + "Shaders\\SkyBoxShader.fx"), "RenderScene");
             //Cargar Shader personalizado para el efecto del fuego
             contexto.efectoFuego = new EfectoFuego(TgcShaders.loadEffect(recursos + "Shaders\\FuegoShader.fx"), "RenderScene");
+            contexto.efectoFuego2 = new EfectoFuego(TgcShaders.loadEffect(recursos + "Shaders\\FuegoShader.fx"), "RenderScene2");
             //Cargar Shader personalizado para el efecto de las algas
             contexto.efectoAlgas = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene");
             contexto.efectoAlgas2 = new EfectoAlga(TgcShaders.loadEffect(recursos + "Shaders\\AlgaShader.fx"), "RenderScene2");
@@ -561,6 +562,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         {
             TgcMesh hachaMesh;
             TgcMesh palo;
+            TgcMesh antorcha;
             Personaje personaje;
 
             //Creamos el personaje
@@ -616,9 +618,17 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Palo
             palo = TgcBox.fromSize(new Vector3(3, 60, 3), Color.Green).toMesh("Palo");
 
+            scene = loader.loadSceneFromFile(recursos
+                + "MeshCreator\\Meshes\\Antorcha\\Antorcha-TgcScene.xml");
+            antorcha = scene.Meshes[0];
+
+            Antorcha antorchaElemento = new Antorcha(100, 100, antorcha, contexto.efectoFuego2);
+            personaje.antorcha = antorchaElemento;
+
             //Carmamos las armas
             personaje.agregarInstrumento(new Arma(100, 50, Matrix.Translation(10, 40, 0), palo));
             personaje.agregarInstrumento(new Arma(1000, 75, Matrix.Translation(10, 20, -20), hachaMesh));
+            personaje.agregarInstrumento(new Arma(1000, 75, Matrix.Translation(10, -20, 0), antorcha));
 
             TgcSkeletalBoneAttach attachment = new TgcSkeletalBoneAttach();
             attachment.Bone = personaje.mesh.getBoneByName("Bip01 R Hand");
@@ -631,6 +641,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             personaje.mesh.playAnimation("Parado", true);
             //Escalarlo porque es muy grande
             personaje.mesh.Position = new Vector3(0, contexto.terreno.CalcularAltura(0, 0), 0);
+            antorchaElemento.SetPosicion(personaje.mesh.Position);
 
             //Una vez configurado el mesh del personaje iniciamos su bounding esfera y su esfera de alcance de interacción con los elementos
             personaje.IniciarBoundingEsfera();
@@ -948,6 +959,17 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     , d3dDevice.PresentationParameters.BackBufferHeight, 1, Usage.RenderTarget,
                         Format.X8R8G8B8, Pool.Default);
 
+            //Creamos un DepthStencil que debe ser compatible con nuestra definicion de renderTarget2D.
+           // DepthStencil depthStencil = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,
+             //   d3dDevice.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true);
+            //Luego en se debe asignar este stencil:
+            // Probar de comentar esta linea, para ver como se produce el fallo en el ztest
+            // por no soportar usualmente el multisampling en el render to texture (en nuevas placas de video)
+            d3dDevice.DepthStencilSurface = d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,
+                d3dDevice.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true); ;
+
+
+
 
             //Cargar shader con efectos de Post-Procesado
             Microsoft.DirectX.Direct3D.Effect effect = TgcShaders.loadEffect(recursos + "Shaders\\PostProcess.fx");
@@ -980,6 +1002,24 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             sonidoGolpePatada.loadSound(recursos + "Sonidos\\GolpePatada.wav");
             contexto.sonidoGolpePatada = sonidoGolpePatada;
 
+            TgcStaticSound sonidoLluvia = new TgcStaticSound();
+            sonidoLluvia.loadSound(recursos + "Sonidos\\Lluvia.wav");
+            contexto.sonidoLluvia = sonidoLluvia;
+
+            TgcStaticSound sonidoAntorcha = new TgcStaticSound();
+            sonidoAntorcha.loadSound(recursos + "Sonidos\\Fuego.wav");
+            contexto.personaje.antorcha.sonidoAntorcha = sonidoAntorcha;
+
+            Tgc3dSound sound1 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(7000,0,5000));
+            sound1.MinDistance = 1500f;
+            contexto.sonidoGrillos = sound1;
+
+            Tgc3dSound sound2 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(-8000, 0, -8000));
+            sound2.MinDistance =1500f;
+            contexto.sonidoGrillos2 = sound2;
+
+            GuiController.Instance.DirectSound.ListenerTracking = contexto.personaje.mesh;
+
             List<String> musicas = new List<string>();
             musicas.Add(recursos + "Sonidos\\Musicas\\02 - The Beach.mp3");
             musicas.Add(recursos + "Sonidos\\Musicas\\03 - The Beach - Fight.mp3");
@@ -992,6 +1032,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             TgcMp3Player player = GuiController.Instance.Mp3Player;
             player.closeFile();
             player.stop();
+
+            sound1.play(true);
+            sound2.play(true);
         }
 
         private String Version()

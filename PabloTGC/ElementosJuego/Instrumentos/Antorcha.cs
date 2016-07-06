@@ -5,8 +5,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos
@@ -15,21 +14,23 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos
     {
         #region Atributos
         private Vector3 posicionActual;
+        public TgcStaticSound sonidoAntorcha;
+        private bool estaActivada;
         #endregion
 
         #region Constructores
         public Antorcha()
         {
-
+            estaActivada = false;
         }
 
         public Antorcha(float peso, float resistencia, TgcMesh mesh) : base(peso, resistencia, mesh)
         {
-
+            estaActivada = false;
         }
         public Antorcha(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
         {
-
+            estaActivada = false;
         }
         #endregion
 
@@ -81,6 +82,23 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos
             efecto.GetEfectoShader().SetValue("materialDiffuseColor", colorDifuso);
             efecto.GetEfectoShader().SetValue("materialSpecularColor", colorEspecular);
             efecto.GetEfectoShader().SetValue("materialSpecularExp", especularEx);
+        }
+
+        public override float GetAlturaAnimacion()
+        {
+            return (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) * 0.9f;
+        }
+
+        public void Activar()
+        {
+            this.estaActivada = true;
+            this.sonidoAntorcha.play(true);
+        }
+
+        public void Desactivar()
+        {
+            this.estaActivada = false;
+            this.sonidoAntorcha.stop();
         }
         #endregion
     }

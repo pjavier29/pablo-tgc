@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
             this.d3dDevice = d3dDevice;
         }
 
-        public void Render(Personaje personaje)
+        public void Render(Personaje personaje, SuvirvalCraft contexto)
         {
             //Hacer que la camara siga al personaje en su nueva posicion. Sumamos 100 en el posición de Y porque queremos que la cámara este un poco más alta.
             this.camaraTgc.Target = personaje.mesh.Position + new Vector3(0,100,0);
@@ -41,7 +41,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
             //Actualizar volumen del Frustum con nuevos valores de camara
             this.frustum.updateVolume(this.d3dDevice.Transform.View, this.d3dDevice.Transform.Projection);
 
-            personaje.Renderizar();
+            personaje.Renderizar(contexto);
         }
 
         public void SubirCamara(Personaje personaje)

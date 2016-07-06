@@ -106,6 +106,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             efecto.GetEfectoShader().SetValue("materialSpecularExp", especularEx);
         }
 
+        public override float GetAlturaAnimacion()
+        {
+            return (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) *0.2f;
+        }
+
         #endregion
     }
 }

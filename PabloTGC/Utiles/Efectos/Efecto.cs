@@ -39,6 +39,22 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
             this.elementosIluminacion.Add(elemento);
         }
 
+        public void EliminarElementoDeIluminacion(Elemento elemento)
+        {
+            ElementoIluminacion elementoABorrar = null;
+            foreach (ElementoIluminacion elemAux in this.elementosIluminacion)
+            {
+                if (elemAux.Elemento == elemento)
+                {
+                    elementoABorrar = elemAux;
+                }
+            }
+            if (elementoABorrar != null)
+            {
+                this.elementosIluminacion.Remove(elementoABorrar);
+            }
+        }
+
         public List<ElementoIluminacion> GetElementosIluminacion()
         {
             return this.elementosIluminacion;

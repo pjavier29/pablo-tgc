@@ -100,6 +100,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public Efecto efectoAlgas2;
         public Efecto efectoBotes;
         public Efecto efectoFuego;
+        public Efecto efectoFuego2;
         public Efecto efectoArbol;
         public Efecto efectoArbol2;
 
@@ -112,7 +113,10 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
 
         public TgcStaticSound sonidoGolpePatada;
         public TgcStaticSound sonidoGolpe;
+        public TgcStaticSound sonidoLluvia;
         public List<String> musicas;
+        public Tgc3dSound sonidoGrillos;
+        public Tgc3dSound sonidoGrillos2;
 
         /// <summary>
         /// Categoría a la que pertenece el ejemplo.
@@ -174,6 +178,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = GuiController.Instance.D3dDevice;
 
+            //Reproduccion de sonidos
             this.ReproducirMusica();
 
             //Actualizamos el dia
@@ -203,7 +208,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 comando.Ejecutar(this, elapsedTime);
             }
 
-            camara.Render(personaje);
+            camara.Render(personaje, this);
 
             optimizador.Actualizar(personaje.mesh.Position);
 
@@ -440,7 +445,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public override void close()
         {
             piso.dispose();
-            personaje.mesh.dispose();
+            personaje.Dispose();
             terreno.dispose();
             skyBox.dispose();
             foreach (Elemento elemento in elementos)
@@ -486,7 +491,10 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             estadoDiaLluviaIcono.dispose();
             sonidoGolpe.dispose();
             sonidoGolpePatada.dispose();
-        }
+            sonidoLluvia.dispose();
+            sonidoGrillos.dispose();
+            sonidoGrillos2.dispose();
+    }
 
         public void ActualizarPosicionSkyBox(Vector3 posicion)
         {

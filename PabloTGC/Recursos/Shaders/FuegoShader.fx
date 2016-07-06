@@ -25,6 +25,7 @@ sampler2D diffuseMap = sampler_state
 };
 
 float time = 0;
+float altura = 0;
 
 
 /**************************************************************************************/
@@ -53,12 +54,14 @@ struct VS_OUTPUT
 VS_OUTPUT vs_main( VS_INPUT Input )
 {
    VS_OUTPUT Output;
+   float y = Input.Position.y;
+   float valor = y > altura
+	       ? ((y + 200) / 142)
+	       : 0;
 
-	float y = Input.Position.y;
-	float valor = (y + 137) / 142;
-
-       Input.Position.x += sin((time*valor*valor)+5)*valor*sign(Input.Position.x);
-       Input.Position.z += cos((time*valor*valor)+5)*valor*sign(Input.Position.z);
+   Input.Position.x += sin((time*valor*valor)*5)*valor*sign(Input.Position.x);
+   Input.Position.z += cos((time*valor*valor)*5)*valor*sign(Input.Position.z);
+   Input.Position.y += (sin(time * 20) + 5) * valor;
    
    //Proyectar posicion
    Output.Position = mul( Input.Position, matWorldViewProj);
@@ -68,6 +71,36 @@ VS_OUTPUT vs_main( VS_INPUT Input )
    
    //Propago el color x vertice
    Output.Color = Input.Color;
+
+   return( Output );
+   
+}
+
+VS_OUTPUT vs_main2( VS_INPUT Input )
+{
+   VS_OUTPUT Output;
+
+   float y = Input.Position.y;
+   float valor = y > altura
+	       ? ((y + 200) / 142)
+	       : 0;
+
+   float4 colorAumentado = y > altura
+	                 ? float4(1, 1, 0, 0)
+	                 : float4(0, 0, 0, 0);
+
+   Input.Position.x += sin((time*valor*valor)*5)*valor*sign(Input.Position.x);
+   Input.Position.z += cos((time*valor*valor)*5)*valor*sign(Input.Position.z);
+   Input.Position.y += (sin(time * 20) + 10) * valor;
+   
+   //Proyectar posicion
+   Output.Position = mul( Input.Position, matWorldViewProj);
+   
+   //Propago las coordenadas de textura
+   Output.Texcoord = Input.Texcoord;
+   
+   //Propago el color x vertice
+   Output.Color = Input.Color + colorAumentado;
 
    return( Output );
    
@@ -93,6 +126,16 @@ technique RenderScene
    pass Pass_0
    {
 	  VertexShader = compile vs_3_0 vs_main();
+	  PixelShader = compile ps_3_0 ps_main();
+   }
+
+}
+
+technique RenderScene2
+{
+   pass Pass_0
+   {
+	  VertexShader = compile vs_3_0 vs_main2();
 	  PixelShader = compile ps_3_0 ps_main();
    }
 

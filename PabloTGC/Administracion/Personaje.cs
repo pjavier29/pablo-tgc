@@ -419,9 +419,31 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
         }
 
-        public void Renderizar()
+        public void Renderizar(SuvirvalCraft contexto)
         {
             this.mesh.animateAndRender();
+            //TODO esto es muy feo
+            if (this.TieneAntorchaSeleccionada())
+            {
+                //Si esta seleccionada la antorcha la renderizamos
+                this.antorcha.renderizar(contexto);
+            }
+        }
+
+        public bool TieneAntorchaSeleccionada()
+        {
+            //TODO. Esto esta muyy malll.
+            return this.instrumentoManoDerecha.mesh == this.antorcha.Mesh;
+        }
+
+        public void Dispose()
+        {
+            /*foreach (Arma arma in this.instrumentos)
+            {
+                arma.mesh.dispose();
+            }*/
+            this.antorcha.sonidoAntorcha.dispose();
+            this.mesh.dispose();
         }
 
         #endregion

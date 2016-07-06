@@ -87,6 +87,7 @@
     </Compile>
     <Compile Include="PabloTGC\Administracion\ConfiguracionModel.cs" />
     <Compile Include="PabloTGC\Administracion\ControladorEntradas.cs" />
+    <Compile Include="PabloTGC\Comandos\ApagarAntorcha.cs" />
     <Compile Include="PabloTGC\Comandos\EncenderAntorcha.cs" />
     <Compile Include="PabloTGC\ElementosDia\Dia.cs" />
     <Compile Include="PabloTGC\ElementosDia\Lluvia.cs" />

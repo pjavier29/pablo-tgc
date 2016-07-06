@@ -23,15 +23,18 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         public override void Actualizar(SuvirvalCraft contexto)
         {
             this.GetEfectoShader().SetValue("time", contexto.tiempo);
+            this.GetEfectoShader().SetValue("altura", 0);
         }
 
         public override void Actualizar(SuvirvalCraft contexto, Elemento elemento)
         {
             this.GetEfectoShader().SetValue("time", contexto.tiempo);
+            this.GetEfectoShader().SetValue("altura", elemento.GetAlturaAnimacion());
         }
         public override void ActualizarRenderizar(SuvirvalCraft contexto, Elemento elemento)
         {
             this.GetEfectoShader().SetValue("time", contexto.tiempo);
+            this.GetEfectoShader().SetValue("altura", elemento.GetAlturaAnimacion());
             elemento.Mesh.render();
         }
         #endregion

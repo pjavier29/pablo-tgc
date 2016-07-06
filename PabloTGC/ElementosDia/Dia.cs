@@ -45,7 +45,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         #region Comportamientos
         public void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
-            this.ActualizarRelojInterno(elapsedTime);
+            this.ActualizarRelojInterno(elapsedTime, contexto);
             this.sol.Actualizar(this.GetAnguloSegunSegundos());
         }
 
@@ -79,7 +79,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
             return this.TemperaturaActual().ToString() + "°";
         }
 
-        private void ActualizarRelojInterno(float elapsedTime)
+        private void ActualizarRelojInterno(float elapsedTime, SuvirvalCraft contexto)
         {
             //Si el elapsedTime es mayor de 0.5 segundos, solo tenemos en cuenta 0,5 segundos sino el reloj se torna inestable
             //Esto viene muy bien en la etapa de configuración, que viene un elapsedTime muy grande.
@@ -99,7 +99,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
             {
                 this.relojInterno = 0;
                 this.tiempo.CalcularTemperaturaDeDia();
-                this.lluvia.Actualizar();
+                this.lluvia.Actualizar(contexto);
                 if (this.lluvia.EstaLloviendo())
                 {
                     this.sol.ActualizarIntensidadMaximaLuz(8000f);

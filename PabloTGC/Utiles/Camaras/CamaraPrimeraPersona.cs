@@ -29,7 +29,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
         #endregion
 
         #region Comportamientos
-        public void Render(Personaje personaje)
+        public void Render(Personaje personaje, SuvirvalCraft contexto)
         {
             this.d3dDevice.Transform.View = Matrix.LookAtLH(personaje.PosicionAlturaCabeza(), personaje.DireccionAlturaCabeza(150), new Vector3(0, 1, 0));
 

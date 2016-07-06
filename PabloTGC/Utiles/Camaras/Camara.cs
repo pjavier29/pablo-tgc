@@ -9,7 +9,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
     public interface Camara
     {
         #region Firmas
-        void Render(Personaje personaje);
+        void Render(Personaje personaje, SuvirvalCraft contexto);
         void SubirCamara(Personaje personaje);
         void BajarCamara(Personaje personaje);
         void AcercarCamara(Personaje personaje);

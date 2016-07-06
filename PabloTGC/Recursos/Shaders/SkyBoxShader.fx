@@ -27,6 +27,7 @@ sampler2D diffuseMap = sampler_state
 float time = 0;
 float lightIntensityRelitive; //Intensidad de la luz, recibimos un numero entre 0 y 1
 float3 colorCielo; //Color RGB de la luz
+float intendidadRayo = 0;
 
 
 /**************************************************************************************/
@@ -79,7 +80,7 @@ float4 ps_main( float2 Texcoord: TEXCOORD0, float4 Color:COLOR0) : COLOR0
 	float4 fvBaseColor = tex2D( diffuseMap, Texcoord );
 	float4 colorCieloFinal = float4(colorCielo.x, colorCielo.y, colorCielo.z, 0);
 	// Lo multiplico por la intensidad y le sumo el color
-	return (fvBaseColor + colorCieloFinal) * lightIntensityRelitive;
+	return (fvBaseColor + colorCieloFinal) * (lightIntensityRelitive + intendidadRayo);
 }
 
 

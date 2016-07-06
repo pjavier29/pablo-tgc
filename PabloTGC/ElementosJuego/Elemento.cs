@@ -501,6 +501,11 @@ namespace AlumnoEjemplos.PabloTGC
             return this.vibracion;
         }
 
+        public virtual float GetAlturaAnimacion()
+        {
+            return 0;
+        }
+
         #endregion
 
     }
