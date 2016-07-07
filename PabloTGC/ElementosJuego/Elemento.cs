@@ -50,6 +50,7 @@ namespace AlumnoEjemplos.PabloTGC
         private List<Elemento> ElementosComposicion { get; set; }//Al romperse un obstaculo puede generar otros
         public TgcMesh Mesh { get; set; }
         public float Flexibilidad { get; set; }
+        public Color ColorBase { get; set; } = Color.White; //Deberiamos definir un color base para cada tipo de luz
         #endregion
 
         #region Contructores
@@ -69,6 +70,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Flexibilidad = 0;
             this.vibracion = 0;
             this.momentoUltimaVibracion = 0;
+            this.ColorBase = Color.White;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh) : this(mesh, resistencia)
@@ -78,6 +80,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Flexibilidad = 0;
             this.vibracion = 0;
             this.momentoUltimaVibracion = 0;
+            this.ColorBase = Color.White;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento) :this(mesh, resistencia)
@@ -88,6 +91,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Flexibilidad = 0;
             this.vibracion = 0;
             this.momentoUltimaVibracion = 0;
+            this.ColorBase = Color.White;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : this(mesh, resistencia)
@@ -99,6 +103,19 @@ namespace AlumnoEjemplos.PabloTGC
             this.Flexibilidad = 0;
             this.vibracion = 0;
             this.momentoUltimaVibracion = 0;
+            this.ColorBase = Color.White;
+        }
+
+        public Elemento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto, Color color) : this(mesh, resistencia)
+        {
+            this.Peso = peso;
+            this.ElementosComposicion = new List<Elemento>();
+            this.agregarElemento(elemento);
+            this.SetEfecto(efecto);
+            this.Flexibilidad = 0;
+            this.vibracion = 0;
+            this.momentoUltimaVibracion = 0;
+            this.ColorBase = color;
         }
 
         public Elemento(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : this(mesh, resistencia)
@@ -109,6 +126,7 @@ namespace AlumnoEjemplos.PabloTGC
             this.Flexibilidad = 0;
             this.vibracion = 0;
             this.momentoUltimaVibracion = 0;
+            this.ColorBase = Color.White;
         }
 
         #endregion
@@ -202,7 +220,7 @@ namespace AlumnoEjemplos.PabloTGC
         /// <summary>
         /// Destruye el elemento
         /// </summary>
-        public void destruir()
+        public virtual void destruir()
         {
             foreach (Elemento elemento in this.ElementosComposicion)
             {
@@ -449,17 +467,17 @@ namespace AlumnoEjemplos.PabloTGC
 
         public virtual ColorValue ColorAmbiente()
         {
-            return ColorValue.FromColor(Color.White);
+            return ColorValue.FromColor(this.ColorBase);
         }
 
         public virtual ColorValue ColorDifuso()
         {
-            return ColorValue.FromColor(Color.White);
+            return ColorValue.FromColor(this.ColorBase);
         }
 
         public virtual ColorValue ColorEspecular()
         {
-            return ColorValue.FromColor(Color.White);
+            return ColorValue.FromColor(this.ColorBase);
         }
 
         public virtual float EspecularEx()
@@ -471,6 +489,16 @@ namespace AlumnoEjemplos.PabloTGC
             ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
         {
 
+        }
+
+        public Color GetColorBase()
+        {
+            return ColorBase;
+          /*  if (this.ColorBase != null)
+            {
+                return ColorBase;
+            }
+            return Color.White;*/
         }
 
         #endregion
@@ -504,6 +532,16 @@ namespace AlumnoEjemplos.PabloTGC
         public virtual float GetAlturaAnimacion()
         {
             return 0;
+        }
+
+        public virtual void Activar()
+        {
+
+        }
+
+        public virtual void Desactivar()
+        {
+
         }
 
         #endregion

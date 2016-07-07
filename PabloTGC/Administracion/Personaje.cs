@@ -1,10 +1,10 @@
 ﻿using AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using TgcViewer.Utils.TgcGeometry;
 using TgcViewer.Utils.TgcSkeletalAnimation;
 
@@ -21,6 +21,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         private Arma instrumentoManoDerecha;//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
         private List<Arma> instrumentos;//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
         public Antorcha antorcha;
+        private Efecto efecto;
         #endregion
 
         #region Propiedades
@@ -32,6 +33,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public float Hidratacion { get; set; }
         public float Alimentacion { get; set; }
         public float TemperaturaCorporal { get; set; }
+        public Color Color { get; set; }
         #endregion
 
         #region Constructores
@@ -419,14 +421,52 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             }
         }
 
-        public void Renderizar(SuvirvalCraft contexto)
+        public void RenderizarTerceraPersona(SuvirvalCraft contexto)
         {
-            this.mesh.animateAndRender();
+            if (this.efecto != null)
+            {
+                this.efecto.ActualizarRenderizar(contexto);
+            }
+            else
+            {
+                this.mesh.animateAndRender();
+            }
+
             //TODO esto es muy feo
             if (this.TieneAntorchaSeleccionada())
             {
                 //Si esta seleccionada la antorcha la renderizamos
                 this.antorcha.renderizar(contexto);
+            }
+            else
+            {
+                this.instrumentoManoDerecha.renderizar(contexto);
+            }
+        }
+
+        public void RenderizarPrimeraPersona(SuvirvalCraft contexto)
+        {
+            this.mesh.updateAnimation();
+            this.mesh.Transform = Matrix.Scaling(this.mesh.Scale)
+                * Matrix.RotationYawPitchRoll(this.mesh.Rotation.Y, this.mesh.Rotation.X, this.mesh.Rotation.Z)
+                * Matrix.Translation(this.mesh.Position);
+
+            //Renderizar attachments
+            foreach (TgcSkeletalBoneAttach attach in this.mesh.Attachments)
+            {
+                attach.Mesh.Transform = attach.Offset * attach.Bone.MatFinal * this.mesh.Transform;
+                //attach.Mesh.render();
+            }
+
+            //TODO esto es muy feo
+            if (this.TieneAntorchaSeleccionada())
+            {
+                //Si esta seleccionada la antorcha la renderizamos
+                this.antorcha.renderizar(contexto);
+            }
+            else
+            {
+                this.instrumentoManoDerecha.renderizar(contexto);
             }
         }
 
@@ -445,6 +485,40 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             this.antorcha.sonidoAntorcha.dispose();
             this.mesh.dispose();
         }
+
+        public void SetEfecto(Efecto efecto)
+        {
+            this.efecto = efecto;
+            efecto.Aplicar(this.mesh);
+        }
+
+        #region Para configurar la luz
+        public virtual ColorValue ColorEmisor()
+        {
+            return ColorValue.FromColor(Color.Black);
+        }
+
+        public virtual ColorValue ColorAmbiente()
+        {
+            return ColorValue.FromColor(this.Color);
+        }
+
+        public virtual ColorValue ColorDifuso()
+        {
+            return ColorValue.FromColor(this.Color);
+        }
+
+        public virtual ColorValue ColorEspecular()
+        {
+            return ColorValue.FromColor(this.Color);
+        }
+
+        public virtual float EspecularEx()
+        {
+            return 20;
+        }
+
+        #endregion
 
         #endregion
     }

@@ -5,8 +5,7 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using TgcViewer.Utils.Sound;
 using TgcViewer.Utils.TgcSceneLoader;
 
 namespace AlumnoEjemplos.PabloTGC.ElementosJuego
@@ -14,6 +13,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
     public class Fuego : Elemento
     {
         #region Atributos
+        private Tgc3dSound sonido;
         #endregion
 
         #region Contructores
@@ -22,9 +22,9 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         }
 
-        public Fuego(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
+        public Fuego(float peso, float resistencia, TgcMesh mesh, Efecto efecto, Tgc3dSound sonidoFuego) : base(peso, resistencia, mesh, efecto)
         {
-
+            sonido = sonidoFuego;
         }
 
         #endregion
@@ -109,6 +109,18 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         public override float GetAlturaAnimacion()
         {
             return (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) *0.2f;
+        }
+
+        public override void destruir()
+        {
+            base.destruir();
+            sonido.dispose();
+        }
+
+        public override void Activar()
+        {
+            sonido.Position = this.Mesh.Position;
+            sonido.play(true);
         }
 
         #endregion

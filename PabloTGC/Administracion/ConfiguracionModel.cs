@@ -9,8 +9,6 @@ using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using TgcViewer;
 using TgcViewer.Utils._2D;
 using TgcViewer.Utils.Shaders;
@@ -102,6 +100,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             contexto.efectoArbol2 = new EfectoArbol(TgcShaders.loadEffect(recursos + "Shaders\\ArbolShader.fx"), "RenderScene2");
             contexto.efectoBotes = new EfectoBote(TgcShaders.loadEffect(recursos + "Shaders\\BoteShader.fx"), "RenderScene");
             contexto.efectoLuz = new EfectoLuz(GuiController.Instance.Shaders.TgcMeshPointLightShader);
+            contexto.efectoLuz2 = new EfectoLuz(GuiController.Instance.Shaders.TgcSkeletalMeshPointLightShader);
         }
 
         public void CrearHeimap()
@@ -247,17 +246,21 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     Elemento elementoNuevo;
+                    Tgc3dSound sonidoFuego = new Tgc3dSound(recursos + "Sonidos\\Fuego.wav", fuegoMesh.Position);
+                    sonidoFuego.MinDistance = 150f;
                     if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.5)
                     {
                         elementoNuevo = new Elemento(1000, 2330, pinoNuevo,
                                 (new Madera(1000, 233, leniaMesh,
-                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego), contexto.efectoLuz)), contexto.efectoArbol);
+                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego, sonidoFuego), contexto.efectoLuz)), contexto.efectoArbol, 
+                                        Color.DarkGreen);
                     }
                     else
                     {
                         elementoNuevo = new Elemento(1000, 2330, pinoNuevo,
                                 (new Madera(1000, 233, leniaMesh,
-                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego), contexto.efectoLuz)), contexto.efectoArbol2);
+                                    new Fuego(1000, 233, fuegoMesh, contexto.efectoFuego, sonidoFuego), contexto.efectoLuz)), contexto.efectoArbol2,
+                                        Color.DarkGreen);
                     }
                     elementoNuevo.Flexibilidad = FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, 0.08F);
                     contexto.elementos.Add(elementoNuevo);
@@ -300,7 +303,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                 + "MeshCreator\\Meshes\\Gallo\\Gallo-TgcScene.xml");
             TgcMesh galloMesh = scene.Meshes[0].createMeshInstance("Gallo");
             Animal gallo = new Animal(5000, 20, galloMesh, contexto.efectoLuz);
-            galloMesh.Position = new Vector3(20, contexto.terreno.CalcularAltura(20, 20), 20);
+            galloMesh.Position = new Vector3(150, contexto.terreno.CalcularAltura(150, 150), 150);
             alimento = new Alimento(1000, 1000, carneCruda.createMeshInstance("Carne Cruda"), 10, contexto.efectoLuz);
             alimento.posicion(galloMesh.Position);
             TgcMesh hamburguesaGallo = hamburguesa.createMeshInstance("Hambur Gallo");
@@ -540,7 +543,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
                     nuevoArbolFrutillaCompleto = new ElementoDoble(1000, 2330, arbolFrutillaMesh, arbolFrutillaVacioMesh, contexto.efectoLuz);
                     for (int k = 0; k < 5; k++)
                     {
-                        frutillaMesh = frutilla.createMeshInstance(frutilla.Name + i + j + k);
+                        frutillaMesh = frutilla.createMeshInstance(/*frutilla.Name + i + j + k*/"Frutilla");
                         frutillaMesh.Position = arbolFrutillaMesh.Position;
                         frutillaMesh.Scale = new Vector3(0.1f, 0.1f, 0.1f);
                         nuevoArbolFrutillaCompleto.agregarElemento(new Alimento(1000, 2330, frutillaMesh, 10, contexto.efectoLuz));
@@ -626,8 +629,8 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             personaje.antorcha = antorchaElemento;
 
             //Carmamos las armas
-            personaje.agregarInstrumento(new Arma(100, 50, Matrix.Translation(10, 40, 0), palo));
-            personaje.agregarInstrumento(new Arma(1000, 75, Matrix.Translation(10, 20, -20), hachaMesh));
+            personaje.agregarInstrumento(new Arma(100, 50, Matrix.Translation(10, 40, 0), palo, contexto.efectoLuz, Color.Green));
+            personaje.agregarInstrumento(new Arma(1000, 75, Matrix.Translation(10, 20, -20), hachaMesh, contexto.efectoLuz, Color.Gray));
             personaje.agregarInstrumento(new Arma(1000, 75, Matrix.Translation(10, -20, 0), antorcha));
 
             TgcSkeletalBoneAttach attachment = new TgcSkeletalBoneAttach();
@@ -648,6 +651,9 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             personaje.IniciarAlcanceInteraccionEsfera();
 
             personaje.mesh.setColor(color);
+            personaje.Color = color;
+
+            personaje.SetEfecto(contexto.efectoLuz2);
 
             contexto.personaje = personaje;
         }
@@ -1011,11 +1017,11 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
             contexto.personaje.antorcha.sonidoAntorcha = sonidoAntorcha;
 
             Tgc3dSound sound1 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(7000,0,5000));
-            sound1.MinDistance = 1500f;
+            sound1.MinDistance = 1000f;
             contexto.sonidoGrillos = sound1;
 
             Tgc3dSound sound2 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(-8000, 0, -8000));
-            sound2.MinDistance =1500f;
+            sound2.MinDistance =1000f;
             contexto.sonidoGrillos2 = sound2;
 
             GuiController.Instance.DirectSound.ListenerTracking = contexto.personaje.mesh;
@@ -1039,7 +1045,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
 
         private String Version()
         {
-            return "1.01.001";
+            return "1.02.001";
         }
 
         #endregion

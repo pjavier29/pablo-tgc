@@ -13,17 +13,20 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
     {
         #region Atributos
         private float nutricion;
+        private String mensajeInformativo;
         #endregion
 
         #region Contructores
         public Alimento(float peso, float resistencia, TgcMesh mesh, float nutricion, Efecto efecto) :base(peso, resistencia, mesh, efecto)
         {
             this.nutricion = nutricion;
+            mensajeInformativo = "";
         }
 
         public Alimento(float peso, float resistencia, TgcMesh mesh, Elemento elemento, float nutricion, Efecto efecto) : base(peso, resistencia, mesh, elemento, efecto)
         {
             this.nutricion = nutricion;
+            mensajeInformativo = "";
         }
 
         #endregion
@@ -39,15 +42,23 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            mensajeInformativo = "Juntar (J), Consumir (C)";
             base.procesarInteraccion(accion, contexto, elapsedTime);
             if (accion.Equals("Juntar"))
             {
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos
                 if (!contexto.personaje.ContieneElementoEnMochila(this))
                 {
-                    contexto.personaje.juntar(this);
-                    contexto.elementos.Remove(this);
-                    contexto.optimizador.ForzarActualizacionElementosColision();
+                    try
+                    {
+                        contexto.personaje.juntar(this);
+                        contexto.elementos.Remove(this);
+                        contexto.optimizador.ForzarActualizacionElementosColision();
+                    }
+                    catch (Exception ex)
+                    {
+                        mensajeInformativo = ex.Message;
+                    }
                 }
             }
             if (accion.Equals("Consumir"))
@@ -61,8 +72,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override String getAcciones()
         {
-            //TODO. Mejorar esta lógica
-            return "Juntar (J), Consumir (C)";
+            return mensajeInformativo;
         }
 
         public override String GetTipo()

@@ -1,4 +1,5 @@
 ﻿using AlumnoEjemplos.PabloTGC.Administracion;
+using AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Text;
 using TgcViewer;
 using TgcViewer.Utils.TgcSceneLoader;
+using TgcViewer.Utils.TgcSkeletalAnimation;
 
 namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
 {
@@ -65,6 +67,18 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
             foreach (ElementoIluminacion elem in this.elementosIluminacion)
             {
                 if (elem.IluminoAElemento(elemento))
+                {
+                    return elem;
+                }
+            }
+            return null;
+        }
+
+        public virtual ElementoIluminacion AlguienIluminaAElemento(Vector3 posicion)
+        {
+            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            {
+                if (elem.IluminoAElemento(posicion))
                 {
                     return elem;
                 }
@@ -145,6 +159,16 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
             mesh.Technique = this.tecnica;
         }
 
+        public void Aplicar(TgcSkeletalMesh mesh)
+        {
+            mesh.Effect = this.efectoShader;
+            if (this.tecnica == null)
+            {
+                this.tecnica = GuiController.Instance.Shaders.getTgcSkeletalMeshTechnique(mesh.RenderType);
+            }
+            mesh.Technique = this.tecnica;
+        }
+       
         public virtual void Actualizar(SuvirvalCraft contexto)
         {
         }
@@ -157,7 +181,21 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Efectos
         {
         }
 
+        public virtual void ActualizarRenderizar(SuvirvalCraft contexto)
+        {
+        }
+
         public virtual void ActualizarRenderizar(SuvirvalCraft contexto, Terreno terreno)
+        {
+
+        }
+
+        /// <summary>
+        /// TODO. Este método no tiene que estar más cuando las armas sean elementos en si mismos
+        /// </summary>
+        /// <param name="contexto"></param>
+        /// <param name="arma"></param>
+        public virtual void ActualizarRenderizar(SuvirvalCraft contexto, Arma arma)
         {
 
         }

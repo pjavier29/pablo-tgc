@@ -89,13 +89,13 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego.Instrumentos
             return (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) * 0.9f;
         }
 
-        public void Activar()
+        public override void Activar()
         {
             this.estaActivada = true;
             this.sonidoAntorcha.play(true);
         }
 
-        public void Desactivar()
+        public override void Desactivar()
         {
             this.estaActivada = false;
             this.sonidoAntorcha.stop();

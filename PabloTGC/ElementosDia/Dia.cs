@@ -102,11 +102,11 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
                 this.lluvia.Actualizar(contexto);
                 if (this.lluvia.EstaLloviendo())
                 {
-                    this.sol.ActualizarIntensidadMaximaLuz(8000f);
+                    this.sol.ActualizarIntensidadMaximaLuz(500f);
                 }
                 else
                 {
-                    this.sol.ActualizarIntensidadMaximaLuz(15000f);
+                    this.sol.ActualizarIntensidadMaximaLuz(1000f);
                 }
             }
         }

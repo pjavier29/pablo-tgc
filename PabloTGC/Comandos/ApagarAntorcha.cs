@@ -1,5 +1,4 @@
-﻿using AlumnoEjemplos.PabloTGC.Utiles;
-using AlumnoEjemplos.PabloTGC.Administracion;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
 
 namespace AlumnoEjemplos.PabloTGC.Comandos
 {
@@ -17,6 +16,7 @@ namespace AlumnoEjemplos.PabloTGC.Comandos
                 contexto.efectoBotes.EliminarElementoDeIluminacion(contexto.personaje.antorcha);
                 contexto.efectoArbol.EliminarElementoDeIluminacion(contexto.personaje.antorcha);
                 contexto.efectoArbol2.EliminarElementoDeIluminacion(contexto.personaje.antorcha);
+                contexto.efectoLuz2.EliminarElementoDeIluminacion(contexto.personaje.antorcha);
             }
         }
     }

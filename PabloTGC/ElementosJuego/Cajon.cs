@@ -16,6 +16,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         private bool estaAbierto;
         private BarraEstado progresoApertura;
         private float tiempoApertura;
+        private String mensajeInformativo;
         #endregion
 
         #region Contructores
@@ -24,6 +25,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             this.estaAbierto = false;
             this.progresoApertura = null;
             this.tiempoApertura = 0;
+            mensajeInformativo = "";
         }
         #endregion
 
@@ -31,6 +33,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            mensajeInformativo = " Juntar Todo (Y), Dejar Todo (U)";
             base.procesarInteraccion(accion, contexto, elapsedTime);
             //TODO. Podria agregarse para que se cambie el mesh del cajon y se muestre cerrado o abierto.
             if (!this.estaAbierto)
@@ -65,8 +68,15 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     {
                         if (!contexto.personaje.ContieneElementoEnMochila(elem))
                         {
-                            contexto.personaje.juntar(elem);
-                         auxiliar.Add(elem);
+                            try
+                            {
+                                contexto.personaje.juntar(elem);
+                                auxiliar.Add(elem);
+                            }
+                            catch (Exception ex)
+                            {
+                                mensajeInformativo = ex.Message;
+                            }
                         }
                     }
                     this.EliminarElementos(auxiliar);
@@ -124,7 +134,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //TODO. Mejorar esta lógica
             if (estaAbierto)
             {
-                return " Juntar Todo (Y), Dejar Todo (U)";
+                return mensajeInformativo;
             }
             else if(! this.SeEstaAbriendo())
             {

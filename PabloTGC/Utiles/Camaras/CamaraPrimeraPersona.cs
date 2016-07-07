@@ -37,7 +37,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
             this.frustum.updateVolume(d3dDevice.Transform.View, d3dDevice.Transform.Projection);
 
             //El personaje no debe animarse cuando se esta en primera persona
-            //personaje.Renderizar();
+            personaje.RenderizarPrimeraPersona(contexto);
         }
 
         public void SubirCamara(Personaje personaje)

@@ -16,6 +16,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         private BarraEstado progresoCoccion;
         private float tiempoCoccion;
         private Elemento elementoCoccion;
+        private String mensajeInformativo;
         #endregion
 
         #region Contructores
@@ -24,6 +25,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             this.progresoCoccion = null;
             this.elementoCoccion = null;
             this.tiempoCoccion = 0;
+            mensajeInformativo = "";
         }
         #endregion
 
@@ -31,14 +33,23 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
 
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            mensajeInformativo = "Juntar (J)";
             if (accion.Equals("Juntar"))
             {
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos
                 if (!contexto.personaje.ContieneElementoEnMochila(this))
                 {
-                    contexto.personaje.juntar(this);
-                    contexto.elementos.Remove(this);
-                    contexto.optimizador.ForzarActualizacionElementosColision();
+                    try
+                    {
+                        contexto.personaje.juntar(this);
+                        contexto.elementos.Remove(this);
+                        contexto.optimizador.ForzarActualizacionElementosColision();
+                    }
+
+                    catch (Exception ex)
+                    {
+                        mensajeInformativo = ex.Message;
+                    }
                 }
             }
         }
@@ -49,7 +60,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             //TODO. Al momento de juntar la hamburguesa no sera eliminado de la coleccion y seguira todo igual (de todas formas por ahora nos sirve)
             if (! this.EstaCocinando())
             {
-                return "Juntar (J)";
+                return mensajeInformativo;
             }
             return "";
         }

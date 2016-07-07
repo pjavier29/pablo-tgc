@@ -32,7 +32,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosDia
         public Sol()
         {
             this.colorDeLuz = ColorValue.FromColor(Color.LightYellow);
-            this.intensidadDeLuzSol = 15000f;
+            this.intensidadDeLuzSol = 1000f;
             this.atenuacionDeLuz = 0.1f;
             this.alturaPuestaSol = 0;
         }

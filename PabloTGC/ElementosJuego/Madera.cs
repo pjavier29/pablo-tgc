@@ -47,9 +47,16 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 //TODO. Esta validacion es porque se ejecuta muchas veces al presionar la tecla. Se deberia solucioanr cuando implementemos los comandos
                 if (! contexto.personaje.ContieneElementoEnMochila(this))
                 {
-                    contexto.personaje.juntar(this);
-                    contexto.elementos.Remove(this);
-                    contexto.optimizador.ForzarActualizacionElementosColision();
+                    try
+                    {
+                        contexto.personaje.juntar(this);
+                        contexto.elementos.Remove(this);
+                        contexto.optimizador.ForzarActualizacionElementosColision();
+                    }
+                    catch (Exception ex)
+                    {
+                        mensajeInformativo = ex.Message;
+                    }
                 }
             }
             if (accion.Equals("Encender"))
@@ -59,6 +66,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                     foreach (Elemento elem in this.elementosQueContiene())
                     {
                         elem.posicion(this.posicion());
+                        elem.Activar();
                         elem.Mesh.BoundingBox.scaleTranslate(this.posicion(), new Vector3(2f, 0.25f, 2f));
                         contexto.elementos.Add(elem);
                         //TODO. ver si es la mejor forma de manejar los elementos de iluminacion
@@ -69,6 +77,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                         contexto.efectoBotes.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                         contexto.efectoArbol.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                         contexto.efectoArbol2.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
+                        contexto.efectoLuz2.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                         //TODO+++++++++++++++++++++++++++++++++
                     }
                     this.liberar();

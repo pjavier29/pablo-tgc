@@ -96,6 +96,7 @@ namespace AlumnoEjemplos.PabloTGC.Administracion
         public Efecto skyboxEfecto;
         public Efecto efectoTerreno;
         public Efecto efectoLuz;
+        public Efecto efectoLuz2;
         public Efecto efectoAlgas;
         public Efecto efectoAlgas2;
         public Efecto efectoBotes;

@@ -1,11 +1,6 @@
 ﻿using AlumnoEjemplos.PabloTGC.Administracion;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TgcViewer;
 using TgcViewer.Utils.Input;
 using TgcViewer.Utils.TgcGeometry;
 
@@ -41,7 +36,7 @@ namespace AlumnoEjemplos.PabloTGC.Utiles.Camaras
             //Actualizar volumen del Frustum con nuevos valores de camara
             this.frustum.updateVolume(this.d3dDevice.Transform.View, this.d3dDevice.Transform.Projection);
 
-            personaje.Renderizar(contexto);
+            personaje.RenderizarTerceraPersona(contexto);
         }
 
         public void SubirCamara(Personaje personaje)

@@ -1,4 +1,5 @@
-﻿using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
+﻿using AlumnoEjemplos.PabloTGC.Administracion;
+using AlumnoEjemplos.PabloTGC.Utiles.Efectos;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System;
@@ -25,6 +26,11 @@ namespace AlumnoEjemplos.PabloTGC.Utiles
         public bool IluminoAElemento(Elemento elementoAIluminar)
         {
             return this.Elemento.distanciaA(elementoAIluminar) < this.Distancia;
+        }
+
+        public bool IluminoAElemento(Vector3 posicion)
+        {
+            return this.Elemento.distanciaA(posicion) < this.Distancia;
         }
 
         public virtual void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor, ColorValue colorAmbiente,

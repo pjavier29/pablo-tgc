@@ -17,6 +17,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         private bool tieneQueCrear;
         private BarraEstado progresoCreacion;
         private float tiempoCreacion;
+        private String mensajeInformativo;
         #endregion
 
         #region Propiedades
@@ -34,24 +35,33 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
             this.tieneQueCrear = false;
             this.progresoCreacion = null;
             this.tiempoCreacion = 0;
+            this.CompletarSetEfecto(efecto);
+            mensajeInformativo = "";
         }
         #endregion
 
         #region Comportamientos
         public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
         {
+            mensajeInformativo = "Juntar (J), Consumir (C)";
             base.procesarInteraccion(accion, contexto, elapsedTime);
 
             if (accion.Equals("Juntar"))
             {
                 if ((this.elementosQueContiene().Count > 0) && !(this.estaCreando))
                 {
-                    //Si tiene elementos para dar
-                    Elemento elem = this.elementosQueContiene()[0];
-                    contexto.personaje.juntar(elem);
-                    this.EliminarElemento(elem);
-                    this.Mesh = this.Mesh2;
-                    this.tieneQueCrear = true;
+                    try
+                    {   //Si tiene elementos para dar
+                        Elemento elem = this.elementosQueContiene()[0];
+                        contexto.personaje.juntar(elem);
+                        this.EliminarElemento(elem);
+                        this.Mesh = this.Mesh2;
+                        this.tieneQueCrear = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        mensajeInformativo = ex.Message;
+                    }
                 }
             }
             if (accion.Equals("Consumir"))
@@ -128,7 +138,7 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
                 if (this.elementosQueContiene().Count > 0)
                 {
                     //Si aun tiene elementos para entregar sigue procesando 
-                    return "Juntar (J), Consumir (C)";
+                    return mensajeInformativo;
                 }
                 else
                 {
@@ -145,6 +155,12 @@ namespace AlumnoEjemplos.PabloTGC.ElementosJuego
         private float TiempoTotalCreacion()
         {
             return 60;
+        }
+
+        public void CompletarSetEfecto(Efecto efecto)
+        {
+            efecto.Aplicar(this.Mesh1);
+            efecto.Aplicar(this.Mesh2);
         }
         #endregion
     }
