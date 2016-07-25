@@ -1,9 +1,11 @@
-﻿using Microsoft.DirectX;
+﻿using System;
+using Microsoft.DirectX;
 using System.Drawing;
 using TGC.Core.Textures;
 
 namespace TGC.Group.Model
 {
+    [Obsolete]
     /// <summary>
     ///     Representa un Sprite 2D con transformaciones
     /// </summary>

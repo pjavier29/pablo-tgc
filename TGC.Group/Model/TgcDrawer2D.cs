@@ -1,9 +1,11 @@
-﻿using Microsoft.DirectX;
+﻿using System;
+using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.Direct3D;
 
 namespace TGC.Group.Model
 {
+    [Obsolete]
     /// <summary>
     ///     Herramienta para dibujar Sprites 2D
     /// </summary>

@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using TGC.Core.Direct3D;
 using Directx = Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model
 {
+    [Obsolete]
     /// <summary>
     ///     Herramienta para dibujar texto genérico del Framework
     /// </summary>

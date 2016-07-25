@@ -1,10 +1,12 @@
-﻿using Microsoft.DirectX.Direct3D;
+﻿using System;
+using Microsoft.DirectX.Direct3D;
 using System.Drawing;
 using TGC.Core.Direct3D;
 using Font = Microsoft.DirectX.Direct3D.Font;
 
 namespace TGC.Group.Model
 {
+    [Obsolete]
     public class TgcText2d
     {
         /// <summary>
