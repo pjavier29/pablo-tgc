@@ -21,10 +21,10 @@ namespace TGC.Group.Model.Administracion
 
         #region Cnstructores
 
-        public ControladorEntradas()
+        public ControladorEntradas(SuvirvalCraft contexto)
         {
             this.comandosSeleccionados = new List<Comando>();
-            this.d3dInput = GuiController.Instance.D3dInput;
+            this.d3dInput = contexto.Input;
         }
 
         #endregion Cnstructores

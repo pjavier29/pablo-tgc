@@ -20,11 +20,11 @@ namespace TGC.Group.Model.Utiles.Camaras
 
         public CamaraTerceraPersona(TgcThirdPersonCamera camaraTgc, Vector3 posicion, TgcFrustum frustum, Microsoft.DirectX.Direct3D.Device d3dDevice)
         {
-            this.camaraTgc = camaraTgc;
-            this.camaraTgc.Enable = true;
-            this.camaraTgc.setCamera(posicion, 0, -300);
-            this.frustum = frustum;
-            this.d3dDevice = d3dDevice;
+            //this.camaraTgc = camaraTgc;
+            //this.camaraTgc.Enable = true;
+            //this.camaraTgc.setCamera(posicion, 0, -300);
+            //this.frustum = frustum;
+            //this.d3dDevice = d3dDevice;
         }
 
         public void Render(Personaje personaje, SuvirvalCraft contexto)

@@ -8,6 +8,7 @@ using TGC.Core.Shaders;
 using TGC.Core.Sound;
 using TGC.Core.Textures;
 using TGC.Group.Model;
+using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Form
 {
@@ -90,7 +91,7 @@ namespace TGC.Group.Form
             TgcShaders.Instance.loadCommonShaders(currentDirectory + Game.Default.ShadersDirectory);
 
             //Juego a ejecutar
-            Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory, currentDirectory + Game.Default.ShadersDirectory);
+            Modelo = new SuvirvalCraft(currentDirectory + Game.Default.MediaDirectory, currentDirectory + Game.Default.ShadersDirectory);
 
             //Cargar juego
             ExecuteModel();

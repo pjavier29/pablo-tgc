@@ -12,10 +12,10 @@ using TGC.Group.Model.Utiles.Camaras;
 using TGC.Group.Model.Utiles.Efectos;
 using TGC.Core.SceneLoader;
 using TGC.Core.Sound;
-using TGC.Core;
 using TGC.Core.Direct3D;
 using TGC.Core.Terrain;
 using TGC.Core.Example;
+using TGC.Core.Text;
 
 namespace TGC.Group.Model.Administracion
 {
@@ -24,6 +24,8 @@ namespace TGC.Group.Model.Administracion
     /// </summary>
     public class SuvirvalCraft : TgcExample
     {
+        public Drawer2D Drawer2D { get; set; }
+
         //TODO. Refactorizar esta lógica, hay demasiados atributos publicos en la apicacion principal.
         public Terreno terreno;
 
@@ -32,23 +34,23 @@ namespace TGC.Group.Model.Administracion
         public List<Elemento> elementos;
         public Personaje personaje;
         public float tiempo;
-        public TgcText2d estadoJuego;
-        public TgcText2d informativo;
+        public TgcText2D estadoJuego;
+        public TgcText2D informativo;
         public Animal oveja;
         public Animal gallo;
         public Elemento cajonReal;
         public Elemento cajonOlla;
         public Elemento fuenteAgua;
 
-        public TgcSprite mochila;
-        public TgcSprite miniMapa;
-        public TgcText2d referenciaMiniMapa;
-        public TgcSprite linea;
+        public CustomSprite mochila;
+        public CustomSprite miniMapa;
+        public TgcText2D referenciaMiniMapa;
+        public CustomSprite linea;
         public Point coordenadaSuperiorDerecha;
         public Point coordenadaInferiorIzquierda;
-        public TgcSprite cajon;
-        public TgcText2d mochilaReglon1;
-        public TgcText2d cajonReglon1;
+        public CustomSprite cajon;
+        public TgcText2D mochilaReglon1;
+        public TgcText2D cajonReglon1;
         public bool mostrarMenuMochila;
         public bool mostrarMenuCajon;
 
@@ -62,30 +64,30 @@ namespace TGC.Group.Model.Administracion
 
         public Optimizador optimizador;
 
-        public TgcSprite salud;
-        public TgcSprite hidratacion;
-        public TgcSprite alimentacion;
-        public TgcSprite cansancio;
-        public TgcSprite saludIcono;
-        public TgcSprite hidratacionIcono;
-        public TgcSprite alimentacionIcono;
-        public TgcSprite cansancioIcono;
-        public TgcSprite objetivosIcono;
-        public TgcText2d mensajeObjetivo1;
+        public CustomSprite salud;
+        public CustomSprite hidratacion;
+        public CustomSprite alimentacion;
+        public CustomSprite cansancio;
+        public CustomSprite saludIcono;
+        public CustomSprite hidratacionIcono;
+        public CustomSprite alimentacionIcono;
+        public CustomSprite cansancioIcono;
+        public CustomSprite objetivosIcono;
+        public TgcText2D mensajeObjetivo1;
         public float tiempoObjetivo;
-        public TgcSprite ayuda;
-        public TgcText2d ayudaReglon1;
-        public TgcText2d ayudaReglon2;
+        public CustomSprite ayuda;
+        public TgcText2D ayudaReglon1;
+        public TgcText2D ayudaReglon2;
         public bool mostrarAyuda;
-        public TgcText2d temperaturaDia;
-        public TgcText2d horaDia;
-        public TgcSprite temperaturaDiaIcono;
-        public TgcSprite horaDiaIcono;
-        public TgcText2d temperaturaPersonaje;
-        public TgcSprite temperaturaPersonajeIcono;
-        public TgcSprite estadoDiaSolIcono;
-        public TgcSprite estadoDiaLunaIcono;
-        public TgcSprite estadoDiaLluviaIcono;
+        public TgcText2D temperaturaDia;
+        public TgcText2D horaDia;
+        public CustomSprite temperaturaDiaIcono;
+        public CustomSprite horaDiaIcono;
+        public TgcText2D temperaturaPersonaje;
+        public CustomSprite temperaturaPersonajeIcono;
+        public CustomSprite estadoDiaSolIcono;
+        public CustomSprite estadoDiaLunaIcono;
+        public CustomSprite estadoDiaLluviaIcono;
 
         public Camara camara;
 
@@ -142,7 +144,7 @@ namespace TGC.Group.Model.Administracion
                 + System.Environment.NewLine +
                 "Buena Suerte!!!!";
         }
-        
+
         /// <summary>
         /// Método que se llama una sola vez,  al principio cuando se ejecuta el ejemplo.
         /// Escribir aquí todo el código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.
@@ -152,10 +154,12 @@ namespace TGC.Group.Model.Administracion
         {
             Configuracion con = new Configuracion(new ConfiguracionModel(this, D3DDevice.Instance.Device, this.MediaDir));
             con.ShowDialog();
+            Drawer2D = new Drawer2D();
         }
 
         public override void Update()
         {
+            PreUpdate();
             //TODO en la nueva estructura del TGC.Core se desacoplo el render del update logico
         }
 
@@ -166,6 +170,7 @@ namespace TGC.Group.Model.Administracion
         /// </summary>
         public override void Render()
         {
+            ClearTextures();
             //Device de DirectX para renderizar
             Microsoft.DirectX.Direct3D.Device d3dDevice = D3DDevice.Instance.Device;
 
@@ -201,7 +206,7 @@ namespace TGC.Group.Model.Administracion
 
             camara.Render(personaje, this);
 
-            optimizador.Actualizar(personaje.mesh.Position);
+            optimizador.Actualizar(personaje.mesh.Position, this);
 
             //Afectamos salud por paso de tiempo y por la temperatura
             personaje.AfectarSaludPorTiempo(ElapsedTime);
@@ -314,22 +319,22 @@ namespace TGC.Group.Model.Administracion
                 informativo.render();
             }
 
-            TgcDrawer2D.Instance.beginDrawSprite();
-            saludIcono.render();
-            hidratacionIcono.render();
-            alimentacionIcono.render();
-            cansancioIcono.render();
+            Drawer2D.BeginDrawSprite();
+            Drawer2D.DrawSprite(saludIcono);
+            Drawer2D.DrawSprite(hidratacionIcono);
+            Drawer2D.DrawSprite(alimentacionIcono);
+            Drawer2D.DrawSprite(cansancioIcono);
             salud.Scaling = new Vector2(personaje.PorcentajeDeSalud() * 0.5f, 0.3f);
-            salud.render();
+            Drawer2D.DrawSprite(salud);
             hidratacion.Scaling = new Vector2(personaje.PorcentajeDeHidratacion() * 0.5f, 0.3f);
-            hidratacion.render();
+            Drawer2D.DrawSprite(hidratacion);
             alimentacion.Scaling = new Vector2(personaje.PorcentajeDeAlimentacion() * 0.5f, 0.3f);
-            alimentacion.render();
+            Drawer2D.DrawSprite(alimentacion);
             cansancio.Scaling = new Vector2(personaje.PorcentajeDeCansancio() * 0.5f, 0.3f);
-            cansancio.render();
-            objetivosIcono.render();
-            miniMapa.render();
-            TgcDrawer2D.Instance.endDrawSprite();
+            Drawer2D.DrawSprite(cansancio);
+            Drawer2D.DrawSprite(objetivosIcono);
+            Drawer2D.DrawSprite(miniMapa);
+            Drawer2D.EndDrawSprite();
 
             referenciaMiniMapa.Position = this.PosicionarReferencia(personaje.mesh.Position);
             referenciaMiniMapa.Color = Color.Orange;
@@ -347,49 +352,49 @@ namespace TGC.Group.Model.Administracion
             mensajeObjetivo1.Text = "Sobrevivir " + System.Environment.NewLine + TimeSpan.FromSeconds(this.tiempoObjetivo - this.tiempo).ToString(@"hh\:mm\:ss");
             mensajeObjetivo1.render();
 
-            TgcDrawer2D.Instance.beginDrawSprite();
+            Drawer2D.BeginDrawSprite();
             linea.Rotation = personaje.mesh.Rotation.Y;
-            linea.render();
+            Drawer2D.DrawSprite(linea);
 
             horaDia.Text = dia.HoraActualTexto();
             temperaturaDia.Text = dia.TemperaturaActualTexto();
             temperaturaPersonaje.Text = personaje.TemperaturaCorporalTexto();
             horaDia.render();
             temperaturaDia.render();
-            temperaturaPersonajeIcono.render();
+            Drawer2D.DrawSprite(temperaturaPersonajeIcono);
             temperaturaPersonaje.render();
-            temperaturaDiaIcono.render();
-            horaDiaIcono.render();
+            Drawer2D.DrawSprite(temperaturaDiaIcono);
+            Drawer2D.DrawSprite(horaDiaIcono);
             if (dia.GetLluvia().EstaLloviendo())
             {
-                estadoDiaLluviaIcono.render();
+                Drawer2D.DrawSprite(estadoDiaLluviaIcono);
             }
             else
             {
                 if (dia.EsDeDia())
                 {
-                    estadoDiaSolIcono.render();
+                    Drawer2D.DrawSprite(estadoDiaSolIcono);
                 }
                 else
                 {
-                    estadoDiaLunaIcono.render();
+                    Drawer2D.DrawSprite(estadoDiaLunaIcono);
                 }
             }
-            TgcDrawer2D.Instance.endDrawSprite();
+            Drawer2D.EndDrawSprite();
 
             if (mostrarMenuMochila)
             {
                 //Iniciar dibujado de todos los Sprites de la escena (en este caso es solo uno)
-                TgcDrawer2D.Instance.beginDrawSprite();
+                Drawer2D.BeginDrawSprite();
                 //Dibujar sprite (si hubiese mas, deberian ir todos aquí)
-                mochila.render();
+                Drawer2D.DrawSprite(mochila);
                 if (mostrarMenuCajon)
                 {
                     //El cajon se muestra siempre junto con la mochila
-                    cajon.render();
+                    Drawer2D.DrawSprite(cajon);
                 }
                 //Finalizar el dibujado de Sprites
-                TgcDrawer2D.Instance.endDrawSprite();
+                Drawer2D.EndDrawSprite();
                 //TODO. Por el momento podemos mantener todo en un renglon ya que no imprimimos ninguna imagen de los elementos en cuestion
                 mochilaReglon1.Text = "";
                 for (int i = 0; i < 9; i++)
@@ -414,15 +419,16 @@ namespace TGC.Group.Model.Administracion
             if (mostrarAyuda)
             {
                 //TODO poner todos los Sprite dentro de una sola apertura y cierre del controlador
-                TgcDrawer2D.Instance.beginDrawSprite();
-                ayuda.render();
-                TgcDrawer2D.Instance.endDrawSprite();
+                Drawer2D.BeginDrawSprite();
+                Drawer2D.DrawSprite(ayuda);
+                Drawer2D.EndDrawSprite();
                 ayudaReglon1.Position = new Point(((int)(ayuda.Position.X)) + 40, ((int)(ayuda.Position.Y)) + 130);
                 ayudaReglon1.render();
                 ayudaReglon2.render();
             }
 
             RenderFPS();
+            D3DDevice.Instance.Device.Present();
         }
 
         /// <summary>
@@ -439,43 +445,43 @@ namespace TGC.Group.Model.Administracion
             {
                 elemento.destruir();
             }
-            informativo.dispose();
-            estadoJuego.dispose();
+            informativo.Dispose();
+            estadoJuego.Dispose();
             oveja.destruir();
             gallo.destruir();
-            mochila.dispose();
-            cajon.dispose();
-            mochilaReglon1.dispose();
-            cajonReglon1.dispose();
-            alimentacion.dispose();
-            salud.dispose();
-            hidratacion.dispose();
-            cansancio.dispose();
-            mensajeObjetivo1.dispose();
-            objetivosIcono.dispose();
-            alimentacionIcono.dispose();
-            saludIcono.dispose();
-            hidratacionIcono.dispose();
-            cansancioIcono.dispose();
-            ayudaReglon1.dispose();
-            ayuda.dispose();
-            ayudaReglon2.dispose();
+            mochila.Dispose();
+            cajon.Dispose();
+            mochilaReglon1.Dispose();
+            cajonReglon1.Dispose();
+            alimentacion.Dispose();
+            salud.Dispose();
+            hidratacion.Dispose();
+            cansancio.Dispose();
+            mensajeObjetivo1.Dispose();
+            objetivosIcono.Dispose();
+            alimentacionIcono.Dispose();
+            saludIcono.Dispose();
+            hidratacionIcono.Dispose();
+            cansancioIcono.Dispose();
+            ayudaReglon1.Dispose();
+            ayuda.Dispose();
+            ayudaReglon2.Dispose();
             dia.GetSol().Mesh.dispose();
-            temperaturaDia.dispose();
-            horaDia.dispose();
-            temperaturaDiaIcono.dispose();
-            horaDiaIcono.dispose();
-            temperaturaPersonaje.dispose();
-            temperaturaPersonajeIcono.dispose();
-            estadoDiaSolIcono.dispose();
-            estadoDiaLunaIcono.dispose();
-            miniMapa.dispose();
-            referenciaMiniMapa.dispose();
-            linea.dispose();
+            temperaturaDia.Dispose();
+            horaDia.Dispose();
+            temperaturaDiaIcono.Dispose();
+            horaDiaIcono.Dispose();
+            temperaturaPersonaje.Dispose();
+            temperaturaPersonajeIcono.Dispose();
+            estadoDiaSolIcono.Dispose();
+            estadoDiaLunaIcono.Dispose();
+            miniMapa.Dispose();
+            referenciaMiniMapa.Dispose();
+            linea.Dispose();
             efectoLluvia.Dispose();
             screenQuadVB.Dispose();
             renderTarget2D.Dispose();
-            estadoDiaLluviaIcono.dispose();
+            estadoDiaLluviaIcono.Dispose();
             sonidoGolpe.dispose();
             sonidoGolpePatada.dispose();
             sonidoLluvia.dispose();

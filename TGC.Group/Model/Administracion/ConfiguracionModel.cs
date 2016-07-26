@@ -16,6 +16,8 @@ using TGC.Group.Model.ElementosJuego.Instrumentos;
 using TGC.Group.Model.Utiles;
 using TGC.Group.Model.Utiles.Camaras;
 using TGC.Group.Model.Utiles.Efectos;
+using TGC.Core.Direct3D;
+using TGC.Core.Text;
 
 namespace TGC.Group.Model.Administracion
 {
@@ -28,6 +30,7 @@ namespace TGC.Group.Model.Administracion
         private string recursos;
         private TgcSceneLoader loader;
         private TgcScene scene;
+        private TgcMp3Player player;
 
         #endregion Atributos
 
@@ -49,9 +52,8 @@ namespace TGC.Group.Model.Administracion
 
         public void IniciarMusicaConfiguracion()
         {
-            GuiController.Instance.Mp3Player.closeFile();
-            GuiController.Instance.Mp3Player.FileName = recursos + "Sonidos\\Musicas\\01 - Risen Title Theme.mp3";
-            TgcMp3Player player = GuiController.Instance.Mp3Player;
+            player = new TgcMp3Player();
+            player.FileName = recursos + "Sonidos\\Musicas\\01 - Risen Title Theme.mp3";
             player.play(true);
         }
 
@@ -71,21 +73,19 @@ namespace TGC.Group.Model.Administracion
             //Iniciamos los elementos
             contexto.elementos = new List<Elemento>();
 
-            contexto.controladorEntradas = new ControladorEntradas();
-            //contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);//Por defecto usamos la camara en primera persona
+            contexto.controladorEntradas = new ControladorEntradas(contexto);
+            contexto.camara = new CamaraPrimeraPersona(contexto.Frustum, D3DDevice.Instance.Device);//Por defecto usamos la camara en primera persona
 
             //¿de donde viene ese 15? bueno, si tiene que andar como mínimo a 30 fps, creo que actualizar los objetos de colision cada 0.5 segundos es razonable.
             contexto.optimizador = new Optimizador(contexto.elementos, 15, 500);
 
-            float aspectRatio = (float)GuiController.Instance.Panel3d.Width / GuiController.Instance.Panel3d.Height;
+            float aspectRatio = (float)D3DDevice.Instance.Width / D3DDevice.Instance.Height;
             float zNearPlaneDistance = 1f;
             float zFarPlaneDistance = 20000f;
             d3dDevice.Transform.Projection =
                 Matrix.PerspectiveFovLH(Geometry.DegreeToRadian(45.0f), aspectRatio, zNearPlaneDistance, zFarPlaneDistance);
 
             contexto.tiempoObjetivo = tiempoObjetivo;
-
-            GuiController.Instance.FullScreenEnable = ejecutarPantallaCompleta;
         }
 
         public void AdministracionDeEfectos()
@@ -250,7 +250,7 @@ namespace TGC.Group.Model.Administracion
                     fuegoMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     leniaMesh.Scale = new Vector3(0.3f, 0.3f, 0.3f);
                     Elemento elementoNuevo;
-                    Tgc3dSound sonidoFuego = new Tgc3dSound(recursos + "Sonidos\\Fuego.wav", fuegoMesh.Position);
+                    Tgc3dSound sonidoFuego = new Tgc3dSound(recursos + "Sonidos\\Fuego.wav", fuegoMesh.Position, contexto.DirectSound.DsDevice);
                     sonidoFuego.MinDistance = 150f;
                     if (FuncionesMatematicas.Instance.NumeroAleatorioDouble() <= 0.5)
                     {
@@ -669,12 +669,12 @@ namespace TGC.Group.Model.Administracion
         public void CrearHud()
         {
             //****************Crear Sprite de la mochila y del cajon**********************************************
-            Size screenSize = GuiController.Instance.Panel3d.Size;
+            Size screenSize = new Size(D3DDevice.Instance.Width, D3DDevice.Instance.Height);
 
-            TgcSprite mochila = new TgcSprite();
-            TgcText2d mochilaReglon1 = new TgcText2d();
-            mochila.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Mochila.jpg");
-            Size textureSize = mochila.Texture.Size;
+            CustomSprite mochila = new CustomSprite();
+            TgcText2D mochilaReglon1 = new TgcText2D();
+            mochila.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Mochila.jpg", D3DDevice.Instance.Device);
+            Size textureSize = mochila.Bitmap.Size;
             if (screenSize.Width >= 1024)
             {
                 mochila.Position = new Vector2(20, (screenSize.Height - textureSize.Height / 2) / 2);
@@ -691,16 +691,16 @@ namespace TGC.Group.Model.Administracion
                 (int)(mochila.Position.Y) + 95);
             mochilaReglon1.Color = Color.Black;
             mochilaReglon1.Text = "";
-            mochilaReglon1.Align = TgcText2d.TextAlign.LEFT;
+            mochilaReglon1.Align = TgcText2D.TextAlign.LEFT;
             mochilaReglon1.Size = new Size(textureSize.Width, textureSize.Height);
 
             contexto.mochila = mochila;
             contexto.mochilaReglon1 = mochilaReglon1;
 
-            TgcSprite cajon = new TgcSprite();
-            TgcText2d cajonReglon1 = new TgcText2d();
-            cajon.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Cajon.jpg");
-            Size textureCacjonSize = cajon.Texture.Size;
+            CustomSprite cajon = new CustomSprite();
+            TgcText2D cajonReglon1 = new TgcText2D();
+            cajon.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Cajon.jpg", D3DDevice.Instance.Device);
+            Size textureCacjonSize = cajon.Bitmap.Size;
             if (screenSize.Width >= 1024)
             {
                 cajon.Position = new Vector2(screenSize.Width - 20 - (textureCacjonSize.Width / 2), (screenSize.Height - textureCacjonSize.Height / 2) / 2);
@@ -716,7 +716,7 @@ namespace TGC.Group.Model.Administracion
             }
             cajonReglon1.Color = Color.White;
             cajonReglon1.Text = "";
-            cajonReglon1.Align = TgcText2d.TextAlign.LEFT;
+            cajonReglon1.Align = TgcText2D.TextAlign.LEFT;
             cajonReglon1.Position = new Point((int)(cajon.Position.X) + 11, (int)(cajon.Position.Y) + 85);
             cajonReglon1.Size = new Size(textureSize.Width, textureSize.Height);
 
@@ -725,24 +725,24 @@ namespace TGC.Group.Model.Administracion
             //****************Crear Sprite de la mochila y del cajon**********************************************
 
             //*******************Creacion del mini mapa******************
-            TgcSprite miniMapa = new TgcSprite();
-            miniMapa.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\MiniMapa.png");
+            CustomSprite miniMapa = new CustomSprite();
+            miniMapa.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\MiniMapa.png", D3DDevice.Instance.Device);
             miniMapa.Scaling = new Vector2(0.25f, 0.4f);
-            miniMapa.Position = new Vector2(0, screenSize.Height - (miniMapa.Texture.Size.Height * 0.4f));
+            miniMapa.Position = new Vector2(0, screenSize.Height - (miniMapa.Bitmap.Size.Height * 0.4f));
             //Me guardo las coordenada para que se faciliten los cálculos
-            Point coordenadaSuperiorDerecha = new Point((int)(miniMapa.Texture.Size.Width * 0.25f), (int)(screenSize.Height - (miniMapa.Texture.Size.Height * 0.4f)));
+            Point coordenadaSuperiorDerecha = new Point((int)(miniMapa.Bitmap.Size.Width * 0.25f), (int)(screenSize.Height - (miniMapa.Bitmap.Size.Height * 0.4f)));
             //Multiplicamos por 0.18 porque aproximadamente el 18% de la imagen es la barra de costado
-            Point coordenadaInferiorIzquierda = new Point((int)(miniMapa.Texture.Size.Width * 0.25f * 0.18f), screenSize.Height);
-            TgcText2d referenciaMiniMapa = new TgcText2d();
+            Point coordenadaInferiorIzquierda = new Point((int)(miniMapa.Bitmap.Size.Width * 0.25f * 0.18f), screenSize.Height);
+            TgcText2D referenciaMiniMapa = new TgcText2D();
             referenciaMiniMapa.changeFont(new System.Drawing.Font("TimesNewRoman", 40, FontStyle.Bold));
             referenciaMiniMapa.Position = new Point(0, 0);
             referenciaMiniMapa.Color = Color.White;
             referenciaMiniMapa.Text = ".";
-            referenciaMiniMapa.Align = TgcText2d.TextAlign.CENTER;
+            referenciaMiniMapa.Align = TgcText2D.TextAlign.CENTER;
             referenciaMiniMapa.Size = new Size(20, 20);
 
-            TgcSprite linea = new TgcSprite();
-            linea.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Flecha.png");
+            CustomSprite linea = new CustomSprite();
+            linea.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Flecha.png", D3DDevice.Instance.Device);
             linea.Scaling = new Vector2(0.25f, 0.4f);
             linea.Position = new Vector2(coordenadaInferiorIzquierda.X - 20, coordenadaInferiorIzquierda.Y - 48);
             linea.RotationCenter = new Vector2(0, 13);
@@ -756,9 +756,9 @@ namespace TGC.Group.Model.Administracion
             //*****************Creacion del mini mapa******************
 
             //****************Crear el texto informativo**********************************************************
-            TgcText2d informativo = new TgcText2d();
+            TgcText2D informativo = new TgcText2D();
             informativo.Color = Color.Yellow;
-            informativo.Align = TgcText2d.TextAlign.CENTER;
+            informativo.Align = TgcText2D.TextAlign.CENTER;
             informativo.Size = new Size(screenSize.Width, 50);
             if (screenSize.Width >= 1024)
             {
@@ -774,45 +774,45 @@ namespace TGC.Group.Model.Administracion
             //****************Crear el texto informativo**********************************************************
 
             //*****Creacion de barra de salud, hidratacion, alimentacion, cansancio y temperatura corporal del persobaje****
-            TgcSprite saludIcono = new TgcSprite();
-            saludIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Corazon.png");
+            CustomSprite saludIcono = new CustomSprite();
+            saludIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Corazon.png", D3DDevice.Instance.Device);
             saludIcono.Position = new Vector2(20, 20);
 
-            TgcSprite salud = new TgcSprite();
-            salud.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraSalud.png");
+            CustomSprite salud = new CustomSprite();
+            salud.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\BarraSalud.png", D3DDevice.Instance.Device);
             salud.Position = new Vector2(100, 40);
 
-            TgcSprite hidratacionIcono = new TgcSprite();
-            hidratacionIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Agua.png");
+            CustomSprite hidratacionIcono = new CustomSprite();
+            hidratacionIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Agua.png", D3DDevice.Instance.Device);
             hidratacionIcono.Position = new Vector2(250, 20);
 
-            TgcSprite hidratacion = new TgcSprite();
-            hidratacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraHidratacion.png");
+            CustomSprite hidratacion = new CustomSprite();
+            hidratacion.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\BarraHidratacion.png", D3DDevice.Instance.Device);
             hidratacion.Position = new Vector2(330, 40);
 
-            TgcSprite alimentacionIcono = new TgcSprite();
-            alimentacionIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Hamburguesa.png");
+            CustomSprite alimentacionIcono = new CustomSprite();
+            alimentacionIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Hamburguesa.png", D3DDevice.Instance.Device);
             alimentacionIcono.Position = new Vector2(480, 20);
 
-            TgcSprite alimentacion = new TgcSprite();
-            alimentacion.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraAlimentacion.png");
+            CustomSprite alimentacion = new CustomSprite();
+            alimentacion.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\BarraAlimentacion.png", D3DDevice.Instance.Device);
             alimentacion.Position = new Vector2(560, 40);
 
-            TgcSprite cansancioIcono = new TgcSprite();
-            cansancioIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Cansancio.png");
+            CustomSprite cansancioIcono = new CustomSprite();
+            cansancioIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Cansancio.png", D3DDevice.Instance.Device);
             cansancioIcono.Position = new Vector2(710, 20);
 
-            TgcSprite cansancio = new TgcSprite();
-            cansancio.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\BarraCansancio.png");
+            CustomSprite cansancio = new CustomSprite();
+            cansancio.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\BarraCansancio.png", D3DDevice.Instance.Device);
             cansancio.Position = new Vector2(790, 40);
 
-            TgcSprite temperaturaPersonajeIcono = new TgcSprite();
-            temperaturaPersonajeIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\TemperaturaPersonaje.png");
+            CustomSprite temperaturaPersonajeIcono = new CustomSprite();
+            temperaturaPersonajeIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\TemperaturaPersonaje.png", D3DDevice.Instance.Device);
             temperaturaPersonajeIcono.Position = new Vector2(20, 90);
 
-            TgcText2d temperaturaPersonaje = new TgcText2d();
+            TgcText2D temperaturaPersonaje = new TgcText2D();
             temperaturaPersonaje.Color = Color.DarkViolet;
-            temperaturaPersonaje.Align = TgcText2d.TextAlign.LEFT;
+            temperaturaPersonaje.Align = TgcText2D.TextAlign.LEFT;
             temperaturaPersonaje.Position = new Point(100, 100);
             temperaturaPersonaje.Size = new Size(100, 50);
             temperaturaPersonaje.changeFont(new System.Drawing.Font("TimesNewRoman", 30, FontStyle.Bold));
@@ -830,9 +830,9 @@ namespace TGC.Group.Model.Administracion
             //*****Creacion de barra de salud, hidratacion, alimentacion, cansancio y temperatura corporal del persobaje****
 
             //****************************Creacion de objetivos*********************
-            TgcSprite objetivosIcono = new TgcSprite();
-            TgcText2d mensajeObjetivo1 = new TgcText2d();
-            objetivosIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Objetivos.png");
+            CustomSprite objetivosIcono = new CustomSprite();
+            TgcText2D mensajeObjetivo1 = new TgcText2D();
+            objetivosIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Objetivos.png", D3DDevice.Instance.Device);
             if (screenSize.Width >= 1024)
             {
                 objetivosIcono.Position = new Vector2(screenSize.Width - 300, 25);
@@ -844,7 +844,7 @@ namespace TGC.Group.Model.Administracion
                 mensajeObjetivo1.Position = new Point(100, 200);
             }
             mensajeObjetivo1.Color = Color.Red;
-            mensajeObjetivo1.Align = TgcText2d.TextAlign.LEFT;
+            mensajeObjetivo1.Align = TgcText2D.TextAlign.LEFT;
             mensajeObjetivo1.Size = new Size(200, 50);
             mensajeObjetivo1.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
 
@@ -854,8 +854,8 @@ namespace TGC.Group.Model.Administracion
 
             //*****************Creación de texto informativo********************************
             //Texto de Game Over e informativo
-            TgcText2d estadoJuego = new TgcText2d();
-            estadoJuego.Align = TgcText2d.TextAlign.CENTER;
+            TgcText2D estadoJuego = new TgcText2D();
+            estadoJuego.Align = TgcText2D.TextAlign.CENTER;
             estadoJuego.Position = new Point(5, screenSize.Height / 2);
             estadoJuego.Size = new Size(screenSize.Width, 50);
             estadoJuego.changeFont(new System.Drawing.Font("TimesNewRoman", 60, FontStyle.Bold));
@@ -864,13 +864,13 @@ namespace TGC.Group.Model.Administracion
             //*****************Creación de texto informativo********************************
 
             //*****************Creación de menu ayuda********************************************************
-            TgcSprite ayuda = new TgcSprite();
-            ayuda.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\ayuda.jpg");
+            CustomSprite ayuda = new CustomSprite();
+            ayuda.Bitmap = new CustomBitmap(recursos + "\\Texturas\\ayuda.jpg", D3DDevice.Instance.Device);
 
             //Ubicarlo centrado en la pantalla
-            Size ayudaTextureSize = ayuda.Texture.Size;
-            TgcText2d ayudaReglon1 = new TgcText2d();
-            TgcText2d ayudaReglon2 = new TgcText2d();
+            Size ayudaTextureSize = ayuda.Bitmap.Size;
+            TgcText2D ayudaReglon1 = new TgcText2D();
+            TgcText2D ayudaReglon2 = new TgcText2D();
             if (screenSize.Width >= 1024)
             {
                 //Sabemos que la textura tiene 1024
@@ -893,12 +893,12 @@ namespace TGC.Group.Model.Administracion
             }
             ayudaReglon1.Color = Color.Black;
             ayudaReglon1.Text = "";
-            ayudaReglon1.Align = TgcText2d.TextAlign.LEFT;
+            ayudaReglon1.Align = TgcText2D.TextAlign.LEFT;
             ayudaReglon1.Position = new Point(0, 0);
             ayudaReglon1.Size = new Size(ayudaTextureSize.Width, ayudaTextureSize.Height);
             ayudaReglon2.Color = Color.DarkViolet;
             ayudaReglon2.Text = "Versión: " + this.Version();
-            ayudaReglon2.Align = TgcText2d.TextAlign.LEFT;
+            ayudaReglon2.Align = TgcText2D.TextAlign.LEFT;
             ayudaReglon2.Size = new Size(200, 50);
 
             contexto.ayuda = ayuda;
@@ -907,32 +907,32 @@ namespace TGC.Group.Model.Administracion
             //*****************Creación de menu ayuda********************************************************
 
             //*****************Creación de texto informativo de la temperatura y la hora del dia********************************
-            TgcSprite temperaturaDiaIcono = new TgcSprite();
-            temperaturaDiaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\TemperaturaDia.png");
+            CustomSprite temperaturaDiaIcono = new CustomSprite();
+            temperaturaDiaIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\TemperaturaDia.png", D3DDevice.Instance.Device);
             temperaturaDiaIcono.Position = new Vector2(screenSize.Width - 85, screenSize.Height - 200);
-            TgcText2d temperaturaDia = new TgcText2d();
+            TgcText2D temperaturaDia = new TgcText2D();
             temperaturaDia.Color = Color.White;
-            temperaturaDia.Align = TgcText2d.TextAlign.RIGHT;
+            temperaturaDia.Align = TgcText2D.TextAlign.RIGHT;
             temperaturaDia.Position = new Point(screenSize.Width - 205, screenSize.Height - 180);
             temperaturaDia.Size = new Size(100, 100);
             temperaturaDia.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
-            TgcSprite horaDiaIcono = new TgcSprite();
-            horaDiaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\HoraDelDia.png");
+            CustomSprite horaDiaIcono = new CustomSprite();
+            horaDiaIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\HoraDelDia.png", D3DDevice.Instance.Device);
             horaDiaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 100);
-            TgcText2d horaDia = new TgcText2d();
+            TgcText2D horaDia = new TgcText2D();
             horaDia.Color = Color.White;
-            horaDia.Align = TgcText2d.TextAlign.RIGHT;
+            horaDia.Align = TgcText2D.TextAlign.RIGHT;
             horaDia.Position = new Point(screenSize.Width - 210, screenSize.Height - 85);
             horaDia.Size = new Size(100, 100);
             horaDia.changeFont(new System.Drawing.Font("TimesNewRoman", 20, FontStyle.Bold));
-            TgcSprite estadoDiaSolIcono = new TgcSprite();
-            estadoDiaSolIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Sol.png");
+            CustomSprite estadoDiaSolIcono = new CustomSprite();
+            estadoDiaSolIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Sol.png", D3DDevice.Instance.Device);
             estadoDiaSolIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
-            TgcSprite estadoDiaLunaIcono = new TgcSprite();
-            estadoDiaLunaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Luna.png");
+            CustomSprite estadoDiaLunaIcono = new CustomSprite();
+            estadoDiaLunaIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Luna.png", D3DDevice.Instance.Device);
             estadoDiaLunaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
-            TgcSprite estadoDiaLluviaIcono = new TgcSprite();
-            estadoDiaLluviaIcono.Texture = TgcTexture.createTexture(recursos + "\\Texturas\\Hud\\Lluvia.png");
+            CustomSprite estadoDiaLluviaIcono = new CustomSprite();
+            estadoDiaLluviaIcono.Bitmap = new CustomBitmap(recursos + "\\Texturas\\Hud\\Lluvia.png", D3DDevice.Instance.Device);
             estadoDiaLluviaIcono.Position = new Vector2(screenSize.Width - 100, screenSize.Height - 300);
 
             contexto.temperaturaDiaIcono = temperaturaDiaIcono;
@@ -991,41 +991,43 @@ namespace TGC.Group.Model.Administracion
 
         public void IniciarCamaraPrimeraPersona()
         {
-            contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
+            contexto.camara = new CamaraPrimeraPersona(contexto.Frustum, D3DDevice.Instance.Device);
         }
 
         public void IniciarCamaraTerceraPersona()
         {
-            contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
+            //contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, contexto.Frustum, D3DDevice.Instance.Device);
         }
 
         public void IniciarMusicasYSonidos()
         {
             TgcStaticSound sonidoGolpe = new TgcStaticSound();
-            sonidoGolpe.loadSound(recursos + "Sonidos\\Golpe.wav");
+            sonidoGolpe.loadSound(recursos + "Sonidos\\Golpe.wav", contexto.DirectSound.DsDevice);
             contexto.sonidoGolpe = sonidoGolpe;
 
             TgcStaticSound sonidoGolpePatada = new TgcStaticSound();
-            sonidoGolpePatada.loadSound(recursos + "Sonidos\\GolpePatada.wav");
+            sonidoGolpePatada.loadSound(recursos + "Sonidos\\GolpePatada.wav", contexto.DirectSound.DsDevice);
             contexto.sonidoGolpePatada = sonidoGolpePatada;
 
             TgcStaticSound sonidoLluvia = new TgcStaticSound();
-            sonidoLluvia.loadSound(recursos + "Sonidos\\Lluvia.wav");
+            sonidoLluvia.loadSound(recursos + "Sonidos\\Lluvia.wav", contexto.DirectSound.DsDevice);
             contexto.sonidoLluvia = sonidoLluvia;
 
             TgcStaticSound sonidoAntorcha = new TgcStaticSound();
-            sonidoAntorcha.loadSound(recursos + "Sonidos\\Fuego.wav");
+            sonidoAntorcha.loadSound(recursos + "Sonidos\\Fuego.wav", contexto.DirectSound.DsDevice);
             contexto.personaje.antorcha.sonidoAntorcha = sonidoAntorcha;
 
-            Tgc3dSound sound1 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(7000, 0, 5000));
+            Tgc3dSound sound1 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(7000, 0, 5000),
+                contexto.DirectSound.DsDevice);
             sound1.MinDistance = 1000f;
             contexto.sonidoGrillos = sound1;
 
-            Tgc3dSound sound2 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(-8000, 0, -8000));
+            Tgc3dSound sound2 = new Tgc3dSound(recursos + "Sonidos\\Grillos.wav", new Vector3(-8000, 0, -8000),
+                contexto.DirectSound.DsDevice);
             sound2.MinDistance = 1000f;
             contexto.sonidoGrillos2 = sound2;
 
-            GuiController.Instance.DirectSound.ListenerTracking = contexto.personaje.mesh;
+            contexto.DirectSound.ListenerTracking = contexto.personaje.mesh;
 
             List<String> musicas = new List<string>();
             musicas.Add(recursos + "Sonidos\\Musicas\\02 - The Beach.mp3");
@@ -1036,7 +1038,6 @@ namespace TGC.Group.Model.Administracion
             musicas.Add(recursos + "Sonidos\\Musicas\\07 - The Harbor City At Night.mp3");
             contexto.musicas = musicas;
 
-            TgcMp3Player player = GuiController.Instance.Mp3Player;
             player.closeFile();
             player.stop();
 

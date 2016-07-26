@@ -5,6 +5,7 @@ using Microsoft.DirectX.Direct3D;
 using TGC.Core.Shaders;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles.Efectos;
+using TGC.Core.Direct3D;
 
 namespace TGC.Group.Model.Utiles
 {
@@ -67,7 +68,7 @@ namespace TGC.Group.Model.Utiles
             scaleXZ = pscaleXZ;
             scaleY = pscaleY;
 
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = D3DDevice.Instance.Device;
             this.center = center;
 
             //Dispose de VertexBuffer anterior, si habia
@@ -213,7 +214,7 @@ namespace TGC.Group.Model.Utiles
                 terrainTexture.Dispose();
             }
 
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = D3DDevice.Instance.Device;
 
             //Rotar e invertir textura
             Bitmap b = (Bitmap)Bitmap.FromFile(path);
@@ -248,13 +249,13 @@ namespace TGC.Group.Model.Utiles
         // utilizo estos metodos para el render:
         public void render()
         {
-            Device d3dDevice = GuiController.Instance.D3dDevice;
+            Device d3dDevice = D3DDevice.Instance.Device;
             d3dDevice.Transform.World = Matrix.Identity;
 
             //Render terrain
             d3dDevice.SetTexture(0, terrainTexture);
             d3dDevice.SetTexture(1, null);
-            d3dDevice.Material = TgcD3dDevice.DEFAULT_MATERIAL;
+            d3dDevice.Material = D3DDevice.DEFAULT_MATERIAL;
 
             d3dDevice.VertexFormat = CustomVertex.PositionTextured.Format;
             d3dDevice.SetStreamSource(0, vbTerrain, 0);
@@ -263,7 +264,7 @@ namespace TGC.Group.Model.Utiles
 
         public void executeRender(Effect effect)
         {
-            Device device = GuiController.Instance.D3dDevice;
+            Device device = D3DDevice.Instance.Device;
             TgcShaders.Instance.setShaderMatrixIdentity(effect);
 
             //Render terrain

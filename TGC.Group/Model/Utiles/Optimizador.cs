@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.DirectX;
 using TGC.Group.Model.ElementosJuego;
+using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Model.Utiles
 {
@@ -38,7 +39,7 @@ namespace TGC.Group.Model.Utiles
 
         #region Comportamientos
 
-        public void Actualizar(Vector3 posicionActual)
+        public void Actualizar(Vector3 posicionActual, SuvirvalCraft contexto)
         {
             this.cicloActual++;
             if (this.cicloActual > this.referenciaActualizacion)
@@ -46,15 +47,15 @@ namespace TGC.Group.Model.Utiles
                 this.cicloActual = 0;
                 this.ActualizarElementosColision(posicionActual);
             }
-            this.ActualizarElementosRenderizacion();
+            this.ActualizarElementosRenderizacion(contexto);
         }
 
-        private void ActualizarElementosRenderizacion()
+        private void ActualizarElementosRenderizacion(SuvirvalCraft contexto)
         {
             this.ElementosRenderizacion.Clear();
             foreach (Elemento elem in this.Elementos)
             {
-                if (ControladorColisiones.FrustumColisionaCuadrado(GuiController.Instance.Frustum, elem.BoundingBox()))
+                if (ControladorColisiones.FrustumColisionaCuadrado(contexto.Frustum, elem.BoundingBox()))
                 {
                     this.ElementosRenderizacion.Add(elem);
                 }

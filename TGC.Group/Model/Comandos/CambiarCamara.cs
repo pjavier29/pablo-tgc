@@ -1,4 +1,5 @@
 ﻿using System;
+using TGC.Core.Direct3D;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles.Camaras;
 
@@ -34,11 +35,11 @@ namespace TGC.Group.Model.Comandos
         {
             if (this.camaraElegida.Equals(PrimeraPersona))
             {
-                contexto.camara = new CamaraPrimeraPersona(GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
+                contexto.camara = new CamaraPrimeraPersona(contexto.Frustum, D3DDevice.Instance.Device);
             }
             if (this.camaraElegida.Equals(TerceraPersona))
             {
-                contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, GuiController.Instance.Frustum, GuiController.Instance.D3dDevice);
+                //contexto.camara = new CamaraTerceraPersona(GuiController.Instance.ThirdPersonCamera, contexto.personaje.mesh.Position, contexto.Frustum, D3DDevice.Instance.Device);
             }
         }
 

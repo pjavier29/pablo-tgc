@@ -431,11 +431,11 @@ namespace TGC.Group.Model.Administracion
         {
             if (this.efecto != null)
             {
-                this.efecto.ActualizarRenderizar(contexto);
+                this.efecto.ActualizarRenderizar(contexto, contexto.ElapsedTime);
             }
             else
             {
-                this.mesh.animateAndRender();
+                this.mesh.animateAndRender(contexto.ElapsedTime);
             }
 
             //TODO esto es muy feo
@@ -452,7 +452,7 @@ namespace TGC.Group.Model.Administracion
 
         public void RenderizarPrimeraPersona(SuvirvalCraft contexto)
         {
-            this.mesh.updateAnimation();
+            this.mesh.updateAnimation(contexto.ElapsedTime);
             this.mesh.Transform = Matrix.Scaling(this.mesh.Scale)
                 * Matrix.RotationYawPitchRoll(this.mesh.Rotation.Y, this.mesh.Rotation.X, this.mesh.Rotation.Z)
                 * Matrix.Translation(this.mesh.Position);
