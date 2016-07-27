@@ -8,8 +8,8 @@ namespace TGC.Group.Model.Utiles
     {
         #region Atributos
 
-        private TgcMesh tgcMesh;
-        private TgcSkeletalMesh tgcSkeletalMesh;
+        private readonly TgcMesh tgcMesh;
+        private readonly TgcSkeletalMesh tgcSkeletalMesh;
 
         #endregion Atributos
 
@@ -17,14 +17,14 @@ namespace TGC.Group.Model.Utiles
 
         public MallaEnvoltura(TgcMesh mesh)
         {
-            this.tgcMesh = mesh;
-            this.tgcSkeletalMesh = null;
+            tgcMesh = mesh;
+            tgcSkeletalMesh = null;
         }
 
         public MallaEnvoltura(TgcSkeletalMesh mesh)
         {
-            this.tgcSkeletalMesh = mesh;
-            this.tgcMesh = null;
+            tgcSkeletalMesh = mesh;
+            tgcMesh = null;
         }
 
         #endregion Contructores
@@ -33,27 +33,53 @@ namespace TGC.Group.Model.Utiles
 
         public void Render()
         {
-            if (tgcMesh != null) { this.tgcMesh.render(); } else { this.tgcSkeletalMesh.render(); }
+            if (tgcMesh != null)
+            {
+                tgcMesh.render();
+            }
+            else
+            {
+                tgcSkeletalMesh.render();
+            }
         }
 
         public Vector3 Posicion()
         {
-            if (tgcMesh != null) { return this.tgcMesh.Position; } else { return this.tgcSkeletalMesh.Position; }
+            if (tgcMesh != null)
+            {
+                return tgcMesh.Position;
+            }
+            return tgcSkeletalMesh.Position;
         }
 
         public void Posicion(Vector3 nuevaPosicion)
         {
-            if (tgcMesh != null) { this.tgcMesh.Position = nuevaPosicion; } else { this.tgcSkeletalMesh.Position = nuevaPosicion; }
+            if (tgcMesh != null)
+            {
+                tgcMesh.Position = nuevaPosicion;
+            }
+            else
+            {
+                tgcSkeletalMesh.Position = nuevaPosicion;
+            }
         }
 
         public Vector3 MinimoPunto()
         {
-            if (tgcMesh != null) { return this.tgcMesh.BoundingBox.PMin; } else { return this.tgcSkeletalMesh.BoundingBox.PMin; }
+            if (tgcMesh != null)
+            {
+                return tgcMesh.BoundingBox.PMin;
+            }
+            return tgcSkeletalMesh.BoundingBox.PMin;
         }
 
         public float FactorCorreccion()
         {
-            if (tgcMesh != null) { return 10; } else { return -2; }
+            if (tgcMesh != null)
+            {
+                return 10;
+            }
+            return -2;
         }
 
         #endregion Comportamientos

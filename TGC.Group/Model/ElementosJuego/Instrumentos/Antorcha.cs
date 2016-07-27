@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
 using TGC.Core.SceneLoader;
 using TGC.Core.Sound;
 using TGC.Core.Utils;
@@ -33,7 +32,8 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
             estaActivada = false;
         }
 
-        public Antorcha(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
+        public Antorcha(float peso, float resistencia, TgcMesh mesh, Efecto efecto)
+            : base(peso, resistencia, mesh, efecto)
         {
             estaActivada = false;
         }
@@ -42,16 +42,17 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
 
         #region Comportamientos
 
-        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector, Vector3 lastPos)
+        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos,
+            float moveForward, Vector3 movementVector, Vector3 lastPos)
         {
         }
 
         public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
-            this.SetPosicion(contexto.personaje.mesh.Position);
+            SetPosicion(contexto.personaje.mesh.Position);
         }
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
         }
 
@@ -61,24 +62,25 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
 
         public void SetPosicion(Vector3 posicion)
         {
-            this.posicionActual = posicion;
+            posicionActual = posicion;
         }
 
         public override Vector3 posicion()
         {
-            return this.posicionActual;
+            return posicionActual;
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return Antorcha;
         }
 
-        public override void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor, ColorValue colorAmbiente,
+        public override void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor,
+            ColorValue colorAmbiente,
             ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
         {
             efecto.GetEfectoShader().SetValue("lightColor", ColorValue.FromColor(Color.LightYellow));
-            efecto.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(this.posicion()));
+            efecto.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(posicion()));
             efecto.GetEfectoShader().SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(posicionVision));
             efecto.GetEfectoShader().SetValue("lightIntensity", 100f);
             efecto.GetEfectoShader().SetValue("lightAttenuation", 0.5f);
@@ -91,19 +93,19 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
 
         public override float GetAlturaAnimacion()
         {
-            return (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) * 0.9f;
+            return (Mesh.BoundingBox.PMax.Y - Mesh.BoundingBox.PMin.Y) * 0.9f;
         }
 
         public override void Activar()
         {
-            this.estaActivada = true;
-            this.sonidoAntorcha.play(true);
+            estaActivada = true;
+            sonidoAntorcha.play(true);
         }
 
         public override void Desactivar()
         {
-            this.estaActivada = false;
-            this.sonidoAntorcha.stop();
+            estaActivada = false;
+            sonidoAntorcha.stop();
         }
 
         #endregion Comportamientos

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
 using TGC.Core.Geometry;
 using TGC.Core.SkeletalAnimation;
 using TGC.Group.Model.ElementosJuego;
@@ -13,15 +13,33 @@ namespace TGC.Group.Model.Administracion
 {
     public class Personaje
     {
+        #region Constructores
+
+        public Personaje()
+        {
+            mochila = new Elemento[9] { null, null, null, null, null, null, null, null, null };
+            //La mochila solo tiene 9 elementos
+            instrumentos = new List<Arma>();
+            tiempoCorriendo = 0;
+            direccionVision = 0;
+            TemperaturaCorporal = 37;
+            antorcha = null;
+        }
+
+        #endregion Constructores
+
         #region Atributos
 
         private TgcSphere boundingEsfera;
         private TgcSphere alcanceInteraccionEsfera;
-        private Elemento[] mochila;
+        private readonly Elemento[] mochila;
         private float direccionVision;
         private float tiempoCorriendo;
-        private Arma instrumentoManoDerecha;//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
-        private List<Arma> instrumentos;//TODO. queda pendiente que las armas extiendan de algun objeto en comun.
+        private Arma instrumentoManoDerecha; //TODO. queda pendiente que las armas extiendan de algun objeto en comun.
+
+        private readonly List<Arma> instrumentos;
+        //TODO. queda pendiente que las armas extiendan de algun objeto en comun.
+
         public Antorcha antorcha;
         private Efecto efecto;
 
@@ -41,20 +59,6 @@ namespace TGC.Group.Model.Administracion
 
         #endregion Propiedades
 
-        #region Constructores
-
-        public Personaje()
-        {
-            this.mochila = new Elemento[9] { null, null, null, null, null, null, null, null, null };//La mochila solo tiene 9 elementos
-            this.instrumentos = new List<Arma>();
-            this.tiempoCorriendo = 0;
-            this.direccionVision = 0;
-            this.TemperaturaCorporal = 37;
-            antorcha = null;
-        }
-
-        #endregion Constructores
-
         #region Comportamientos
 
         public void IniciarBoundingEsfera()
@@ -63,7 +67,7 @@ namespace TGC.Group.Model.Administracion
             boundingEsfera = new TgcSphere();
             boundingEsfera.setColor(Color.SkyBlue);
             boundingEsfera.Radius = 60;
-            boundingEsfera.Position = this.mesh.Position;
+            boundingEsfera.Position = mesh.Position;
             boundingEsfera.updateValues();
         }
 
@@ -72,52 +76,53 @@ namespace TGC.Group.Model.Administracion
             alcanceInteraccionEsfera = new TgcSphere();
             alcanceInteraccionEsfera.setColor(Color.White);
             alcanceInteraccionEsfera.Radius = 70;
-            alcanceInteraccionEsfera.Position = this.mesh.Position;
+            alcanceInteraccionEsfera.Position = mesh.Position;
             alcanceInteraccionEsfera.updateValues();
         }
 
         public void ActualizarEsferas()
         {
             //Actualizamos la esfera del bounding
-            boundingEsfera.Position = this.mesh.Position + new Vector3(0, (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y) / 2, 0);
+            boundingEsfera.Position = mesh.Position +
+                                      new Vector3(0, (mesh.BoundingBox.PMax.Y - mesh.BoundingBox.PMin.Y) / 2, 0);
             boundingEsfera.updateValues();
 
             //Actualizamos la esfera del alcance
             //TODO. Misma logica de siempre para saber la direccion del persnaje. REVISAR.
-            Vector3 direccionEsferaGolpe = this.mesh.Position + new Vector3(-(float)Math.Sin((float)this.mesh.Rotation.Y) * 50,
-                (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y) / 2, -(float)Math.Cos((float)this.mesh.Rotation.Y) * 50);
+            var direccionEsferaGolpe = mesh.Position + new Vector3(-(float)Math.Sin(mesh.Rotation.Y) * 50,
+                (mesh.BoundingBox.PMax.Y - mesh.BoundingBox.PMin.Y) / 2, -(float)Math.Cos(mesh.Rotation.Y) * 50);
             alcanceInteraccionEsfera.Position = direccionEsferaGolpe;
             alcanceInteraccionEsfera.updateValues();
 
             //TODO. Esto esta muy mal
-            if (this.antorcha != null)
+            if (antorcha != null)
             {
-                this.antorcha.SetPosicion(this.Direccion(50) + new Vector3(0, 20, 0));
+                antorcha.SetPosicion(Direccion(50) + new Vector3(0, 20, 0));
             }
         }
 
         public TgcSphere GetBoundingEsfera()
         {
-            return this.boundingEsfera;
+            return boundingEsfera;
         }
 
         public TgcSphere GetAlcanceInteraccionEsfera()
         {
-            return this.alcanceInteraccionEsfera;
+            return alcanceInteraccionEsfera;
         }
 
         public void agregarInstrumento(Arma instrumento)
         {
-            this.instrumentos.Add(instrumento);
+            instrumentos.Add(instrumento);
         }
 
         public void juntar(Elemento elemento)
         {
-            for (int i = 0; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
-                if (this.mochila[i] == null)
+                if (mochila[i] == null)
                 {
-                    this.mochila[i] = elemento;
+                    mochila[i] = elemento;
                     return;
                 }
             }
@@ -126,11 +131,11 @@ namespace TGC.Group.Model.Administracion
 
         public void Dejar(Elemento elemento)
         {
-            for (int i = 0; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
-                if (this.mochila[i] != null && this.mochila[i].Equals(elemento))
+                if (mochila[i] != null && mochila[i].Equals(elemento))
                 {
-                    this.mochila[i] = null;
+                    mochila[i] = null;
                     return;
                 }
             }
@@ -139,98 +144,96 @@ namespace TGC.Group.Model.Administracion
 
         public void DejarElementos(List<Elemento> elementos)
         {
-            foreach (Elemento elem in elementos)
+            foreach (var elem in elementos)
             {
-                this.Dejar(elem);
+                Dejar(elem);
             }
         }
 
         public float correr(float tiempo)
         {
-            if (this.tiempoCorriendo >= this.ResistenciaFisica)
+            if (tiempoCorriendo >= ResistenciaFisica)
             {
-                this.tiempoCorriendo = this.ResistenciaFisica;
-                return this.VelocidadCaminar;
+                tiempoCorriendo = ResistenciaFisica;
+                return VelocidadCaminar;
             }
-            else
+            tiempoCorriendo += tiempo;
+            if (tiempoCorriendo >= ResistenciaFisica * 0.5)
             {
-                this.tiempoCorriendo += tiempo;
-                if (this.tiempoCorriendo >= this.ResistenciaFisica * 0.5)
-                {
-                    return this.VelocidadCaminar * 1.5f;
-                }
-                return this.VelocidadCaminar * 3.5f;
+                return VelocidadCaminar * 1.5f;
             }
+            return VelocidadCaminar * 3.5f;
         }
 
         public float rotarRapido()
         {
-            return this.VelocidadRotacion * 2.5f;
+            return VelocidadRotacion * 2.5f;
         }
 
         /// <summary>
-        /// Afecta la salud del personaje dado un tiempo pasado por parámetro. El tiempo es en segundos. La salud del personaje se compone por su hidratacion
-        /// y por su alimentacion (mitad de cada una)
+        ///     Afecta la salud del personaje dado un tiempo pasado por parámetro. El tiempo es en segundos. La salud del personaje
+        ///     se compone por su hidratacion
+        ///     y por su alimentacion (mitad de cada una)
         /// </summary>
         /// <param name="tiempoEnSegundos"></param>
         public void AfectarSaludPorTiempo(float tiempoEnSegundos)
         {
             //Agregamos estos valores que serian como las defensas del personaje. Si en algun momento tiene traje podrian ser mas bajos (proteger más)
-            this.AfectarHidratacion(tiempoEnSegundos * 0.1f);
-            this.AfectarAlimentacion(tiempoEnSegundos * 0.3f);
+            AfectarHidratacion(tiempoEnSegundos * 0.1f);
+            AfectarAlimentacion(tiempoEnSegundos * 0.3f);
         }
 
         private void AfectarHidratacion(float tiempoEnSegundos)
         {
-            this.Hidratacion -= tiempoEnSegundos;
+            Hidratacion -= tiempoEnSegundos;
         }
 
         private void AfectarAlimentacion(float tiempoEnSegundos)
         {
-            this.Alimentacion -= tiempoEnSegundos;
+            Alimentacion -= tiempoEnSegundos;
         }
 
         public void incrementoResistenciaFisica(float tiempoEnSegundos)
         {
-            if ((this.tiempoCorriendo - tiempoEnSegundos) > 0)
+            if (tiempoCorriendo - tiempoEnSegundos > 0)
             {
-                this.tiempoCorriendo -= tiempoEnSegundos;
+                tiempoCorriendo -= tiempoEnSegundos;
             }
             else
             {
-                this.tiempoCorriendo = 0;
+                tiempoCorriendo = 0;
             }
         }
 
         public bool estaMuerto()
         {
-            return (this.Hidratacion + this.Alimentacion <= 0) || (this.TemperaturaCorporal < 34);
+            return (Hidratacion + Alimentacion <= 0) || (TemperaturaCorporal < 34);
         }
 
         public void ConsumirAlimento(float nutricion)
         {
-            this.Alimentacion += nutricion;
-            if (this.Alimentacion > 100)
+            Alimentacion += nutricion;
+            if (Alimentacion > 100)
             {
-                this.Alimentacion = 100;
+                Alimentacion = 100;
             }
         }
 
         public void ConsumirAguar(float cantidad)
         {
-            this.Hidratacion += cantidad;
-            if (this.Hidratacion > 100)
+            Hidratacion += cantidad;
+            if (Hidratacion > 100)
             {
-                this.Hidratacion = 100;
+                Hidratacion = 100;
             }
         }
 
         public void IncrementarTemperaturaCorporalPorTiempo(float temperatura, float tiempoEnSegundos)
         {
-            this.TemperaturaCorporal += temperatura * tiempoEnSegundos * 0.05f;
-            if (this.TemperaturaCorporal > 37)
+            TemperaturaCorporal += temperatura * tiempoEnSegundos * 0.05f;
+            if (TemperaturaCorporal > 37)
             {
-                this.TemperaturaCorporal = 37;
+                TemperaturaCorporal = 37;
             }
         }
 
@@ -239,29 +242,29 @@ namespace TGC.Group.Model.Administracion
             if (temperatura < 24)
             {
                 //Ese 0.001 seria la resistencia, se puede decrementar con trajes.
-                this.TemperaturaCorporal -= ((24 - temperatura) * tiempo * 0.001f);
+                TemperaturaCorporal -= (24 - temperatura) * tiempo * 0.001f;
             }
-            if (this.TemperaturaCorporal < 31)
+            if (TemperaturaCorporal < 31)
             {
-                this.TemperaturaCorporal = 31;
+                TemperaturaCorporal = 31;
             }
         }
 
         public void morir()
         {
-            this.Hidratacion = 0;
-            this.Alimentacion = 0;
-            this.TemperaturaCorporal = 0;
+            Hidratacion = 0;
+            Alimentacion = 0;
+            TemperaturaCorporal = 0;
         }
 
         public List<Elemento> elementosEnMochila()
         {
-            List<Elemento> elementos = new List<Elemento>();
-            for (int i = 0; i < 9; i++)
+            var elementos = new List<Elemento>();
+            for (var i = 0; i < 9; i++)
             {
-                if (this.mochila[i] != null)
+                if (mochila[i] != null)
                 {
-                    elementos.Add(this.mochila[i]);
+                    elementos.Add(mochila[i]);
                 }
             }
             return elementos;
@@ -269,9 +272,9 @@ namespace TGC.Group.Model.Administracion
 
         public bool ContieneElementoEnMochila(Elemento elemento)
         {
-            for (int i = 0; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
-                if (this.mochila[i] != null && this.mochila[i].Equals(elemento))
+                if (mochila[i] != null && mochila[i].Equals(elemento))
                 {
                     return true;
                 }
@@ -279,11 +282,11 @@ namespace TGC.Group.Model.Administracion
             return false;
         }
 
-        public bool ContieneElementoEnMochilaDeTipo(String tipo)
+        public bool ContieneElementoEnMochilaDeTipo(string tipo)
         {
-            for (int i = 0; i < 9; i++)
+            for (var i = 0; i < 9; i++)
             {
-                if (this.mochila[i] != null && this.mochila[i].EsDeTipo(tipo))
+                if (mochila[i] != null && mochila[i].EsDeTipo(tipo))
                 {
                     return true;
                 }
@@ -293,25 +296,25 @@ namespace TGC.Group.Model.Administracion
 
         public bool ContieneElementoEnPosicionDeMochila(int numero)
         {
-            return (this.mochila[numero] != null);
+            return mochila[numero] != null;
         }
 
         public Elemento DarElementoEnPosicionDeMochila(int numero)
         {
-            return this.mochila[numero];
+            return mochila[numero];
         }
 
         /// <summary>
-        /// El orden en el cual fueron cargados los instrumentos es el orden que se utilizará para seleccionar el instrumento
+        ///     El orden en el cual fueron cargados los instrumentos es el orden que se utilizará para seleccionar el instrumento
         /// </summary>
         /// <param name="numeroInstrumento"></param>
         public void seleccionarInstrumentoManoDerecha(int numeroInstrumento)
         {
             //Por el momento sabemos que el Attachment 0 es el que esta en la mano derecha
-            this.instrumentoManoDerecha = this.instrumentos[numeroInstrumento];
-            this.mesh.Attachments[0].Mesh = this.instrumentoManoDerecha.mesh;
-            this.mesh.Attachments[0].Offset = this.instrumentoManoDerecha.translacion;
-            this.mesh.Attachments[0].updateValues();
+            instrumentoManoDerecha = instrumentos[numeroInstrumento];
+            mesh.Attachments[0].Mesh = instrumentoManoDerecha.mesh;
+            mesh.Attachments[0].Offset = instrumentoManoDerecha.translacion;
+            mesh.Attachments[0].updateValues();
         }
 
         public float alcancePatada()
@@ -326,22 +329,22 @@ namespace TGC.Group.Model.Administracion
 
         public float alcanceGolpe()
         {
-            return this.instrumentoManoDerecha.alcance;
+            return instrumentoManoDerecha.alcance;
         }
 
         public float fuerzaGolpe()
         {
-            return this.instrumentoManoDerecha.potenciaGolpe * this.Fuerza;
+            return instrumentoManoDerecha.potenciaGolpe * Fuerza;
         }
 
         public float PorcentajeDeSalud()
         {
-            float actual = (this.Hidratacion + this.Alimentacion) / 200;
+            var actual = (Hidratacion + Alimentacion) / 200;
             if (actual < 0)
             {
                 return 0;
             }
-            else if (actual > 1)
+            if (actual > 1)
             {
                 return 1;
             }
@@ -350,12 +353,12 @@ namespace TGC.Group.Model.Administracion
 
         public float PorcentajeDeHidratacion()
         {
-            float actual = this.Hidratacion / 100;
+            var actual = Hidratacion / 100;
             if (actual < 0)
             {
                 return 0;
             }
-            else if (actual > 1)
+            if (actual > 1)
             {
                 return 1;
             }
@@ -364,12 +367,12 @@ namespace TGC.Group.Model.Administracion
 
         public float PorcentajeDeAlimentacion()
         {
-            float actual = this.Alimentacion / 100;
+            var actual = Alimentacion / 100;
             if (actual < 0)
             {
                 return 0;
             }
-            else if (actual > 1)
+            if (actual > 1)
             {
                 return 1;
             }
@@ -378,108 +381,108 @@ namespace TGC.Group.Model.Administracion
 
         public float PorcentajeDeCansancio()
         {
-            return 1 - (this.tiempoCorriendo / this.ResistenciaFisica);
+            return 1 - tiempoCorriendo / ResistenciaFisica;
         }
 
-        public String TemperaturaCorporalTexto()
+        public string TemperaturaCorporalTexto()
         {
-            return ((int)this.TemperaturaCorporal).ToString() + "°";
+            return (int)TemperaturaCorporal + "°";
         }
 
         public Vector3 Direccion(float distancia)
         {
             //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
-            float z = -(float)Math.Cos((float)this.mesh.Rotation.Y) * distancia;
-            float x = -(float)Math.Sin((float)this.mesh.Rotation.Y) * distancia;
+            var z = -(float)Math.Cos(mesh.Rotation.Y) * distancia;
+            var x = -(float)Math.Sin(mesh.Rotation.Y) * distancia;
             //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
             //el vector salga del personaje.
-            return this.mesh.Position + new Vector3(x, 0, z);
+            return mesh.Position + new Vector3(x, 0, z);
         }
 
         public Vector3 DireccionAlturaCabeza(float distancia)
         {
             //Lo hacemos negativo para invertir hacia donde apunta el vector en 180 grados
-            float z = -(float)Math.Cos((float)this.mesh.Rotation.Y) * distancia;
-            float x = -(float)Math.Sin((float)this.mesh.Rotation.Y) * distancia;
+            var z = -(float)Math.Cos(mesh.Rotation.Y) * distancia;
+            var x = -(float)Math.Sin(mesh.Rotation.Y) * distancia;
             //Direccion donde apunta el personaje, sumamos las coordenadas obtenidas a la posición del personaje para que
             //el vector salga del personaje.
-            return this.PosicionAlturaCabeza() + new Vector3(x, this.direccionVision, z);
+            return PosicionAlturaCabeza() + new Vector3(x, direccionVision, z);
         }
 
         public Vector3 PosicionAlturaCabeza()
         {
-            return this.mesh.Position + new Vector3(0, (this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y), 0);
+            return mesh.Position + new Vector3(0, mesh.BoundingBox.PMax.Y - mesh.BoundingBox.PMin.Y, 0);
         }
 
         public void SubirVision(float valor)
         {
-            if (this.direccionVision < 200)
+            if (direccionVision < 200)
             {
-                this.direccionVision += valor;
+                direccionVision += valor;
             }
         }
 
         public void BajarVision(float valor)
         {
-            if (this.direccionVision > -(this.mesh.BoundingBox.PMax.Y - this.mesh.BoundingBox.PMin.Y))
+            if (direccionVision > -(mesh.BoundingBox.PMax.Y - mesh.BoundingBox.PMin.Y))
             {
-                this.direccionVision -= valor;
+                direccionVision -= valor;
             }
         }
 
         public void RenderizarTerceraPersona(SuvirvalCraft contexto)
         {
-            if (this.efecto != null)
+            if (efecto != null)
             {
-                this.efecto.ActualizarRenderizar(contexto, contexto.ElapsedTime);
+                efecto.ActualizarRenderizar(contexto, contexto.ElapsedTime);
             }
             else
             {
-                this.mesh.animateAndRender(contexto.ElapsedTime);
+                mesh.animateAndRender(contexto.ElapsedTime);
             }
 
             //TODO esto es muy feo
-            if (this.TieneAntorchaSeleccionada())
+            if (TieneAntorchaSeleccionada())
             {
                 //Si esta seleccionada la antorcha la renderizamos
-                this.antorcha.renderizar(contexto);
+                antorcha.renderizar(contexto);
             }
             else
             {
-                this.instrumentoManoDerecha.renderizar(contexto);
+                instrumentoManoDerecha.renderizar(contexto);
             }
         }
 
         public void RenderizarPrimeraPersona(SuvirvalCraft contexto)
         {
-            this.mesh.updateAnimation(contexto.ElapsedTime);
-            this.mesh.Transform = Matrix.Scaling(this.mesh.Scale)
-                * Matrix.RotationYawPitchRoll(this.mesh.Rotation.Y, this.mesh.Rotation.X, this.mesh.Rotation.Z)
-                * Matrix.Translation(this.mesh.Position);
+            mesh.updateAnimation(contexto.ElapsedTime);
+            mesh.Transform = Matrix.Scaling(mesh.Scale)
+                             * Matrix.RotationYawPitchRoll(mesh.Rotation.Y, mesh.Rotation.X, mesh.Rotation.Z)
+                             * Matrix.Translation(mesh.Position);
 
             //Renderizar attachments
-            foreach (TgcSkeletalBoneAttach attach in this.mesh.Attachments)
+            foreach (var attach in mesh.Attachments)
             {
-                attach.Mesh.Transform = attach.Offset * attach.Bone.MatFinal * this.mesh.Transform;
+                attach.Mesh.Transform = attach.Offset * attach.Bone.MatFinal * mesh.Transform;
                 //attach.Mesh.render();
             }
 
             //TODO esto es muy feo
-            if (this.TieneAntorchaSeleccionada())
+            if (TieneAntorchaSeleccionada())
             {
                 //Si esta seleccionada la antorcha la renderizamos
-                this.antorcha.renderizar(contexto);
+                antorcha.renderizar(contexto);
             }
             else
             {
-                this.instrumentoManoDerecha.renderizar(contexto);
+                instrumentoManoDerecha.renderizar(contexto);
             }
         }
 
         public bool TieneAntorchaSeleccionada()
         {
             //TODO. Esto esta muyy malll.
-            return this.instrumentoManoDerecha.mesh == this.antorcha.Mesh;
+            return instrumentoManoDerecha.mesh == antorcha.Mesh;
         }
 
         public void Dispose()
@@ -488,14 +491,14 @@ namespace TGC.Group.Model.Administracion
             {
                 arma.mesh.dispose();
             }*/
-            this.antorcha.sonidoAntorcha.dispose();
-            this.mesh.dispose();
+            antorcha.sonidoAntorcha.dispose();
+            mesh.dispose();
         }
 
         public void SetEfecto(Efecto efecto)
         {
             this.efecto = efecto;
-            efecto.Aplicar(this.mesh);
+            efecto.Aplicar(mesh);
         }
 
         #region Para configurar la luz
@@ -507,17 +510,17 @@ namespace TGC.Group.Model.Administracion
 
         public virtual ColorValue ColorAmbiente()
         {
-            return ColorValue.FromColor(this.Color);
+            return ColorValue.FromColor(Color);
         }
 
         public virtual ColorValue ColorDifuso()
         {
-            return ColorValue.FromColor(this.Color);
+            return ColorValue.FromColor(Color);
         }
 
         public virtual ColorValue ColorEspecular()
         {
-            return ColorValue.FromColor(this.Color);
+            return ColorValue.FromColor(Color);
         }
 
         public virtual float EspecularEx()

@@ -7,7 +7,6 @@ using TGC.Core.Input;
 using TGC.Core.Shaders;
 using TGC.Core.Sound;
 using TGC.Core.Textures;
-using TGC.Group.Model;
 using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Form
@@ -15,32 +14,32 @@ namespace TGC.Group.Form
     public partial class GameForm : System.Windows.Forms.Form
     {
         /// <summary>
-        /// Ejemplo del juego a correr
-        /// </summary>
-        private TgcExample Modelo { get; set; }
-
-        /// <summary>
-        /// Obtener o parar el estado del RenderLoop.
-        /// </summary>
-        private bool ApplicationRunning { get; set; }
-
-        /// <summary>
-        /// Permite manejar el sonido
-        /// </summary>
-        private TgcDirectSound DirectSound { get; set; }
-
-        /// <summary>
-        /// Permite manejar los inputs de la computadora
-        /// </summary>
-        private TgcD3dInput Input { get; set; }
-
-        /// <summary>
-        /// Constructor de la ventana
+        ///     Constructor de la ventana
         /// </summary>
         public GameForm()
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        ///     Ejemplo del juego a correr
+        /// </summary>
+        private TgcExample Modelo { get; set; }
+
+        /// <summary>
+        ///     Obtener o parar el estado del RenderLoop.
+        /// </summary>
+        private bool ApplicationRunning { get; set; }
+
+        /// <summary>
+        ///     Permite manejar el sonido
+        /// </summary>
+        private TgcDirectSound DirectSound { get; set; }
+
+        /// <summary>
+        ///     Permite manejar los inputs de la computadora
+        /// </summary>
+        private TgcD3dInput Input { get; set; }
 
         private void GameForm_Load(object sender, EventArgs e)
         {
@@ -66,7 +65,7 @@ namespace TGC.Group.Form
         }
 
         /// <summary>
-        /// Inicio todos los objetos necesarios para cargar el ejemplo y directx
+        ///     Inicio todos los objetos necesarios para cargar el ejemplo y directx
         /// </summary>
         public void InitGraphics()
         {
@@ -91,14 +90,15 @@ namespace TGC.Group.Form
             TgcShaders.Instance.loadCommonShaders(currentDirectory + Game.Default.ShadersDirectory);
 
             //Juego a ejecutar
-            Modelo = new SuvirvalCraft(currentDirectory + Game.Default.MediaDirectory, currentDirectory + Game.Default.ShadersDirectory);
+            Modelo = new SuvirvalCraft(currentDirectory + Game.Default.MediaDirectory,
+                currentDirectory + Game.Default.ShadersDirectory);
 
             //Cargar juego
             ExecuteModel();
         }
 
         /// <summary>
-        /// Comienzo el loop del juego
+        ///     Comienzo el loop del juego
         /// </summary>
         public void InitRenderLoop()
         {

@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
+using System.Drawing;
 using TGC.Core.Geometry;
 
 namespace TGC.Group.Model.Utiles
@@ -24,21 +24,21 @@ namespace TGC.Group.Model.Utiles
 
         public BarraEstado(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo)
         {
-            this.Iniciar(puntoMinimo, puntoMaximo, valorMaximo);
+            Iniciar(puntoMinimo, puntoMaximo, valorMaximo);
         }
 
         private void Iniciar(Vector3 puntoMinimo, Vector3 puntoMaximo, float valorMaximo)
         {
-            this.PuntoMinimo = puntoMinimo;
-            this.PuntoMaximo = puntoMaximo;
-            this.ValorMaximo = valorMaximo;
-            this.linea = new TgcArrow();
-            this.linea.PStart = puntoMinimo;
-            this.linea.PEnd = puntoMaximo;
-            this.linea.BodyColor = Color.Green;
-            this.linea.HeadColor = Color.Green;
-            this.linea.Thickness = 3;
-            this.linea.HeadSize = new Vector2(1, 1);
+            PuntoMinimo = puntoMinimo;
+            PuntoMaximo = puntoMaximo;
+            ValorMaximo = valorMaximo;
+            linea = new TgcArrow();
+            linea.PStart = puntoMinimo;
+            linea.PEnd = puntoMaximo;
+            linea.BodyColor = Color.Green;
+            linea.HeadColor = Color.Green;
+            linea.Thickness = 3;
+            linea.HeadSize = new Vector2(1, 1);
         }
 
         #endregion Contructores
@@ -47,32 +47,33 @@ namespace TGC.Group.Model.Utiles
 
         public void ActualizarPuntosBase(Vector3 puntoMinimo, Vector3 puntoMaximo)
         {
-            this.PuntoMinimo = puntoMinimo;
-            this.PuntoMaximo = puntoMaximo;
-            this.linea.PStart = puntoMinimo;
-            this.linea.PEnd = puntoMaximo;
+            PuntoMinimo = puntoMinimo;
+            PuntoMaximo = puntoMaximo;
+            linea.PStart = puntoMinimo;
+            linea.PEnd = puntoMaximo;
         }
 
         public void Render()
         {
-            this.linea.updateValues();
-            this.linea.render();
+            linea.updateValues();
+            linea.render();
         }
 
         public void ActualizarEstado(float valorActual)
         {
-            float porcentajerelativo = valorActual / this.ValorMaximo;
-            this.ActualizarAltura(porcentajerelativo);
-            this.ActualizarColor(porcentajerelativo);
+            var porcentajerelativo = valorActual / ValorMaximo;
+            ActualizarAltura(porcentajerelativo);
+            ActualizarColor(porcentajerelativo);
         }
 
         private void ActualizarAltura(float porcentajerelativo)
         {
-            float nuevoLargo = this.LargoBarra() * porcentajerelativo;
-            Vector3 nuevoDestino = new Vector3(this.PuntoMaximo.X - this.PuntoMinimo.X, this.PuntoMaximo.Y - this.PuntoMinimo.Y, this.PuntoMaximo.Z - this.PuntoMinimo.Z);
+            var nuevoLargo = LargoBarra() * porcentajerelativo;
+            var nuevoDestino = new Vector3(PuntoMaximo.X - PuntoMinimo.X, PuntoMaximo.Y - PuntoMinimo.Y,
+                PuntoMaximo.Z - PuntoMinimo.Z);
             nuevoDestino.Normalize();
             nuevoDestino.Multiply(nuevoLargo);
-            this.linea.PEnd = this.linea.PStart + nuevoDestino;
+            linea.PEnd = linea.PStart + nuevoDestino;
         }
 
         private void ActualizarColor(float porcentajerelativo)
@@ -100,18 +101,18 @@ namespace TGC.Group.Model.Utiles
                     }
                 }
             }
-            this.linea.BodyColor = nuevoColor;
-            this.linea.HeadColor = nuevoColor;
+            linea.BodyColor = nuevoColor;
+            linea.HeadColor = nuevoColor;
         }
 
         public float LargoBarra()
         {
-            return FuncionesMatematicas.Instance.DistanciaEntrePuntos(this.PuntoMinimo, this.PuntoMaximo);
+            return FuncionesMatematicas.Instance.DistanciaEntrePuntos(PuntoMinimo, PuntoMaximo);
         }
 
         public void Liberar()
         {
-            this.linea.dispose();
+            linea.dispose();
         }
 
         #endregion Comportamientos

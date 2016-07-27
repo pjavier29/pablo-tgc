@@ -7,9 +7,8 @@ namespace TGC.Group.Model.Utiles
     {
         public static bool IsPointInsideAABB(Vector3 point, TgcBoundingBox box)
         {
-            return (point.X >= box.PMin.X && point.X <= box.PMax.X) &&
-                   (point.Y >= box.PMin.Y && point.Y <= box.PMax.Y) &&
-                   (point.Z >= box.PMin.Z && point.Z <= box.PMax.Z);
+            return point.X >= box.PMin.X && point.X <= box.PMax.X && point.Y >= box.PMin.Y && point.Y <= box.PMax.Y &&
+                   point.Z >= box.PMin.Z && point.Z <= box.PMax.Z;
         }
 
         public static bool EsferaColisionaCuadrado(TgcSphere esfera, TgcBoundingBox cuadrado)
@@ -19,7 +18,7 @@ namespace TGC.Group.Model.Utiles
             float d = 0;
 
             // Comprobamos si el centro de la esfera está dentro del AABB
-            if (ControladorColisiones.IsPointInsideAABB(esfera.Position, cuadrado))
+            if (IsPointInsideAABB(esfera.Position, cuadrado))
             {
                 return true;
             }
@@ -58,26 +57,27 @@ namespace TGC.Group.Model.Utiles
                 d += s * s;
             }
 
-            return (d <= esfera.Radius * esfera.Radius);
+            return d <= esfera.Radius * esfera.Radius;
         }
 
         /// <summary>
-        /// Este método verifica la colision entre dos cuadrados pero proyectanto los cuadrados, asumiendo que ambos estan alineados sobre un eje.
+        ///     Este método verifica la colision entre dos cuadrados pero proyectanto los cuadrados, asumiendo que ambos estan
+        ///     alineados sobre un eje.
         /// </summary>
         /// <param name="cuadrado1"></param>
         /// <param name="cuadrado2"></param>
         /// <returns></returns>
         public static bool CuadradoColisionaCuadrano(TgcBoundingBox cuadrado1, TgcBoundingBox cuadrado2)
         {
-            return (cuadrado1.PMin.X <= cuadrado2.PMax.X && cuadrado1.PMax.X >= cuadrado2.PMin.X) &&
-                   (cuadrado1.PMin.Y <= cuadrado2.PMax.Y && cuadrado1.PMax.Y >= cuadrado2.PMin.Y) &&
-                   (cuadrado1.PMin.Z <= cuadrado2.PMax.Z && cuadrado1.PMax.Z >= cuadrado2.PMin.Z);
+            return cuadrado1.PMin.X <= cuadrado2.PMax.X && cuadrado1.PMax.X >= cuadrado2.PMin.X &&
+                   cuadrado1.PMin.Y <= cuadrado2.PMax.Y && cuadrado1.PMax.Y >= cuadrado2.PMin.Y &&
+                   cuadrado1.PMin.Z <= cuadrado2.PMax.Z && cuadrado1.PMax.Z >= cuadrado2.PMin.Z;
         }
 
         public static bool FrustumColisionaCuadrado(TgcFrustum frustum, TgcBoundingBox boundingBox)
         {
-            TgcCollisionUtils.FrustumResult c = TgcCollisionUtils.classifyFrustumAABB(frustum, boundingBox);
-            return (c == TgcCollisionUtils.FrustumResult.INSIDE || c == TgcCollisionUtils.FrustumResult.INTERSECT);
+            var c = TgcCollisionUtils.classifyFrustumAABB(frustum, boundingBox);
+            return c == TgcCollisionUtils.FrustumResult.INSIDE || c == TgcCollisionUtils.FrustumResult.INTERSECT;
         }
     }
 }

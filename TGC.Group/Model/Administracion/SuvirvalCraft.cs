@@ -1,128 +1,128 @@
+using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.DirectX;
-using Microsoft.DirectX.Direct3D;
-using TGC.Group.Model.Comandos;
+using TGC.Core.Direct3D;
+using TGC.Core.Example;
+using TGC.Core.SceneLoader;
+using TGC.Core.Sound;
+using TGC.Core.Terrain;
+using TGC.Core.Text;
 using TGC.Group.Model.ElementosDia;
 using TGC.Group.Model.ElementosJuego;
 using TGC.Group.Model.Movimientos;
 using TGC.Group.Model.Utiles;
 using TGC.Group.Model.Utiles.Camaras;
 using TGC.Group.Model.Utiles.Efectos;
-using TGC.Core.SceneLoader;
-using TGC.Core.Sound;
-using TGC.Core.Direct3D;
-using TGC.Core.Terrain;
-using TGC.Core.Example;
-using TGC.Core.Text;
 
 namespace TGC.Group.Model.Administracion
 {
     /// <summary>
-    /// Ejemplo del alumno
+    ///     Ejemplo del alumno
     /// </summary>
     public class SuvirvalCraft : TgcExample
     {
-        public Drawer2D Drawer2D { get; set; }
-
-        //TODO. Refactorizar esta lógica, hay demasiados atributos publicos en la apicacion principal.
-        public Terreno terreno;
-
-        public TgcSkyBox skyBox;
-        public TgcMesh piso;
-        public List<Elemento> elementos;
-        public Personaje personaje;
-        public float tiempo;
-        public TgcText2D estadoJuego;
-        public TgcText2D informativo;
-        public Animal oveja;
-        public Animal gallo;
-        public Elemento cajonReal;
-        public Elemento cajonOlla;
-        public Elemento fuenteAgua;
-
-        public CustomSprite mochila;
-        public CustomSprite miniMapa;
-        public TgcText2D referenciaMiniMapa;
-        public CustomSprite linea;
-        public Point coordenadaSuperiorDerecha;
-        public Point coordenadaInferiorIzquierda;
-        public CustomSprite cajon;
-        public TgcText2D mochilaReglon1;
-        public TgcText2D cajonReglon1;
-        public bool mostrarMenuMochila;
-        public bool mostrarMenuCajon;
-
-        public Elemento puebaFisica;
-        public MovimientoParabolico movimiento;
-        public MovimientoParabolico movimientoPersonaje;
-
-        public ControladorEntradas controladorEntradas;
-
-        public Vector3 esquina;//Con un solo punto arma el cuadrado para definir los limites del mapa
-
-        public Optimizador optimizador;
-
-        public CustomSprite salud;
-        public CustomSprite hidratacion;
         public CustomSprite alimentacion;
-        public CustomSprite cansancio;
-        public CustomSprite saludIcono;
-        public CustomSprite hidratacionIcono;
         public CustomSprite alimentacionIcono;
-        public CustomSprite cansancioIcono;
-        public CustomSprite objetivosIcono;
-        public TgcText2D mensajeObjetivo1;
-        public float tiempoObjetivo;
         public CustomSprite ayuda;
         public TgcText2D ayudaReglon1;
         public TgcText2D ayudaReglon2;
-        public bool mostrarAyuda;
-        public TgcText2D temperaturaDia;
-        public TgcText2D horaDia;
-        public CustomSprite temperaturaDiaIcono;
-        public CustomSprite horaDiaIcono;
-        public TgcText2D temperaturaPersonaje;
-        public CustomSprite temperaturaPersonajeIcono;
-        public CustomSprite estadoDiaSolIcono;
-        public CustomSprite estadoDiaLunaIcono;
-        public CustomSprite estadoDiaLluviaIcono;
+        public CustomSprite cajon;
+        public Elemento cajonOlla;
+        public Elemento cajonReal;
+        public TgcText2D cajonReglon1;
 
         public Camara camara;
+        public CustomSprite cansancio;
+        public CustomSprite cansancioIcono;
+
+        public ControladorEntradas controladorEntradas;
+        public Point coordenadaInferiorIzquierda;
+        public Point coordenadaSuperiorDerecha;
 
         public Dia dia;
+        public Efecto efectoAlgas;
+        public Efecto efectoAlgas2;
+        public Efecto efectoArbol;
+        public Efecto efectoArbol2;
+        public Efecto efectoBotes;
+        public Efecto efectoFuego;
+        public Efecto efectoFuego2;
+        public Effect efectoLluvia;
+        public Efecto efectoLuz;
+        public Efecto efectoLuz2;
+        public Efecto efectoTerreno;
+        public List<Elemento> elementos;
+
+        public Vector3 esquina; //Con un solo punto arma el cuadrado para definir los limites del mapa
+        public CustomSprite estadoDiaLluviaIcono;
+        public CustomSprite estadoDiaLunaIcono;
+        public CustomSprite estadoDiaSolIcono;
+        public TgcText2D estadoJuego;
+        public Elemento fuenteAgua;
+        public Animal gallo;
+        public CustomSprite hidratacion;
+        public CustomSprite hidratacionIcono;
+        public TgcText2D horaDia;
+        public CustomSprite horaDiaIcono;
+        public TgcText2D informativo;
+        public CustomSprite linea;
+        public TgcText2D mensajeObjetivo1;
+        public CustomSprite miniMapa;
+
+        public CustomSprite mochila;
+        public TgcText2D mochilaReglon1;
+        public bool mostrarAyuda;
+        public bool mostrarMenuCajon;
+        public bool mostrarMenuMochila;
+        public MovimientoParabolico movimiento;
+        public MovimientoParabolico movimientoPersonaje;
+        public List<string> musicas;
+        public CustomSprite objetivosIcono;
+
+        public Optimizador optimizador;
+        public Animal oveja;
+        public Personaje personaje;
+        public TgcMesh piso;
 
         //TODO. Ver si no conviente tener un administrador de efectos
         public Efecto pisoEfecto;
 
-        public Efecto skyboxEfecto;
-        public Efecto efectoTerreno;
-        public Efecto efectoLuz;
-        public Efecto efectoLuz2;
-        public Efecto efectoAlgas;
-        public Efecto efectoAlgas2;
-        public Efecto efectoBotes;
-        public Efecto efectoFuego;
-        public Efecto efectoFuego2;
-        public Efecto efectoArbol;
-        public Efecto efectoArbol2;
-
-        public VertexBuffer screenQuadVB;
-        public Texture renderTarget2D;
         private Surface pOldRT;
         private Surface pSurf;
-        public Microsoft.DirectX.Direct3D.Effect efectoLluvia;
+
+        public Elemento puebaFisica;
+        public TgcText2D referenciaMiniMapa;
+        public Texture renderTarget2D;
+
+        public CustomSprite salud;
+        public CustomSprite saludIcono;
+
+        public VertexBuffer screenQuadVB;
+
+        public TgcSkyBox skyBox;
+
+        public Efecto skyboxEfecto;
+        public TgcStaticSound sonidoGolpe;
 
         public TgcStaticSound sonidoGolpePatada;
-        public TgcStaticSound sonidoGolpe;
-        public TgcStaticSound sonidoLluvia;
-        public List<String> musicas;
         public Tgc3dSound sonidoGrillos;
         public Tgc3dSound sonidoGrillos2;
+        public TgcStaticSound sonidoLluvia;
+        public TgcText2D temperaturaDia;
+        public CustomSprite temperaturaDiaIcono;
+        public TgcText2D temperaturaPersonaje;
+        public CustomSprite temperaturaPersonajeIcono;
+
+        //TODO. Refactorizar esta lógica, hay demasiados atributos publicos en la apicacion principal.
+        public Terreno terreno;
+
+        public float tiempo;
+        public float tiempoObjetivo;
 
         /// <summary>
-        /// Constructor del juego
+        ///     Constructor del juego
         /// </summary>
         /// <param name="mediaDir">Ruta donde esta la carpeta con los assets</param>
         /// <param name="shadersDir">Ruta donde esta la carpeta con los shaders</param>
@@ -131,28 +131,30 @@ namespace TGC.Group.Model.Administracion
             Category = "AlumnoEjemplos";
             Name = "Pablo TGC - Suvirval Craft";
             Description = "Juego de supervivencia en donde un personaje debe sobrevivir durante un tiempo determinado."
-                + System.Environment.NewLine +
-                "Para ello debe hidratarse, y consumir alimentos. Puede eliminar animales y crear su propia hamburguesa, a ver si descubre cómo hacerlo."
-                + System.Environment.NewLine +
-                "Tambien puede comer frutas desde los árboles."
-                + System.Environment.NewLine +
-                "Tenga cuidado con la temperatura del dia y de su personaje, si la temperatura del personaje llega a 34° morirá."
-                + System.Environment.NewLine +
-                "Podría ser últil crear algún fuego para evitar esto."
-                + System.Environment.NewLine +
-                "Busque los cajones indicados en el mini mapa, encontrará algunas sorpresas."
-                + System.Environment.NewLine +
-                "Buena Suerte!!!!";
+                          + Environment.NewLine +
+                          "Para ello debe hidratarse, y consumir alimentos. Puede eliminar animales y crear su propia hamburguesa, a ver si descubre cómo hacerlo."
+                          + Environment.NewLine +
+                          "Tambien puede comer frutas desde los árboles."
+                          + Environment.NewLine +
+                          "Tenga cuidado con la temperatura del dia y de su personaje, si la temperatura del personaje llega a 34° morirá."
+                          + Environment.NewLine +
+                          "Podría ser últil crear algún fuego para evitar esto."
+                          + Environment.NewLine +
+                          "Busque los cajones indicados en el mini mapa, encontrará algunas sorpresas."
+                          + Environment.NewLine +
+                          "Buena Suerte!!!!";
         }
 
+        public Drawer2D Drawer2D { get; set; }
+
         /// <summary>
-        /// Método que se llama una sola vez,  al principio cuando se ejecuta el ejemplo.
-        /// Escribir aquí todo el código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.
-        /// Borrar todo lo que no haga falta
+        ///     Método que se llama una sola vez,  al principio cuando se ejecuta el ejemplo.
+        ///     Escribir aquí todo el código de inicialización: cargar modelos, texturas, modifiers, uservars, etc.
+        ///     Borrar todo lo que no haga falta
         /// </summary>
         public override void Init()
         {
-            Configuracion con = new Configuracion(new ConfiguracionModel(this, D3DDevice.Instance.Device, this.MediaDir));
+            var con = new Configuracion(new ConfiguracionModel(this, D3DDevice.Instance.Device, MediaDir));
             con.ShowDialog();
             Drawer2D = new Drawer2D();
         }
@@ -164,18 +166,18 @@ namespace TGC.Group.Model.Administracion
         }
 
         /// <summary>
-        /// Método que se llama cada vez que hay que refrescar la pantalla.
-        /// Escribir aquí todo el código referido al renderizado.
-        /// Borrar todo lo que no haga falta
+        ///     Método que se llama cada vez que hay que refrescar la pantalla.
+        ///     Escribir aquí todo el código referido al renderizado.
+        ///     Borrar todo lo que no haga falta
         /// </summary>
         public override void Render()
         {
             ClearTextures();
             //Device de DirectX para renderizar
-            Microsoft.DirectX.Direct3D.Device d3dDevice = D3DDevice.Instance.Device;
+            var d3dDevice = D3DDevice.Instance.Device;
 
             //Reproduccion de sonidos
-            this.ReproducirMusica();
+            ReproducirMusica();
 
             //Actualizamos el dia
             dia.Actualizar(this, ElapsedTime);
@@ -199,7 +201,7 @@ namespace TGC.Group.Model.Administracion
             mostrarMenuCajon = false;
             mostrarAyuda = false;
 
-            foreach (Comando comando in controladorEntradas.ProcesarEntradasTeclado())
+            foreach (var comando in controladorEntradas.ProcesarEntradasTeclado())
             {
                 comando.Ejecutar(this, ElapsedTime);
             }
@@ -245,21 +247,22 @@ namespace TGC.Group.Model.Administracion
             piso.render();
 
             //Renderizar SkyBox
-            foreach (TgcMesh faces in this.skyBox.Faces)
+            foreach (var faces in skyBox.Faces)
             {
                 skyboxEfecto.Actualizar(this);
                 faces.render();
             }
 
             //Actualiza los elementos
-            List<Elemento> aux = new List<Elemento>();
-            aux.AddRange(elementos);//TODO. Porque sino con la actualizacion borramos o agregamos elementos de la coleccion y se rompe todo
-            foreach (Elemento elemento in aux)
+            var aux = new List<Elemento>();
+            aux.AddRange(elementos);
+            //TODO. Porque sino con la actualizacion borramos o agregamos elementos de la coleccion y se rompe todo
+            foreach (var elemento in aux)
             {
                 elemento.Actualizar(this, ElapsedTime);
             }
 
-            foreach (Elemento elem in optimizador.ElementosRenderizacion)
+            foreach (var elem in optimizador.ElementosRenderizacion)
             {
                 elem.renderizar(this);
             }
@@ -307,7 +310,7 @@ namespace TGC.Group.Model.Administracion
                 estadoJuego.Text = "Game Over";
                 estadoJuego.render();
             }
-            else if (this.tiempo > this.tiempoObjetivo)
+            else if (tiempo > tiempoObjetivo)
             {
                 estadoJuego.Color = Color.Green;
                 estadoJuego.Text = "Has Ganado";
@@ -336,20 +339,21 @@ namespace TGC.Group.Model.Administracion
             Drawer2D.DrawSprite(miniMapa);
             Drawer2D.EndDrawSprite();
 
-            referenciaMiniMapa.Position = this.PosicionarReferencia(personaje.mesh.Position);
+            referenciaMiniMapa.Position = PosicionarReferencia(personaje.mesh.Position);
             referenciaMiniMapa.Color = Color.Orange;
             referenciaMiniMapa.render();
-            referenciaMiniMapa.Position = this.PosicionarReferencia(fuenteAgua.posicion());
+            referenciaMiniMapa.Position = PosicionarReferencia(fuenteAgua.posicion());
             referenciaMiniMapa.Color = Color.Blue;
             referenciaMiniMapa.render();
-            referenciaMiniMapa.Position = this.PosicionarReferencia(cajonReal.posicion());
+            referenciaMiniMapa.Position = PosicionarReferencia(cajonReal.posicion());
             referenciaMiniMapa.Color = Color.Brown;
             referenciaMiniMapa.render();
-            referenciaMiniMapa.Position = this.PosicionarReferencia(cajonOlla.posicion());
+            referenciaMiniMapa.Position = PosicionarReferencia(cajonOlla.posicion());
             referenciaMiniMapa.Color = Color.Brown;
             referenciaMiniMapa.render();
 
-            mensajeObjetivo1.Text = "Sobrevivir " + System.Environment.NewLine + TimeSpan.FromSeconds(this.tiempoObjetivo - this.tiempo).ToString(@"hh\:mm\:ss");
+            mensajeObjetivo1.Text = "Sobrevivir " + Environment.NewLine +
+                                    TimeSpan.FromSeconds(tiempoObjetivo - tiempo).ToString(@"hh\:mm\:ss");
             mensajeObjetivo1.render();
 
             Drawer2D.BeginDrawSprite();
@@ -397,15 +401,18 @@ namespace TGC.Group.Model.Administracion
                 Drawer2D.EndDrawSprite();
                 //TODO. Por el momento podemos mantener todo en un renglon ya que no imprimimos ninguna imagen de los elementos en cuestion
                 mochilaReglon1.Text = "";
-                for (int i = 0; i < 9; i++)
+                for (var i = 0; i < 9; i++)
                 {
                     if (personaje.ContieneElementoEnPosicionDeMochila(i))
                     {
-                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    " + personaje.DarElementoEnPosicionDeMochila(i).GetDescripcion() + System.Environment.NewLine;
+                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1) + "    " +
+                                              personaje.DarElementoEnPosicionDeMochila(i).GetDescripcion() +
+                                              Environment.NewLine;
                     }
                     else
                     {
-                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1).ToString() + "    " + "Disponible" + System.Environment.NewLine;
+                        mochilaReglon1.Text = mochilaReglon1.Text + (i + 1) + "    " + "Disponible" +
+                                              Environment.NewLine;
                     }
                 }
                 mochilaReglon1.render();
@@ -422,7 +429,7 @@ namespace TGC.Group.Model.Administracion
                 Drawer2D.BeginDrawSprite();
                 Drawer2D.DrawSprite(ayuda);
                 Drawer2D.EndDrawSprite();
-                ayudaReglon1.Position = new Point(((int)(ayuda.Position.X)) + 40, ((int)(ayuda.Position.Y)) + 130);
+                ayudaReglon1.Position = new Point((int)ayuda.Position.X + 40, (int)ayuda.Position.Y + 130);
                 ayudaReglon1.render();
                 ayudaReglon2.render();
             }
@@ -432,8 +439,8 @@ namespace TGC.Group.Model.Administracion
         }
 
         /// <summary>
-        /// Método que se llama cuando termina la ejecución del ejemplo.
-        /// Hacer dispose() de todos los objetos creados.
+        ///     Método que se llama cuando termina la ejecución del ejemplo.
+        ///     Hacer dispose() de todos los objetos creados.
         /// </summary>
         public override void Dispose()
         {
@@ -441,7 +448,7 @@ namespace TGC.Group.Model.Administracion
             personaje.Dispose();
             terreno.dispose();
             skyBox.dispose();
-            foreach (Elemento elemento in elementos)
+            foreach (var elemento in elementos)
             {
                 elemento.destruir();
             }
@@ -491,7 +498,7 @@ namespace TGC.Group.Model.Administracion
 
         public void ActualizarPosicionSkyBox(Vector3 posicion)
         {
-            foreach (TgcMesh faces in this.skyBox.Faces)
+            foreach (var faces in skyBox.Faces)
             {
                 faces.Position += posicion;
             }
@@ -499,7 +506,7 @@ namespace TGC.Group.Model.Administracion
 
         public void ActualizarPosicionSuelo(Vector3 posicion)
         {
-            this.piso.Position += posicion;
+            piso.Position += posicion;
         }
 
         private Point PosicionarReferencia(Vector3 posicion)
@@ -508,8 +515,8 @@ namespace TGC.Group.Model.Administracion
             float porcentajeY;
             int coordenadaRelativaX;
             int coordenadaRelativaY;
-            int factorCorreccionX = 0;
-            int factorCorreccionY = -50;
+            var factorCorreccionX = 0;
+            var factorCorreccionY = -50;
             //Necesitamos calcular el porcentaje de x que esta recorrido sobre el total del mapa.
             porcentajeX = (esquina.X + posicion.X) / (2 * esquina.X);
             //Necesitamos calcular el porcentaje de Z que esta recorrido sobre el total del mapa.
@@ -519,17 +526,18 @@ namespace TGC.Group.Model.Administracion
             coordenadaRelativaX = (int)(porcentajeX * (coordenadaSuperiorDerecha.X - coordenadaInferiorIzquierda.X));
             coordenadaRelativaY = (int)(porcentajeY * (coordenadaInferiorIzquierda.Y - coordenadaSuperiorDerecha.Y));
 
-            return new Point(coordenadaInferiorIzquierda.X + coordenadaRelativaX + factorCorreccionX, coordenadaInferiorIzquierda.Y - coordenadaRelativaY + factorCorreccionY);
+            return new Point(coordenadaInferiorIzquierda.X + coordenadaRelativaX + factorCorreccionX,
+                coordenadaInferiorIzquierda.Y - coordenadaRelativaY + factorCorreccionY);
         }
 
         private void ReproducirMusica()
         {
-            TgcMp3Player player = new TgcMp3Player();
-            TgcMp3Player.States currentState = player.getStatus();
+            var player = new TgcMp3Player();
+            var currentState = player.getStatus();
             if (currentState == TgcMp3Player.States.Open || currentState == TgcMp3Player.States.Stopped)
             {
                 player.closeFile();
-                player.FileName = this.musicas[FuncionesMatematicas.Instance.NumeroAleatorioIntEntre(0, this.musicas.Count - 1)];
+                player.FileName = musicas[FuncionesMatematicas.Instance.NumeroAleatorioIntEntre(0, musicas.Count - 1)];
                 player.play(false);
             }
         }

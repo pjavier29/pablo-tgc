@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.DirectX;
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles.Efectos;
@@ -15,7 +14,8 @@ namespace TGC.Group.Model.ElementosJuego
         {
         }
 
-        public ElementoSinInteraccion(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
+        public ElementoSinInteraccion(float peso, float resistencia, TgcMesh mesh, Efecto efecto)
+            : base(peso, resistencia, mesh, efecto)
         {
         }
 
@@ -23,7 +23,8 @@ namespace TGC.Group.Model.ElementosJuego
 
         #region Comportamientos
 
-        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector, Vector3 lastPos)
+        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos,
+            float moveForward, Vector3 movementVector, Vector3 lastPos)
         {
         }
 
@@ -31,7 +32,7 @@ namespace TGC.Group.Model.ElementosJuego
         {
         }
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
         }
 

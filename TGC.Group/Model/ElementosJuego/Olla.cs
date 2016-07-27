@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
+using System;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles;
@@ -10,30 +9,30 @@ namespace TGC.Group.Model.ElementosJuego
 {
     public class Olla : Elemento
     {
-        #region Atributos
-
-        private BarraEstado progresoCoccion;
-        private float tiempoCoccion;
-        private Elemento elementoCoccion;
-        private String mensajeInformativo;
-
-        #endregion Atributos
-
         #region Contructores
 
         public Olla(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
         {
-            this.progresoCoccion = null;
-            this.elementoCoccion = null;
-            this.tiempoCoccion = 0;
+            progresoCoccion = null;
+            elementoCoccion = null;
+            tiempoCoccion = 0;
             mensajeInformativo = "";
         }
 
         #endregion Contructores
 
+        #region Atributos
+
+        private BarraEstado progresoCoccion;
+        private float tiempoCoccion;
+        private Elemento elementoCoccion;
+        private string mensajeInformativo;
+
+        #endregion Atributos
+
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
             mensajeInformativo = "Juntar (J)";
             if (accion.Equals("Juntar"))
@@ -55,11 +54,11 @@ namespace TGC.Group.Model.ElementosJuego
             }
         }
 
-        public override String getAcciones()
+        public override string getAcciones()
         {
             //TODO. Mejorar esta lógica
             //TODO. Al momento de juntar la hamburguesa no sera eliminado de la coleccion y seguira todo igual (de todas formas por ahora nos sirve)
-            if (!this.EstaCocinando())
+            if (!EstaCocinando())
             {
                 return mensajeInformativo;
             }
@@ -70,69 +69,70 @@ namespace TGC.Group.Model.ElementosJuego
         {
             if (elemento.GetTipo().Equals(Alimento))
             {
-                if (!this.elementosQueContiene().Contains(elemento))
+                if (!elementosQueContiene().Contains(elemento))
                 {
                     //Le coloca la misma posicion que tiene la olla pero sobre su altura
-                    elemento.posicion(this.posicion() + new Vector3(0, 25, 0));
-                    this.agregarElemento(elemento);
-                    this.elementoCoccion = elemento;
-                    this.tiempoCoccion = 0;
-                    this.progresoCoccion = new BarraEstado(new Vector3(this.BoundingBox().PMin.X, this.BoundingBox().PMax.Y, this.BoundingBox().PMax.Z),
-                        this.BoundingBox().PMax, this.TiempoCoccionElementos());
+                    elemento.posicion(posicion() + new Vector3(0, 25, 0));
+                    agregarElemento(elemento);
+                    elementoCoccion = elemento;
+                    tiempoCoccion = 0;
+                    progresoCoccion =
+                        new BarraEstado(new Vector3(BoundingBox().PMin.X, BoundingBox().PMax.Y, BoundingBox().PMax.Z),
+                            BoundingBox().PMax, TiempoCoccionElementos());
                 }
             }
         }
 
         public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
-            if (this.EstaCocinando())
+            if (EstaCocinando())
             {
-                this.tiempoCoccion += elapsedTime;
-                if (this.tiempoCoccion > this.TiempoCoccionElementos())
+                tiempoCoccion += elapsedTime;
+                if (tiempoCoccion > TiempoCoccionElementos())
                 {
-                    if (this.elementoCoccion != null)
+                    if (elementoCoccion != null)
                     {
-                        this.EliminarElemento(this.elementoCoccion);
-                        this.tiempoCoccion = 0;
-                        this.progresoCoccion.Liberar();
-                        this.progresoCoccion = null;
-                        List<Elemento> contenido = this.elementoCoccion.DestruirSolo();
-                        foreach (Elemento cont in contenido)
+                        EliminarElemento(elementoCoccion);
+                        tiempoCoccion = 0;
+                        progresoCoccion.Liberar();
+                        progresoCoccion = null;
+                        var contenido = elementoCoccion.DestruirSolo();
+                        foreach (var cont in contenido)
                         {
-                            cont.posicion(this.elementoCoccion.posicion());
+                            cont.posicion(elementoCoccion.posicion());
                         }
                         //this.AgregarElementos(contenido);
-                        contexto.elementos.Remove(this.elementoCoccion);
-                        this.elementoCoccion = null;
+                        contexto.elementos.Remove(elementoCoccion);
+                        elementoCoccion = null;
                         contexto.elementos.AddRange(contenido);
                         contexto.optimizador.ForzarActualizacionElementosColision();
                     }
                 }
                 else
                 {
-                    this.progresoCoccion.ActualizarEstado(this.tiempoCoccion);
+                    progresoCoccion.ActualizarEstado(tiempoCoccion);
                 }
             }
         }
 
         /// <summary>
-        /// Renderiza el objeto
+        ///     Renderiza el objeto
         /// </summary>
         public override void renderizar(SuvirvalCraft contexto)
         {
             base.renderizar(contexto);
-            if (this.EstaCocinando())
+            if (EstaCocinando())
             {
-                this.progresoCoccion.Render();
+                progresoCoccion.Render();
             }
         }
 
         public override bool AdmiteMultipleColision()
         {
-            return this.EstaCocinando();
+            return EstaCocinando();
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return Olla;
         }
@@ -144,7 +144,7 @@ namespace TGC.Group.Model.ElementosJuego
 
         private bool EstaCocinando()
         {
-            return this.elementoCoccion != null;
+            return elementoCoccion != null;
         }
 
         #endregion Comportamientos

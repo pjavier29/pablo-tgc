@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.DirectX;
+using System;
 using System.Collections.Generic;
-using Microsoft.DirectX;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles;
@@ -12,7 +12,7 @@ namespace TGC.Group.Model.ElementosJuego
     {
         #region Atributos
 
-        private String mensajeInformativo;
+        private string mensajeInformativo;
 
         #endregion Atributos
 
@@ -23,7 +23,8 @@ namespace TGC.Group.Model.ElementosJuego
             mensajeInformativo = "";
         }
 
-        public Madera(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto) : base(peso, resistencia, mesh, elemento, efecto)
+        public Madera(float peso, float resistencia, TgcMesh mesh, Elemento elemento, Efecto efecto)
+            : base(peso, resistencia, mesh, elemento, efecto)
         {
             mensajeInformativo = "";
         }
@@ -33,13 +34,14 @@ namespace TGC.Group.Model.ElementosJuego
         #region Comportamientos
 
         /// <summary>
-        /// Procesa una colisión cuando el personaje colisiona contra un pedazo de madera
+        ///     Procesa una colisión cuando el personaje colisiona contra un pedazo de madera
         /// </summary>
-        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos, float moveForward, Vector3 movementVector, Vector3 lastPos)
+        public override void procesarColision(Personaje personaje, float elapsedTime, List<Elemento> elementos,
+            float moveForward, Vector3 movementVector, Vector3 lastPos)
         {
         }
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
             base.procesarInteraccion(accion, contexto, elapsedTime);
             mensajeInformativo = "Juntar(J), Encender(E)";
@@ -64,11 +66,11 @@ namespace TGC.Group.Model.ElementosJuego
             {
                 if (contexto.personaje.TieneAntorchaSeleccionada())
                 {
-                    foreach (Elemento elem in this.elementosQueContiene())
+                    foreach (var elem in elementosQueContiene())
                     {
-                        elem.posicion(this.posicion());
+                        elem.posicion(posicion());
                         elem.Activar();
-                        elem.Mesh.BoundingBox.scaleTranslate(this.posicion(), new Vector3(2f, 0.25f, 2f));
+                        elem.Mesh.BoundingBox.scaleTranslate(posicion(), new Vector3(2f, 0.25f, 2f));
                         contexto.elementos.Add(elem);
                         //TODO. ver si es la mejor forma de manejar los elementos de iluminacion
                         contexto.efectoTerreno.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
@@ -81,7 +83,7 @@ namespace TGC.Group.Model.ElementosJuego
                         contexto.efectoLuz2.AgregarElementoDeIluminacion(new ElementoIluminacion(elem, 1000));
                         //TODO+++++++++++++++++++++++++++++++++
                     }
-                    this.liberar();
+                    liberar();
                     contexto.elementos.Remove(this);
                     contexto.optimizador.ForzarActualizacionElementosColision();
                 }
@@ -92,14 +94,14 @@ namespace TGC.Group.Model.ElementosJuego
             }
         }
 
-        public override String getAcciones()
+        public override string getAcciones()
         {
             //TODO. Mejorar esta lógica
             //return "Juntar (J), Encender (E)";
             return mensajeInformativo;
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return Madera;
         }

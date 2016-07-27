@@ -7,7 +7,7 @@ namespace TGC.Group.Model.Comandos
     {
         #region Atributos
 
-        private float sentido;
+        private readonly float sentido;
 
         #endregion Atributos
 
@@ -17,22 +17,6 @@ namespace TGC.Group.Model.Comandos
 
         #endregion Propiedades
 
-        #region Constructores
-
-        public Girar(float sentido)
-        {
-            this.sentido = sentido;
-            this.MovimientoRapido = false;
-        }
-
-        public Girar(float sentido, bool rapido)
-        {
-            this.sentido = sentido;
-            this.MovimientoRapido = rapido;
-        }
-
-        #endregion Constructores
-
         #region Comportamientos
 
         public void Ejecutar(SuvirvalCraft contexto, float elapsedTime)
@@ -41,19 +25,35 @@ namespace TGC.Group.Model.Comandos
 
             if (MovimientoRapido)
             {
-                rotate = this.sentido * contexto.personaje.rotarRapido();
+                rotate = sentido * contexto.personaje.rotarRapido();
             }
             else
             {
-                rotate = this.sentido * contexto.personaje.VelocidadRotacion;
+                rotate = sentido * contexto.personaje.VelocidadRotacion;
             }
 
             //Rotar personaje, hay que multiplicarlo por el tiempo transcurrido para no atarse a la velocidad el hardware
-            float rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
+            var rotAngle = Geometry.DegreeToRadian(rotate * elapsedTime);
             contexto.personaje.mesh.rotateY(rotAngle);
             contexto.personaje.ActualizarEsferas();
         }
 
         #endregion Comportamientos
+
+        #region Constructores
+
+        public Girar(float sentido)
+        {
+            this.sentido = sentido;
+            MovimientoRapido = false;
+        }
+
+        public Girar(float sentido, bool rapido)
+        {
+            this.sentido = sentido;
+            MovimientoRapido = rapido;
+        }
+
+        #endregion Constructores
     }
 }

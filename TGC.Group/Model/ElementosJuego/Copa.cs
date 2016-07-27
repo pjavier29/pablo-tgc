@@ -9,7 +9,7 @@ namespace TGC.Group.Model.ElementosJuego
     {
         #region Atributos
 
-        private String mensajeInformativo;
+        private string mensajeInformativo;
 
         #endregion Atributos
 
@@ -20,7 +20,8 @@ namespace TGC.Group.Model.ElementosJuego
             mensajeInformativo = "";
         }
 
-        public Copa(float peso, float resistencia, TgcMesh mesh, Elemento elemento) : base(peso, resistencia, mesh, elemento)
+        public Copa(float peso, float resistencia, TgcMesh mesh, Elemento elemento)
+            : base(peso, resistencia, mesh, elemento)
         {
             mensajeInformativo = "";
         }
@@ -29,7 +30,7 @@ namespace TGC.Group.Model.ElementosJuego
 
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
             mensajeInformativo = "Juntar (J)";
             base.procesarInteraccion(accion, contexto, elapsedTime);
@@ -52,13 +53,13 @@ namespace TGC.Group.Model.ElementosJuego
             }
         }
 
-        public override String getAcciones()
+        public override string getAcciones()
         {
             //TODO. Mejorar esta lógica
             return mensajeInformativo;
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return Copa;
         }

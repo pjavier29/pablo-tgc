@@ -18,24 +18,26 @@ namespace TGC.Group.Model.Utiles
 
         public ElementoIluminacion(Elemento elemento, float distancia)
         {
-            this.Elemento = elemento;
-            this.Distancia = distancia;
+            Elemento = elemento;
+            Distancia = distancia;
         }
 
         public bool IluminoAElemento(Elemento elementoAIluminar)
         {
-            return this.Elemento.distanciaA(elementoAIluminar) < this.Distancia;
+            return Elemento.distanciaA(elementoAIluminar) < Distancia;
         }
 
         public bool IluminoAElemento(Vector3 posicion)
         {
-            return this.Elemento.distanciaA(posicion) < this.Distancia;
+            return Elemento.distanciaA(posicion) < Distancia;
         }
 
-        public virtual void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor, ColorValue colorAmbiente,
+        public virtual void Iluminar(Efecto efecto, Vector3 posicionVision, ColorValue colorEmisor,
+            ColorValue colorAmbiente,
             ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
         {
-            this.Elemento.Iluminar(efecto, posicionVision, colorEmisor, colorAmbiente, colorDifuso, colorEspecular, especularEx);
+            Elemento.Iluminar(efecto, posicionVision, colorEmisor, colorAmbiente, colorDifuso, colorEspecular,
+                especularEx);
         }
 
         #endregion Constructores

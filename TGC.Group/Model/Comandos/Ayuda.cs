@@ -1,5 +1,4 @@
-﻿using System;
-using TGC.Group.Model.Administracion;
+﻿using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Model.Comandos
 {
@@ -7,15 +6,15 @@ namespace TGC.Group.Model.Comandos
     {
         #region Atributos
 
-        private String mensajeAyuda;
+        private readonly string mensajeAyuda;
 
         #endregion Atributos
 
         #region Constructores
 
-        public Ayuda(String ayuda)
+        public Ayuda(string ayuda)
         {
-            this.mensajeAyuda = ayuda;
+            mensajeAyuda = ayuda;
         }
 
         #endregion Constructores
@@ -24,7 +23,7 @@ namespace TGC.Group.Model.Comandos
 
         public void Ejecutar(SuvirvalCraft contexto, float elapsedTime)
         {
-            contexto.ayudaReglon1.Text = this.mensajeAyuda;
+            contexto.ayudaReglon1.Text = mensajeAyuda;
             contexto.mostrarAyuda = true;
         }
 

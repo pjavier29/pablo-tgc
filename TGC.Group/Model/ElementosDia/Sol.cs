@@ -1,6 +1,6 @@
-﻿using System.Drawing;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using System.Drawing;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
 using TGC.Group.Model.Movimientos;
@@ -11,10 +11,28 @@ namespace TGC.Group.Model.ElementosDia
 {
     public class Sol
     {
+        #region Constructores
+
+        public Sol()
+        {
+            colorDeLuz = ColorValue.FromColor(Color.LightYellow);
+            intensidadDeLuzSol = 1000f;
+            atenuacionDeLuz = 0.1f;
+            alturaPuestaSol = 0;
+        }
+
+        #endregion Constructores
+
+        #region Propiedades
+
+        public TgcMesh Mesh { get; set; }
+
+        #endregion Propiedades
+
         #region Atributos
 
-        private ColorValue colorDeLuz;
-        private float atenuacionDeLuz;
+        private readonly ColorValue colorDeLuz;
+        private readonly float atenuacionDeLuz;
         public float intensidadDeLuzSol;
         private MovimientoEliptico movimientoSol;
         private float alturaPuestaSol;
@@ -23,49 +41,33 @@ namespace TGC.Group.Model.ElementosDia
 
         #endregion Atributos
 
-        #region Propiedades
-
-        public TgcMesh Mesh { get; set; }
-
-        #endregion Propiedades
-
-        #region Constructores
-
-        public Sol()
-        {
-            this.colorDeLuz = ColorValue.FromColor(Color.LightYellow);
-            this.intensidadDeLuzSol = 1000f;
-            this.atenuacionDeLuz = 0.1f;
-            this.alturaPuestaSol = 0;
-        }
-
-        #endregion Constructores
-
         #region Comportamientos
 
         public void CrearMovimiento()
         {
-            movimientoSol = new MovimientoEliptico(new Vector3(0f, 0f, 0f), new Vector3(12000f, 0f, 0f), new Vector3(0f, 5000f, 0f), this.Mesh);
-            this.alturaPuestaSol = (this.Mesh.BoundingBox.PMax.Y - this.Mesh.BoundingBox.PMin.Y) / 2;
+            movimientoSol = new MovimientoEliptico(new Vector3(0f, 0f, 0f), new Vector3(12000f, 0f, 0f),
+                new Vector3(0f, 5000f, 0f), Mesh);
+            alturaPuestaSol = (Mesh.BoundingBox.PMax.Y - Mesh.BoundingBox.PMin.Y) / 2;
             //Lo colocamos en atributos porque son valores fijos, de esta forma nos evitamos hacer la cuenta en cada render
             //De un calculo que siempre dara igual.
-            this.atenuacionMaxima = (this.atenuacionDeLuz * this.movimientoSol.AlturaMaxima()) / this.alturaPuestaSol; ;
-            this.intesidadLuzMinima = (this.intensidadDeLuzSol * this.alturaPuestaSol) / this.movimientoSol.AlturaMaxima();
+            atenuacionMaxima = atenuacionDeLuz * movimientoSol.AlturaMaxima() / alturaPuestaSol;
+            ;
+            intesidadLuzMinima = intensidadDeLuzSol * alturaPuestaSol / movimientoSol.AlturaMaxima();
         }
 
         public void Actualizar(float valor)
         {
-            this.movimientoSol.Actualizar(valor);
+            movimientoSol.Actualizar(valor);
         }
 
         public void Iluminar(Vector3 posicionVision, Efecto efecto, ColorValue colorEmisor, ColorValue colorAmbiente,
             ColorValue colorDifuso, ColorValue colorEspecular, float especularEx)
         {
-            efecto.GetEfectoShader().SetValue("lightColor", this.GetColorLuz());
-            efecto.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(this.Mesh.Position));
+            efecto.GetEfectoShader().SetValue("lightColor", GetColorLuz());
+            efecto.GetEfectoShader().SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(Mesh.Position));
             efecto.GetEfectoShader().SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(posicionVision));
-            efecto.GetEfectoShader().SetValue("lightIntensity", this.IntensidadDeLuz());
-            efecto.GetEfectoShader().SetValue("lightAttenuation", this.Atenuacion());
+            efecto.GetEfectoShader().SetValue("lightIntensity", IntensidadDeLuz());
+            efecto.GetEfectoShader().SetValue("lightAttenuation", Atenuacion());
             efecto.GetEfectoShader().SetValue("materialEmissiveColor", colorEmisor);
             efecto.GetEfectoShader().SetValue("materialAmbientColor", colorAmbiente);
             efecto.GetEfectoShader().SetValue("materialDiffuseColor", colorDifuso);
@@ -75,63 +77,64 @@ namespace TGC.Group.Model.ElementosDia
 
         public float Atenuacion()
         {
-            if (this.EsDeNoche())
+            if (EsDeNoche())
             {
-                return this.atenuacionMaxima;
+                return atenuacionMaxima;
             }
-            return (this.atenuacionDeLuz * this.movimientoSol.AlturaMaxima()) / this.Mesh.Position.Y;
+            return atenuacionDeLuz * movimientoSol.AlturaMaxima() / Mesh.Position.Y;
         }
 
         public float IntensidadDeLuz()
         {
-            if (this.EsDeNoche())
+            if (EsDeNoche())
             {
-                return this.intesidadLuzMinima;
+                return intesidadLuzMinima;
             }
-            return (this.intensidadDeLuzSol * this.Mesh.Position.Y) / this.movimientoSol.AlturaMaxima();
+            return intensidadDeLuzSol * Mesh.Position.Y / movimientoSol.AlturaMaxima();
         }
 
         /// <summary>
-        /// retorna la intendidad actual de la luz pero llevada a porcentaje entre 0 y 1
+        ///     retorna la intendidad actual de la luz pero llevada a porcentaje entre 0 y 1
         /// </summary>
         /// <returns></returns>
         public float IntensidadRelativa()
         {
-            return FuncionesMatematicas.Instance.PorcentajeRelativo(this.intesidadLuzMinima, this.intensidadDeLuzSol, this.IntensidadDeLuz());
+            return FuncionesMatematicas.Instance.PorcentajeRelativo(intesidadLuzMinima, intensidadDeLuzSol,
+                IntensidadDeLuz());
         }
 
         public ColorValue GetColorLuz()
         {
-            return this.colorDeLuz;
+            return colorDeLuz;
         }
 
         public bool EsDeDia()
         {
-            return this.Mesh.Position.Y > this.alturaPuestaSol;
+            return Mesh.Position.Y > alturaPuestaSol;
         }
 
         public bool EsDeNoche()
         {
-            return !this.EsDeDia();
+            return !EsDeDia();
         }
 
         public void ActualizarIntensidadMaximaLuz(float nuevaIntensidad)
         {
-            this.intensidadDeLuzSol = nuevaIntensidad;
-            this.intesidadLuzMinima = (this.intensidadDeLuzSol * this.alturaPuestaSol) / this.movimientoSol.AlturaMaxima();
+            intensidadDeLuzSol = nuevaIntensidad;
+            intesidadLuzMinima = intensidadDeLuzSol * alturaPuestaSol / movimientoSol.AlturaMaxima();
         }
 
         public ColorValue GetColorAmanecerAnochecer()
         {
-            ColorValue color = new ColorValue();
-            if (this.Mesh.BoundingBox.PMax.Y > 0 && this.EsDeNoche())
+            var color = new ColorValue();
+            if (Mesh.BoundingBox.PMax.Y > 0 && EsDeNoche())
             {
                 color.Red = 1f;
                 color.Green = 0f;
                 color.Blue = 0f;
                 return color;
             }
-            float aux = this.Mesh.Position.Y - this.alturaPuestaSol;
+            var aux = Mesh.Position.Y - alturaPuestaSol;
             //Si despues de salir el sol su altura no supera mas de 200 la puesta del sol
             if (aux > 0 && aux < 300f)
             {

@@ -1,5 +1,4 @@
-﻿using System;
-using TGC.Group.Model.Administracion;
+﻿using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Model.Comandos
 {
@@ -7,19 +6,19 @@ namespace TGC.Group.Model.Comandos
     {
         #region Constantes
 
-        public const String Mochila = "Mochila";
+        public const string Mochila = "Mochila";
 
         #endregion Constantes
 
         #region Atributos
 
-        private String tipo;
+        private readonly string tipo;
 
         #endregion Atributos
 
         #region Constructores
 
-        public Menu(String tipo)
+        public Menu(string tipo)
         {
             this.tipo = tipo;
         }
@@ -30,7 +29,7 @@ namespace TGC.Group.Model.Comandos
 
         public void Ejecutar(SuvirvalCraft contexto, float elapsedTime)
         {
-            if (this.tipo.Equals(Mochila))
+            if (tipo.Equals(Mochila))
             {
                 contexto.mostrarMenuMochila = true;
             }

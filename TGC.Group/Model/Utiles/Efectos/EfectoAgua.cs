@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.DirectX.Direct3D;
+﻿using Microsoft.DirectX.Direct3D;
 using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Model.Utiles.Efectos
@@ -8,7 +7,7 @@ namespace TGC.Group.Model.Utiles.Efectos
     {
         #region Constructores
 
-        public EfectoAgua(Effect efectoShader, String tecnica) : base(efectoShader, tecnica)
+        public EfectoAgua(Effect efectoShader, string tecnica) : base(efectoShader, tecnica)
         {
         }
 
@@ -18,8 +17,8 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public override void Actualizar(SuvirvalCraft contexto)
         {
-            this.GetEfectoShader().SetValue("time", contexto.tiempo);
-            this.GetEfectoShader().SetValue("lightIntensityRelitive", contexto.dia.GetSol().IntensidadRelativa());
+            GetEfectoShader().SetValue("time", contexto.tiempo);
+            GetEfectoShader().SetValue("lightIntensityRelitive", contexto.dia.GetSol().IntensidadRelativa());
         }
 
         #endregion Comportamientos

@@ -4,26 +4,17 @@ namespace TGC.Group.Model.Comandos
 {
     public class Seleccionar : Comando
     {
-        #region Constantes
-
-        public const int NumeroUno = 0;
-        public const int NumeroDos = 1;
-
-        #endregion Constantes
-
         #region Atributos
 
-        private int numeroSeleccionado;
+        private readonly int numeroSeleccionado;
 
         #endregion Atributos
-
-
 
         #region Constructores
 
         public Seleccionar(int numero)
         {
-            this.numeroSeleccionado = numero;
+            numeroSeleccionado = numero;
         }
 
         #endregion Constructores
@@ -32,9 +23,16 @@ namespace TGC.Group.Model.Comandos
 
         public void Ejecutar(SuvirvalCraft contexto, float elapsedTime)
         {
-            contexto.personaje.seleccionarInstrumentoManoDerecha(this.numeroSeleccionado);
+            contexto.personaje.seleccionarInstrumentoManoDerecha(numeroSeleccionado);
         }
 
         #endregion Comportamientos
+
+        #region Constantes
+
+        public const int NumeroUno = 0;
+        public const int NumeroDos = 1;
+
+        #endregion Constantes
     }
 }

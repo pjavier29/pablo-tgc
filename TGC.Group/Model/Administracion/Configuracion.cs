@@ -24,66 +24,66 @@ namespace TGC.Group.Model.Administracion
             comboBoxDificultad.Items.Add("Muy Difícil");
             comboBoxDificultad.SelectedIndex = 0;
             radioButtonPrimeraPersona.Checked = true;
-            this.modelo.IniciarMusicaConfiguracion();
+            modelo.IniciarMusicaConfiguracion();
         }
 
         private void botonAceptar_Click(object sender, EventArgs e)
         {
-            this.modelo.IniciarCreacion(this.ObtenerValorDificultad(), checkBoxPantallaCompleta.Checked);
+            modelo.IniciarCreacion(ObtenerValorDificultad(), checkBoxPantallaCompleta.Checked);
             progressBarCreacion.Increment(5);
-            this.modelo.AdministracionDeEfectos();
+            modelo.AdministracionDeEfectos();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearHeimap();
+            modelo.CrearHeimap();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearIluminacion(this.ObtenerVelocidadTiempo(), this.ObtenerMomentoDeInicio(),
-                this.ObtenerLapsoPrecipitaciones());
+            modelo.CrearIluminacion(ObtenerVelocidadTiempo(), ObtenerMomentoDeInicio(),
+                ObtenerLapsoPrecipitaciones());
             progressBarCreacion.Increment(5);
-            this.modelo.CrearSkyBox();
+            modelo.CrearSkyBox();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPalmerasComunes();
+            modelo.CrearPalmerasComunes();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearArbolesBanana();
+            modelo.CrearArbolesBanana();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearArbolesDeLenia();
+            modelo.CrearArbolesDeLenia();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPiedraParaTirar();
+            modelo.CrearPiedraParaTirar();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearOvejaYGallo();
+            modelo.CrearOvejaYGallo();
             progressBarCreacion.Increment(5);
-            this.modelo.CreamosLosCajones();
+            modelo.CreamosLosCajones();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearArbolesGenerales();
+            modelo.CrearArbolesGenerales();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearFuenteAgua();
+            modelo.CrearFuenteAgua();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearAlgas();
+            modelo.CrearAlgas();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPiedrasSobreAgua();
+            modelo.CrearPiedrasSobreAgua();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearCanoasSobreAgua();
+            modelo.CrearCanoasSobreAgua();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearArbolFrutilla();
+            modelo.CrearArbolFrutilla();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPiso();
+            modelo.CrearPiso();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPersonaje(this.ObtenerVelocidadCaminar(), this.ObtenerVelocidadRotar(), this.ObtenerFuerza(),
+            modelo.CrearPersonaje(ObtenerVelocidadCaminar(), ObtenerVelocidadRotar(), ObtenerFuerza(),
                 pictureBoxColorPersonaje.BackColor);
             progressBarCreacion.Increment(5);
-            this.modelo.CrearHud();
+            modelo.CrearHud();
             progressBarCreacion.Increment(5);
-            this.modelo.CrearPostProcesado();
+            modelo.CrearPostProcesado();
             progressBarCreacion.Increment(5);
             if (radioButtonPrimeraPersona.Checked)
             {
-                this.modelo.IniciarCamaraPrimeraPersona();
+                modelo.IniciarCamaraPrimeraPersona();
             }
             else
             {
-                this.modelo.IniciarCamaraTerceraPersona();
+                modelo.IniciarCamaraTerceraPersona();
             }
             progressBarCreacion.Increment(5);
-            this.modelo.IniciarMusicasYSonidos();
-            this.Close();
+            modelo.IniciarMusicasYSonidos();
+            Close();
         }
 
         private void trackBarPresipitaciones_Scroll(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace TGC.Group.Model.Administracion
 
         private int ObtenerValorDificultad()
         {
-            String selectedItem = (String)comboBoxDificultad.SelectedItem;
+            var selectedItem = (string)comboBoxDificultad.SelectedItem;
             if (selectedItem.Equals("Fácil"))
             {
                 return 300;
@@ -160,7 +160,7 @@ namespace TGC.Group.Model.Administracion
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            ColorDialog color = new ColorDialog();
+            var color = new ColorDialog();
             color.AllowFullOpen = false;
             color.ShowHelp = true;
             color.Color = pictureBoxColorPersonaje.BackColor;

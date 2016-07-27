@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.DirectX;
+using System;
 using System.Drawing;
-using Microsoft.DirectX;
 
 namespace TGC.Group.Model
 {
@@ -11,15 +11,27 @@ namespace TGC.Group.Model
             initialize();
         }
 
+        #region Miembros de IDisposable
+
+        public void Dispose()
+        {
+            if (Bitmap != null)
+            {
+                Bitmap.Dispose();
+            }
+        }
+
+        #endregion Miembros de IDisposable
+
         private void initialize()
         {
-            //Set the identity matrix. 
+            //Set the identity matrix.
             TransformationMatrix = Matrix.Identity;
 
-            //Set an empty rectangle to indicate the entire bitmap. 
+            //Set an empty rectangle to indicate the entire bitmap.
             SrcRect = Rectangle.Empty;
 
-            //Initialize transformation properties. 
+            //Initialize transformation properties.
             position = new Vector2(0, 0);
             scaling = new Vector2(1, 1);
             scalingCenter = new Vector2(0, 0);
@@ -28,40 +40,39 @@ namespace TGC.Group.Model
 
             Color = Color.White;
         }
-        
+
         private void UpdateTransformationMatrix()
         {
             TransformationMatrix = Matrix.Transformation2D(scalingCenter, 0, scaling, rotationCenter, rotation, position);
         }
 
+        #region Public members
 
-        #region Public members 
-
-        /// <summary> 
-        ///     The transformation matrix. 
-        /// </summary> 
+        /// <summary>
+        ///     The transformation matrix.
+        /// </summary>
         public Matrix TransformationMatrix { get; private set; }
 
-        /// <summary> 
-        ///     The source rectangle to be drawn from the bitmap. 
-        /// </summary> 
+        /// <summary>
+        ///     The source rectangle to be drawn from the bitmap.
+        /// </summary>
         public Rectangle SrcRect { get; set; }
 
-        /// <summary> 
-        ///     The linked bitmap for the sprite. 
-        /// </summary> 
+        /// <summary>
+        ///     The linked bitmap for the sprite.
+        /// </summary>
         public CustomBitmap Bitmap { get; set; }
 
-        /// <summary> 
-        ///     The color of the sprite. 
-        /// </summary> 
+        /// <summary>
+        ///     The color of the sprite.
+        /// </summary>
         public Color Color { get; set; }
 
         private Vector2 position;
 
-        /// <summary> 
-        ///     The sprite position in the 2D plane. 
-        /// </summary> 
+        /// <summary>
+        ///     The sprite position in the 2D plane.
+        /// </summary>
         public Vector2 Position
         {
             get { return position; }
@@ -74,9 +85,9 @@ namespace TGC.Group.Model
 
         private float rotation;
 
-        /// <summary> 
-        ///     The angle of rotation in radians. 
-        /// </summary> 
+        /// <summary>
+        ///     The angle of rotation in radians.
+        /// </summary>
         public float Rotation
         {
             get { return rotation; }
@@ -89,9 +100,9 @@ namespace TGC.Group.Model
 
         private Vector2 rotationCenter;
 
-        /// <summary> 
-        ///     The position of the centre of rotation 
-        /// </summary> 
+        /// <summary>
+        ///     The position of the centre of rotation
+        /// </summary>
         public Vector2 RotationCenter
         {
             get { return rotationCenter; }
@@ -104,9 +115,9 @@ namespace TGC.Group.Model
 
         private Vector2 scalingCenter;
 
-        /// <summary> 
-        ///     The position of the centre of scaling 
-        /// </summary> 
+        /// <summary>
+        ///     The position of the centre of scaling
+        /// </summary>
         public Vector2 ScalingCenter
         {
             get { return scalingCenter; }
@@ -119,9 +130,9 @@ namespace TGC.Group.Model
 
         private Vector2 scaling;
 
-        /// <summary> 
-        ///     The scaling factors in the x and y axes. 
-        /// </summary> 
+        /// <summary>
+        ///     The scaling factors in the x and y axes.
+        /// </summary>
         public Vector2 Scaling
         {
             get { return scaling; }
@@ -132,18 +143,6 @@ namespace TGC.Group.Model
             }
         }
 
-        #endregion Public members 
-
-        #region Miembros de IDisposable 
-
-        public void Dispose()
-        {
-            if (Bitmap != null)
-            {
-                Bitmap.Dispose();
-            }
-        }
-
-        #endregion Miembros de IDisposable 
+        #endregion Public members
     }
 }

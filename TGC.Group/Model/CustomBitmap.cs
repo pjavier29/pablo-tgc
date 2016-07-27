@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.DirectX.Direct3D;
+using System;
 using System.Drawing;
-using Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model
 {
@@ -19,8 +19,8 @@ namespace TGC.Group.Model
             }
         }
 
-        #region Miembros de IDisposable 
-        
+        #region Miembros de IDisposable
+
         public void Dispose()
         {
             if (D3dTexture != null)
@@ -28,51 +28,51 @@ namespace TGC.Group.Model
                 D3dTexture.Dispose();
             }
         }
-        
-        #endregion Miembros de IDisposable 
-        
-        #region Public members 
-        
-        /// <summary> 
-        ///     returns the underlying texture. 
-        /// </summary> 
+
+        #endregion Miembros de IDisposable
+
+        #region Public members
+
+        /// <summary>
+        ///     returns the underlying texture.
+        /// </summary>
         public Texture D3dTexture { get; }
-        
-        /// <summary> 
-        ///     Ancho de la textura 
-        /// </summary> 
+
+        /// <summary>
+        ///     Ancho de la textura
+        /// </summary>
         public int Width
         {
             get { return D3dTexture.GetLevelDescription(0).Width; }
         }
 
-        /// <summary> 
-        ///     Alto de la textura 
-        /// </summary> 
+        /// <summary>
+        ///     Alto de la textura
+        /// </summary>
         public int Height
         {
             get { return D3dTexture.GetLevelDescription(0).Height; }
         }
-        
-        /// <summary> 
-        ///     Dimensiones de la textura 
-        /// </summary> 
+
+        /// <summary>
+        ///     Dimensiones de la textura
+        /// </summary>
         public Size Size
         {
             get { return new Size(Width, Height); }
         }
-        
+
         private ImageInformation imageInformation;
-        
-        /// <summary> 
-        ///     Returns the image information of the bitmap. 
-        /// </summary> 
+
+        /// <summary>
+        ///     Returns the image information of the bitmap.
+        /// </summary>
         public ImageInformation ImageInformation
         {
             get { return imageInformation; }
             set { imageInformation = value; }
         }
-        
-        #endregion Public members 
+
+        #endregion Public members
     }
 }

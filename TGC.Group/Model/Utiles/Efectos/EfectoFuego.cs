@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.DirectX.Direct3D;
+﻿using Microsoft.DirectX.Direct3D;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.ElementosJuego;
 
@@ -9,7 +8,7 @@ namespace TGC.Group.Model.Utiles.Efectos
     {
         #region Constructores
 
-        public EfectoFuego(Effect efectoShader, String tecnica) : base(efectoShader, tecnica)
+        public EfectoFuego(Effect efectoShader, string tecnica) : base(efectoShader, tecnica)
         {
         }
 
@@ -19,20 +18,20 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public override void Actualizar(SuvirvalCraft contexto)
         {
-            this.GetEfectoShader().SetValue("time", contexto.tiempo);
-            this.GetEfectoShader().SetValue("altura", 0);
+            GetEfectoShader().SetValue("time", contexto.tiempo);
+            GetEfectoShader().SetValue("altura", 0);
         }
 
         public override void Actualizar(SuvirvalCraft contexto, Elemento elemento)
         {
-            this.GetEfectoShader().SetValue("time", contexto.tiempo);
-            this.GetEfectoShader().SetValue("altura", elemento.GetAlturaAnimacion());
+            GetEfectoShader().SetValue("time", contexto.tiempo);
+            GetEfectoShader().SetValue("altura", elemento.GetAlturaAnimacion());
         }
 
         public override void ActualizarRenderizar(SuvirvalCraft contexto, Elemento elemento)
         {
-            this.GetEfectoShader().SetValue("time", contexto.tiempo);
-            this.GetEfectoShader().SetValue("altura", elemento.GetAlturaAnimacion());
+            GetEfectoShader().SetValue("time", contexto.tiempo);
+            GetEfectoShader().SetValue("altura", elemento.GetAlturaAnimacion());
             elemento.Mesh.render();
         }
 

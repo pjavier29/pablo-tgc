@@ -1,6 +1,6 @@
-﻿using System.Drawing;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using System.Drawing;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles.Efectos;
@@ -13,10 +13,10 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
 
         public float potenciaGolpe { get; set; }
         public float alcance { get; set; }
-        public Matrix translacion { get; set; }//Para poder ubicarla en la mano del personaje
-        public TgcMesh mesh { get; set; }//Para poder representar el arma
+        public Matrix translacion { get; set; } //Para poder ubicarla en la mano del personaje
+        public TgcMesh mesh { get; set; } //Para poder representar el arma
         private Efecto efecto;
-        private Color colorBase;
+        private readonly Color colorBase;
 
         #endregion Atributos
 
@@ -40,7 +40,7 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
             this.alcance = alcance;
             this.translacion = translacion;
             this.mesh = mesh;
-            this.SetEfecto(efecto);
+            SetEfecto(efecto);
             this.colorBase = colorBase;
         }
 
@@ -50,26 +50,26 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
 
         public void renderizar(SuvirvalCraft contexto)
         {
-            if (this.Efecto() != null)
+            if (Efecto() != null)
             {
                 //Delego en el efecto la responsabilidad del renderizado.
-                this.Efecto().ActualizarRenderizar(contexto, this);
+                Efecto().ActualizarRenderizar(contexto, this);
             }
             else
             {
-                this.mesh.render();
+                mesh.render();
             }
         }
 
         public void SetEfecto(Efecto efecto)
         {
             this.efecto = efecto;
-            efecto.Aplicar(this.mesh);
+            efecto.Aplicar(mesh);
         }
 
         public Efecto Efecto()
         {
-            return this.efecto;
+            return efecto;
         }
 
         #region Para configurar la luz
@@ -81,17 +81,17 @@ namespace TGC.Group.Model.ElementosJuego.Instrumentos
 
         public virtual ColorValue ColorAmbiente()
         {
-            return ColorValue.FromColor(this.colorBase);
+            return ColorValue.FromColor(colorBase);
         }
 
         public virtual ColorValue ColorDifuso()
         {
-            return ColorValue.FromColor(this.colorBase);
+            return ColorValue.FromColor(colorBase);
         }
 
         public virtual ColorValue ColorEspecular()
         {
-            return ColorValue.FromColor(this.colorBase);
+            return ColorValue.FromColor(colorBase);
         }
 
         public virtual float EspecularEx()

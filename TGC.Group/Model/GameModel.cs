@@ -16,16 +16,8 @@ namespace TGC.Group.Model
     /// </summary>
     public class GameModel : TgcExample
     {
-        //Caja que se muestra en el ejemplo
-        private TgcBox Box { get; set; }
-
-        private TgcMesh Mesh { get; set; }
-
-        //Boleano para ver si dibujamos el boundingbox
-        private bool BoundingBox { get; set; }
-
         /// <summary>
-        /// Constructor del juego
+        ///     Constructor del juego
         /// </summary>
         /// <param name="mediaDir">Ruta donde esta la carpeta con los assets</param>
         /// <param name="shadersDir">Ruta donde esta la carpeta con los shaders</param>
@@ -35,6 +27,14 @@ namespace TGC.Group.Model
             Name = Game.Default.Name;
             Description = Game.Default.Description;
         }
+
+        //Caja que se muestra en el ejemplo
+        private TgcBox Box { get; set; }
+
+        private TgcMesh Mesh { get; set; }
+
+        //Boleano para ver si dibujamos el boundingbox
+        private bool BoundingBox { get; set; }
 
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
@@ -68,8 +68,8 @@ namespace TGC.Group.Model
         }
 
         /// <summary>
-        /// Se llama en cada frame.
-        /// Se debe escribir toda la logica de computo del modelo.
+        ///     Se llama en cada frame.
+        ///     Se debe escribir toda la logica de computo del modelo.
         /// </summary>
         public override void Update()
         {

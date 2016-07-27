@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.SceneLoader;
 using TGC.Core.Utils;
@@ -11,30 +10,31 @@ namespace TGC.Group.Model.ElementosJuego
 {
     public class Animal : Elemento
     {
-        #region Atributos
-
-        private float tiempoEnActividad;
-        private float tiempoInactivo;
-        private float tiempo;
-        private float velocidadCaminar;
-        private float velocidadRotar;
-        private String movimientoActual;
-
-        #endregion Atributos
-
         #region Contructores
 
-        public Animal(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
+        public Animal(float peso, float resistencia, TgcMesh mesh, Efecto efecto)
+            : base(peso, resistencia, mesh, efecto)
         {
-            this.tiempoEnActividad = 7;
-            this.tiempoInactivo = 3;
-            this.tiempo = 0;
-            this.velocidadCaminar = 30f;
-            this.velocidadRotar = 10F;
-            this.movimientoActual = "Caminar";
+            tiempoEnActividad = 7;
+            tiempoInactivo = 3;
+            tiempo = 0;
+            velocidadCaminar = 30f;
+            velocidadRotar = 10F;
+            movimientoActual = "Caminar";
         }
 
         #endregion Contructores
+
+        #region Atributos
+
+        private readonly float tiempoEnActividad;
+        private readonly float tiempoInactivo;
+        private float tiempo;
+        private readonly float velocidadCaminar;
+        private readonly float velocidadRotar;
+        private string movimientoActual;
+
+        #endregion Atributos
 
         #region Comportamientos
 
@@ -44,7 +44,7 @@ namespace TGC.Group.Model.ElementosJuego
             tiempo += elapsedTime;
             if (tiempo < tiempoEnActividad)
             {
-                this.simularMovimiento(elapsedTime, contexto.terreno);
+                simularMovimiento(elapsedTime, contexto.terreno);
                 //TODO. Colocar animación de caminar
             }
             else
@@ -53,7 +53,7 @@ namespace TGC.Group.Model.ElementosJuego
                 if (tiempo > tiempoEnActividad + tiempoInactivo)
                 {
                     tiempo = 0;
-                    double aleatorioActual = FuncionesMatematicas.Instance.NumeroAleatorioDouble();
+                    var aleatorioActual = FuncionesMatematicas.Instance.NumeroAleatorioDouble();
                     if (aleatorioActual < 0.2F)
                     {
                         movimientoActual = "Caminar";
@@ -72,24 +72,25 @@ namespace TGC.Group.Model.ElementosJuego
                 }
             }
             //Tenemos que actualizar los puntos de la barra ya que el animal se mueve por el terreno
-            this.ActualizarBarraEstadoCompleta(this.Mesh.BoundingBox.PMin, new Vector3(this.Mesh.BoundingBox.PMin.X, this.Mesh.BoundingBox.PMax.Y, this.Mesh.BoundingBox.PMin.Z));
+            ActualizarBarraEstadoCompleta(Mesh.BoundingBox.PMin,
+                new Vector3(Mesh.BoundingBox.PMin.X, Mesh.BoundingBox.PMax.Y, Mesh.BoundingBox.PMin.Z));
         }
 
         private void simularMovimiento(float elapsedTime, Terreno terreno)
         {
             if (movimientoActual.Equals("Caminar"))
             {
-                this.moverse(elapsedTime, terreno);
+                moverse(elapsedTime, terreno);
             }
 
             if (movimientoActual.Equals("CaminarDerecha"))
             {
-                this.moverseRotando(elapsedTime, terreno, 1);
+                moverseRotando(elapsedTime, terreno, 1);
             }
 
             if (movimientoActual.Equals("CaminarIzquierda"))
             {
-                this.moverseRotando(elapsedTime, terreno, -1);
+                moverseRotando(elapsedTime, terreno, -1);
             }
         }
 
@@ -97,21 +98,22 @@ namespace TGC.Group.Model.ElementosJuego
         {
             //Aplicamos el movimiento
             //TODO Ver si es correcta la forma que aplico para representar que se esta a la altura del terreno.
-            float xm = FastMath.Sin(this.Mesh.Rotation.Y) * velocidadCaminar;
-            float zm = FastMath.Cos(this.Mesh.Rotation.Y) * velocidadCaminar;
-            Vector3 movementVector = new Vector3(xm, 0, zm);
-            this.Mesh.move(movementVector * elapsedTime);
-            this.Mesh.Position = new Vector3(this.Mesh.Position.X, terreno.CalcularAltura(this.Mesh.Position.X, this.Mesh.Position.Z), this.Mesh.Position.Z);
+            var xm = FastMath.Sin(Mesh.Rotation.Y) * velocidadCaminar;
+            var zm = FastMath.Cos(Mesh.Rotation.Y) * velocidadCaminar;
+            var movementVector = new Vector3(xm, 0, zm);
+            Mesh.move(movementVector * elapsedTime);
+            Mesh.Position = new Vector3(Mesh.Position.X, terreno.CalcularAltura(Mesh.Position.X, Mesh.Position.Z),
+                Mesh.Position.Z);
         }
 
         private void moverseRotando(float elapsedTime, Terreno terreno, int direccion)
         {
-            float rotAngle = Geometry.DegreeToRadian(direccion * velocidadRotar * elapsedTime);
-            this.Mesh.rotateY(rotAngle);
-            this.moverse(elapsedTime, terreno);
+            var rotAngle = Geometry.DegreeToRadian(direccion * velocidadRotar * elapsedTime);
+            Mesh.rotateY(rotAngle);
+            moverse(elapsedTime, terreno);
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return Animal;
         }

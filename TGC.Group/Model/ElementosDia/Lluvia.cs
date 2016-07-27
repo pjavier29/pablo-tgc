@@ -5,6 +5,19 @@ namespace TGC.Group.Model.ElementosDia
 {
     public class Lluvia
     {
+        #region Constructores
+
+        public Lluvia(float incrementador, float lapsoPrecipitaciones)
+        {
+            IncrementadorProbabilidad = incrementador;
+            LapsoPrecipitaciones = lapsoPrecipitaciones;
+            probabilidadLluvia = 0; //Al principio nunca llueve!!!
+            estaLloviendo = false;
+            momentoUltimoRayo = 0;
+        }
+
+        #endregion Constructores
+
         #region Atributos
 
         private float probabilidadLluvia;
@@ -20,39 +33,26 @@ namespace TGC.Group.Model.ElementosDia
 
         #endregion Propiedades
 
-        #region Constructores
-
-        public Lluvia(float incrementador, float lapsoPrecipitaciones)
-        {
-            this.IncrementadorProbabilidad = incrementador;
-            this.LapsoPrecipitaciones = lapsoPrecipitaciones;
-            this.probabilidadLluvia = 0;//Al principio nunca llueve!!!
-            this.estaLloviendo = false;
-            this.momentoUltimoRayo = 0;
-        }
-
-        #endregion Constructores
-
         #region Comportamientos
 
         /// <summary>
-        /// Método que debería ser invocado una sola vez por dia.
+        ///     Método que debería ser invocado una sola vez por dia.
         /// </summary>
         public void Actualizar(SuvirvalCraft contexto)
         {
-            this.estaLloviendo = false;
-            this.momentoUltimoRayo = 0;
+            estaLloviendo = false;
+            momentoUltimoRayo = 0;
             contexto.sonidoLluvia.stop();
-            if (FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, LapsoPrecipitaciones) < this.probabilidadLluvia)
+            if (FuncionesMatematicas.Instance.NumeroAleatorioFloatEntre(0, LapsoPrecipitaciones) < probabilidadLluvia)
             {
-                this.estaLloviendo = true;
-                this.probabilidadLluvia = 0;
+                estaLloviendo = true;
+                probabilidadLluvia = 0;
                 contexto.sonidoLluvia.play(true);
             }
             else
             {
                 //Si no esta lloviendo incremento la probabilidad para tener más chances después
-                this.probabilidadLluvia += this.IncrementadorProbabilidad;
+                probabilidadLluvia += IncrementadorProbabilidad;
             }
         }
 
@@ -68,23 +68,23 @@ namespace TGC.Group.Model.ElementosDia
 
         public bool EstaLloviendo()
         {
-            return this.estaLloviendo;
+            return estaLloviendo;
         }
 
         public float GetIntensidadRayo(float tiempo)
         {
-            if (this.EstaLloviendo())
+            if (EstaLloviendo())
             {
-                if (this.momentoUltimoRayo == 0)
+                if (momentoUltimoRayo == 0)
                 {
                     if (FuncionesMatematicas.Instance.NumeroAleatorioIntEntre(0, 1000) < 2)
                     {
-                        this.momentoUltimoRayo = tiempo;
+                        momentoUltimoRayo = tiempo;
                     }
                 }
                 else
                 {
-                    float momento = tiempo - this.momentoUltimoRayo;
+                    var momento = tiempo - momentoUltimoRayo;
                     if (momento < 0.15f)
                     {
                         return 0.3f;
@@ -95,7 +95,8 @@ namespace TGC.Group.Model.ElementosDia
                     }
                     if (momento > 1f)
                     {
-                        this.momentoUltimoRayo = 0; ;
+                        momentoUltimoRayo = 0;
+                        ;
                     }
                 }
             }

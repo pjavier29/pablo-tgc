@@ -7,42 +7,44 @@ namespace TGC.Group.Model.Movimientos
     public class MovimientoParabolico
     {
         private const float Gravedad = 9.8f;
-
-        private Vector3 posicionInicial { get; set; }
-        private Vector3 direccion { get; set; }
-        private float velocidad { get; set; }
-        private float tiempo { get; set; }
         private MallaEnvoltura mesh;
-        public bool Finalizo { get; set; }
 
         private float proporcionalX;
         private float proporcionalZ;
+        private float velocidadInicialXZ;
 
         private float velocidadInicialY;
-        private float velocidadInicialXZ;
 
         public MovimientoParabolico()
         {
-            this.mesh = null;
+            mesh = null;
         }
 
         public MovimientoParabolico(Vector3 posicionInicial, Vector3 direccion, float velocidad, MallaEnvoltura mesh)
         {
-            this.tiempo = 0;
+            tiempo = 0;
             this.posicionInicial = posicionInicial;
             this.direccion = direccion;
             this.velocidad = velocidad;
             this.mesh = mesh;
-            this.Finalizo = false;
-            this.inicializar();
+            Finalizo = false;
+            inicializar();
         }
+
+        private Vector3 posicionInicial { get; }
+        private Vector3 direccion { get; }
+        private float velocidad { get; }
+        private float tiempo { get; set; }
+        public bool Finalizo { get; set; }
 
         private void inicializar()
         {
-            float componenteXZ = FastMath.Sqrt(FastMath.Pow2(direccion.X - posicionInicial.X) + FastMath.Pow2(direccion.Z - posicionInicial.Z));
-            float componenteY = direccion.Y - posicionInicial.Y;
-            float componenteX = direccion.X - posicionInicial.X;
-            float componenteZ = direccion.Z - posicionInicial.Z;
+            var componenteXZ =
+                FastMath.Sqrt(FastMath.Pow2(direccion.X - posicionInicial.X) +
+                              FastMath.Pow2(direccion.Z - posicionInicial.Z));
+            var componenteY = direccion.Y - posicionInicial.Y;
+            var componenteX = direccion.X - posicionInicial.X;
+            var componenteZ = direccion.Z - posicionInicial.Z;
             float angulo;
             float anguloxz;
 
@@ -90,47 +92,52 @@ namespace TGC.Group.Model.Movimientos
                 }
             }
 
-            float largoVector = FastMath.Sqrt(FastMath.Pow2(direccion.X - posicionInicial.X) + FastMath.Pow2(direccion.Y - posicionInicial.Y) + FastMath.Pow2(direccion.Z - posicionInicial.Z));
+            var largoVector =
+                FastMath.Sqrt(FastMath.Pow2(direccion.X - posicionInicial.X) +
+                              FastMath.Pow2(direccion.Y - posicionInicial.Y) +
+                              FastMath.Pow2(direccion.Z - posicionInicial.Z));
             angulo = FastMath.Asin((direccion.Y - posicionInicial.Y) / largoVector);
 
-            this.velocidadInicialXZ = FastMath.Cos(angulo) * this.velocidad;
-            this.velocidadInicialY = FastMath.Sin(angulo) * this.velocidad;
+            velocidadInicialXZ = FastMath.Cos(angulo) * velocidad;
+            velocidadInicialY = FastMath.Sin(angulo) * velocidad;
         }
 
         public void update(float elapsedTime, Terreno terreno)
         {
-            if (this.mesh != null)
+            if (mesh != null)
             {
                 tiempo += elapsedTime;
 
-                Vector3 posicionUltima = this.mesh.Posicion();
+                var posicionUltima = mesh.Posicion();
 
-                float distanciaRecorridaXZ = this.velocidadInicialXZ * tiempo /** elapsedTime*/;
-                float distanciaRecorridaY = ((FastMath.Pow2(tiempo) * -0.5f * Gravedad) + this.velocidadInicialY * tiempo) /** elapsedTime*/;
+                var distanciaRecorridaXZ = velocidadInicialXZ * tiempo /** elapsedTime*/;
+                var distanciaRecorridaY = FastMath.Pow2(tiempo) * -0.5f * Gravedad + velocidadInicialY * tiempo
+                    /** elapsedTime*/;
 
-                float x = this.mesh.Posicion().X + proporcionalX * distanciaRecorridaXZ;
-                float z = this.mesh.Posicion().Z + proporcionalZ * distanciaRecorridaXZ;
+                var x = mesh.Posicion().X + proporcionalX * distanciaRecorridaXZ;
+                var z = mesh.Posicion().Z + proporcionalZ * distanciaRecorridaXZ;
 
                 //TODO. Por el momentos nos manejamos con Y siempre positivas
-                this.mesh.Posicion(new Vector3(x, this.mesh.Posicion().Y + distanciaRecorridaY, z));
+                mesh.Posicion(new Vector3(x, mesh.Posicion().Y + distanciaRecorridaY, z));
 
                 //TODO necesitamos el tamaño del elemento para poder saber cuando choca contra en terreno
-                if ((this.mesh.MinimoPunto().Y - this.mesh.FactorCorreccion()) < terreno.CalcularAltura(this.mesh.MinimoPunto().X, this.mesh.MinimoPunto().Z))
+                if (mesh.MinimoPunto().Y - mesh.FactorCorreccion() <
+                    terreno.CalcularAltura(mesh.MinimoPunto().X, mesh.MinimoPunto().Z))
                 {
                     //Esto debe ser cuando colosiona con el terreno.
-                    this.mesh.Posicion(posicionUltima);
-                    this.mesh = null;
+                    mesh.Posicion(posicionUltima);
+                    mesh = null;
                     tiempo = 0;
-                    this.Finalizo = true;
+                    Finalizo = true;
                 }
             }
         }
 
         public void render()
         {
-            if (this.mesh != null)
+            if (mesh != null)
             {
-                this.mesh.Render();
+                mesh.Render();
             }
         }
     }

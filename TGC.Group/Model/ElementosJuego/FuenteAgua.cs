@@ -1,5 +1,4 @@
-﻿using System;
-using TGC.Core.SceneLoader;
+﻿using TGC.Core.SceneLoader;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles.Efectos;
 
@@ -9,7 +8,8 @@ namespace TGC.Group.Model.ElementosJuego
     {
         #region Contructores
 
-        public FuenteAgua(float peso, float resistencia, TgcMesh mesh, Efecto efecto) : base(peso, resistencia, mesh, efecto)
+        public FuenteAgua(float peso, float resistencia, TgcMesh mesh, Efecto efecto)
+            : base(peso, resistencia, mesh, efecto)
         {
         }
 
@@ -17,7 +17,7 @@ namespace TGC.Group.Model.ElementosJuego
 
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
             //En la fuente de agua no queremos que se miestre barra de estado
             base.procesarInteraccion(accion, contexto, elapsedTime);
@@ -34,13 +34,13 @@ namespace TGC.Group.Model.ElementosJuego
             }
         }
 
-        public override String getAcciones()
+        public override string getAcciones()
         {
             //TODO. Mejorar esta lógica
             return "Consumir (C)";
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return FuenteAgua;
         }

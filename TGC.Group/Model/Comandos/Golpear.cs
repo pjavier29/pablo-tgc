@@ -1,5 +1,4 @@
-﻿using System;
-using TGC.Group.Model.Administracion;
+﻿using TGC.Group.Model.Administracion;
 using TGC.Group.Model.ElementosJuego;
 using TGC.Group.Model.Utiles;
 
@@ -7,6 +6,23 @@ namespace TGC.Group.Model.Comandos
 {
     public class Golpear : Comando
     {
+        #region Constructores
+
+        public Golpear(string tipoDeGolpe)
+        {
+            GolpeActual = tipoDeGolpe;
+            momentoUltimoGolpe = 0;
+            elementoEnColision = null;
+        }
+
+        #endregion Constructores
+
+        #region Propiedades
+
+        public string GolpeActual { get; set; }
+
+        #endregion Propiedades
+
         #region Atributo;
 
         private float momentoUltimoGolpe;
@@ -14,29 +30,12 @@ namespace TGC.Group.Model.Comandos
 
         #endregion Atributo;
 
-        #region Propiedades
-
-        public String GolpeActual { get; set; }
-
-        #endregion Propiedades
-
         #region Constantes
 
-        public const String Patear = "Patear";
-        public const String Pegar = "Pegar";
+        public const string Patear = "Patear";
+        public const string Pegar = "Pegar";
 
         #endregion Constantes
-
-        #region Constructores
-
-        public Golpear(String tipoDeGolpe)
-        {
-            this.GolpeActual = tipoDeGolpe;
-            this.momentoUltimoGolpe = 0;
-            this.elementoEnColision = null;
-        }
-
-        #endregion Constructores
 
         #region Comportamientos
 
@@ -45,26 +44,26 @@ namespace TGC.Group.Model.Comandos
             float alcance = 0;
             float fuerzaGolpe = 0;
 
-            this.BuscarColisionConGolpe(contexto);
+            BuscarColisionConGolpe(contexto);
 
-            if (this.GolpeActual.Equals(Patear))
+            if (GolpeActual.Equals(Patear))
             {
-                if (this.elementoEnColision != null)
+                if (elementoEnColision != null)
                 {
                     contexto.sonidoGolpePatada.play(false);
-                    this.elementoEnColision.GenerarVibracion(contexto.tiempo);
+                    elementoEnColision.GenerarVibracion(contexto.tiempo);
                 }
                 contexto.personaje.mesh.playAnimation("Patear", true);
                 alcance = contexto.personaje.alcancePatada();
                 fuerzaGolpe = contexto.personaje.fuerzaPatada();
             }
 
-            if (this.GolpeActual.Equals(Pegar))
+            if (GolpeActual.Equals(Pegar))
             {
-                if (this.elementoEnColision != null)
+                if (elementoEnColision != null)
                 {
                     contexto.sonidoGolpe.play(false);
-                    this.elementoEnColision.GenerarVibracion(contexto.tiempo);
+                    elementoEnColision.GenerarVibracion(contexto.tiempo);
                 }
                 contexto.personaje.mesh.playAnimation("Pegar", true);
                 alcance = contexto.personaje.alcanceGolpe();
@@ -72,7 +71,7 @@ namespace TGC.Group.Model.Comandos
             }
 
             //Si golpeo un obstáculo deberé esperar 2 segundos para poder golpearlo nuevamente
-            if (this.PuedeGolpear(contexto.tiempo) && this.elementoEnColision != null)
+            if (PuedeGolpear(contexto.tiempo) && elementoEnColision != null)
             {
                 //Buscamos si esta al alcance alguno de los obstáculos
                 //foreach (Elemento elem in contexto.optimizador.ElementosColision)
@@ -80,21 +79,21 @@ namespace TGC.Group.Model.Comandos
                 //if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
                 //{
                 //Si golpeo actualizamos el tiempo local
-                this.momentoUltimoGolpe = contexto.tiempo;
-                this.elementoEnColision.recibirDanio(fuerzaGolpe, contexto.tiempo);
-                if (this.elementoEnColision.estaDestruido())
+                momentoUltimoGolpe = contexto.tiempo;
+                elementoEnColision.recibirDanio(fuerzaGolpe, contexto.tiempo);
+                if (elementoEnColision.estaDestruido())
                 {
-                    if (!this.elementoEnColision.destruccionTotal())
+                    if (!elementoEnColision.destruccionTotal())
                     {
-                        foreach (Elemento obs in this.elementoEnColision.elementosQueContiene())
+                        foreach (var obs in elementoEnColision.elementosQueContiene())
                         {
                             //TODO. Aplicar algun algoritmo de dispersion copado
-                            obs.posicion(this.elementoEnColision.posicion());
+                            obs.posicion(elementoEnColision.posicion());
                             contexto.elementos.Add(obs);
                         }
                     }
-                    this.elementoEnColision.liberar();
-                    contexto.elementos.Remove(this.elementoEnColision);
+                    elementoEnColision.liberar();
+                    contexto.elementos.Remove(elementoEnColision);
                     contexto.optimizador.ForzarActualizacionElementosColision();
                 }
 
@@ -107,19 +106,23 @@ namespace TGC.Group.Model.Comandos
 
         private bool PuedeGolpear(float tiempo)
         {
-            if (this.momentoUltimoGolpe == 0) { return true; }
-            return (tiempo - this.momentoUltimoGolpe) > 1.5f;
+            if (momentoUltimoGolpe == 0)
+            {
+                return true;
+            }
+            return tiempo - momentoUltimoGolpe > 1.5f;
         }
 
         private void BuscarColisionConGolpe(SuvirvalCraft contexto)
         {
-            this.elementoEnColision = null;
+            elementoEnColision = null;
             //Buscamos si esta al alcance alguno de los obstáculos
-            foreach (Elemento elem in contexto.optimizador.ElementosColision)
+            foreach (var elem in contexto.optimizador.ElementosColision)
             {
-                if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
+                if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(),
+                    elem.BoundingBox()))
                 {
-                    this.elementoEnColision = elem;
+                    elementoEnColision = elem;
                     //En principio solo se puede golpear un obstaculo a la vez.
                     break;
                 }

@@ -8,24 +8,22 @@ namespace TGC.Group.Model.ElementosDia
     {
         #region Atributos
 
-        private Tiempo tiempo;
-        private Sol sol;
-        private Lluvia lluvia;
-        private float velocidadTiempo;
-        private double relojInterno;//Son segundos virtuales
+        private readonly Tiempo tiempo;
+        private readonly Sol sol;
+        private readonly Lluvia lluvia;
+        private readonly float velocidadTiempo;
+        private double relojInterno; //Son segundos virtuales
 
         #endregion Atributos
-
-
 
         #region Constructores
 
         public Dia(float velocidadTiempo, Sol sol, Lluvia lluvia)
         {
             this.velocidadTiempo = velocidadTiempo;
-            this.tiempo = new Tiempo();
-            this.tiempo.CalcularTemperaturaDeDia();
-            this.relojInterno = 0;
+            tiempo = new Tiempo();
+            tiempo.CalcularTemperaturaDeDia();
+            relojInterno = 0;
             this.sol = sol;
             this.lluvia = lluvia;
         }
@@ -33,8 +31,8 @@ namespace TGC.Group.Model.ElementosDia
         public Dia(float velocidadTiempo, Sol sol, float relojInterno, Lluvia lluvia)
         {
             this.velocidadTiempo = velocidadTiempo;
-            this.tiempo = new Tiempo();
-            this.tiempo.CalcularTemperaturaDeDia();
+            tiempo = new Tiempo();
+            tiempo.CalcularTemperaturaDeDia();
             this.relojInterno = relojInterno;
             this.sol = sol;
             this.lluvia = lluvia;
@@ -46,38 +44,38 @@ namespace TGC.Group.Model.ElementosDia
 
         public void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
-            this.ActualizarRelojInterno(elapsedTime, contexto);
-            this.sol.Actualizar(this.GetAnguloSegunSegundos());
+            ActualizarRelojInterno(elapsedTime, contexto);
+            sol.Actualizar(GetAnguloSegunSegundos());
         }
 
         private float GetAnguloSegunSegundos()
         {
-            return (float)(((this.relojInterno * FastMath.PI * 2) / 86400) - FastMath.PI / 2);
+            return (float)(relojInterno * FastMath.PI * 2 / 86400 - FastMath.PI / 2);
         }
 
         public int HoraActual()
         {
-            return (int)Math.Floor(this.relojInterno / 3600);
+            return (int)Math.Floor(relojInterno / 3600);
         }
 
         public int Minutoactual()
         {
-            return (int)((this.relojInterno % 3600) / 60);
+            return (int)(relojInterno % 3600 / 60);
         }
 
-        public String HoraActualTexto()
+        public string HoraActualTexto()
         {
-            return this.HoraActual().ToString("D2") + ":" + this.Minutoactual().ToString("D2");
+            return HoraActual().ToString("D2") + ":" + Minutoactual().ToString("D2");
         }
 
         public float TemperaturaActual()
         {
-            return this.tiempo.TemperaturaActualPorHora(this.HoraActual());
+            return tiempo.TemperaturaActualPorHora(HoraActual());
         }
 
-        public String TemperaturaActualTexto()
+        public string TemperaturaActualTexto()
         {
-            return this.TemperaturaActual().ToString() + "°";
+            return TemperaturaActual() + "°";
         }
 
         private void ActualizarRelojInterno(float elapsedTime, SuvirvalCraft contexto)
@@ -87,44 +85,44 @@ namespace TGC.Group.Model.ElementosDia
             if (elapsedTime > 0.5f)
             {
                 //El reloj interno lo interpretamos en segundos
-                this.relojInterno += 0.5f * this.velocidadTiempo;
+                relojInterno += 0.5f * velocidadTiempo;
             }
             else
             {
                 //El reloj interno lo interpretamos en segundos
-                this.relojInterno += elapsedTime * this.velocidadTiempo;
+                relojInterno += elapsedTime * velocidadTiempo;
             }
 
             //Si pasaron mas de 86400 segundos quiere decir que el dia termino.
-            if (this.relojInterno > 86400)
+            if (relojInterno > 86400)
             {
-                this.relojInterno = 0;
-                this.tiempo.CalcularTemperaturaDeDia();
-                this.lluvia.Actualizar(contexto);
-                if (this.lluvia.EstaLloviendo())
+                relojInterno = 0;
+                tiempo.CalcularTemperaturaDeDia();
+                lluvia.Actualizar(contexto);
+                if (lluvia.EstaLloviendo())
                 {
-                    this.sol.ActualizarIntensidadMaximaLuz(500f);
+                    sol.ActualizarIntensidadMaximaLuz(500f);
                 }
                 else
                 {
-                    this.sol.ActualizarIntensidadMaximaLuz(1000f);
+                    sol.ActualizarIntensidadMaximaLuz(1000f);
                 }
             }
         }
 
         public Sol GetSol()
         {
-            return this.sol;
+            return sol;
         }
 
         public bool EsDeDia()
         {
-            return this.sol.EsDeDia();
+            return sol.EsDeDia();
         }
 
         public Lluvia GetLluvia()
         {
-            return this.lluvia;
+            return lluvia;
         }
 
         #endregion Comportamientos

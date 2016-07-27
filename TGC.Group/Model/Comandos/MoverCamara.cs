@@ -1,30 +1,20 @@
-﻿using System;
-using TGC.Group.Model.Administracion;
+﻿using TGC.Group.Model.Administracion;
 
 namespace TGC.Group.Model.Comandos
 {
     public class MoverCamara : Comando
     {
-        #region Constantes
-
-        public const String SubirCamara = "SubirCamara";
-        public const String BajarCamara = "BajarCamara";
-        public const String AlejarCamara = "AlejarCamara";
-        public const String AcercarCamara = "AcercarCamara";
-
-        #endregion Constantes
-
         #region Atributos
 
-        private String accionCamara;
+        private readonly string accionCamara;
 
         #endregion Atributos
 
         #region Constructores
 
-        public MoverCamara(String accion)
+        public MoverCamara(string accion)
         {
-            this.accionCamara = accion;
+            accionCamara = accion;
         }
 
         #endregion Constructores
@@ -33,24 +23,33 @@ namespace TGC.Group.Model.Comandos
 
         public void Ejecutar(SuvirvalCraft contexto, float elapsedTime)
         {
-            if (this.accionCamara.Equals(SubirCamara))
+            if (accionCamara.Equals(SubirCamara))
             {
                 contexto.camara.SubirCamara(contexto.personaje);
             }
-            if (this.accionCamara.Equals(BajarCamara))
+            if (accionCamara.Equals(BajarCamara))
             {
                 contexto.camara.BajarCamara(contexto.personaje);
             }
-            if (this.accionCamara.Equals(AlejarCamara))
+            if (accionCamara.Equals(AlejarCamara))
             {
                 contexto.camara.AlejarCamara(contexto.personaje);
             }
-            if (this.accionCamara.Equals(AcercarCamara))
+            if (accionCamara.Equals(AcercarCamara))
             {
                 contexto.camara.AcercarCamara(contexto.personaje);
             }
 
             #endregion Comportamientos
         }
+
+        #region Constantes
+
+        public const string SubirCamara = "SubirCamara";
+        public const string BajarCamara = "BajarCamara";
+        public const string AlejarCamara = "AlejarCamara";
+        public const string AcercarCamara = "AcercarCamara";
+
+        #endregion Constantes
     }
 }

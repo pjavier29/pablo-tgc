@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.ElementosJuego;
 using TGC.Group.Model.Utiles;
@@ -10,32 +9,12 @@ namespace TGC.Group.Model.Comandos
     //definen los elementos,
     public class Interactuar : Comando
     {
-        #region Constantes
-
-        public const String Consumir = "Consumir";
-        public const String Encender = "Encender";
-        public const String Juntar = "Juntar";
-        public const String Abrir = "Abrir";
-        public const String JuntarTodo = "Juntar Todo";
-        public const String DejarTodo = "Dejar Todo";
-        public const String Parado = "Parado";//Accion generica
-
-        #endregion Constantes
-
-
-
-        #region Propiedades
-        public String Accion { get; set; }
-        public List<Elemento> ObstaculosInteractuar { get; set; }
-
-        #endregion Propiedades
-
         #region Constructores
 
-        public Interactuar(String accion)
+        public Interactuar(string accion)
         {
-            this.Accion = accion;
-            this.ObstaculosInteractuar = new List<Elemento>();
+            Accion = accion;
+            ObstaculosInteractuar = new List<Elemento>();
         }
 
         #endregion Constructores
@@ -48,26 +27,46 @@ namespace TGC.Group.Model.Comandos
             //Simulamos el descanso del personaje
             contexto.personaje.incrementoResistenciaFisica(elapsedTime);
 
-            this.ObstaculosInteractuar.Clear();
-            foreach (Elemento elem in contexto.optimizador.ElementosColision)
+            ObstaculosInteractuar.Clear();
+            foreach (var elem in contexto.optimizador.ElementosColision)
             {
                 //TODO. Optimizar esto para solo objetos cernanos!!!!!!!!
-                if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(), elem.BoundingBox()))
+                if (ControladorColisiones.EsferaColisionaCuadrado(contexto.personaje.GetAlcanceInteraccionEsfera(),
+                    elem.BoundingBox()))
                 {
-                    this.ObstaculosInteractuar.Add(elem);
+                    ObstaculosInteractuar.Add(elem);
                     if (!elem.AdmiteMultipleColision())
                     {
                         break;
                     }
                 }
             }
-            foreach (Elemento elem in this.ObstaculosInteractuar)
+            foreach (var elem in ObstaculosInteractuar)
             {
-                elem.procesarInteraccion(this.Accion, contexto, elapsedTime);
+                elem.procesarInteraccion(Accion, contexto, elapsedTime);
                 contexto.informativo.Text = elem.getAcciones();
             }
         }
 
         #endregion Comportamientos
+
+        #region Constantes
+
+        public const string Consumir = "Consumir";
+        public const string Encender = "Encender";
+        public const string Juntar = "Juntar";
+        public const string Abrir = "Abrir";
+        public const string JuntarTodo = "Juntar Todo";
+        public const string DejarTodo = "Dejar Todo";
+        public const string Parado = "Parado"; //Accion generica
+
+        #endregion Constantes
+
+        #region Propiedades
+
+        public string Accion { get; set; }
+        public List<Elemento> ObstaculosInteractuar { get; set; }
+
+        #endregion Propiedades
     }
 }

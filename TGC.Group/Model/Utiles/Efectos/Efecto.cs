@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
+using System.Collections.Generic;
 using TGC.Core.SceneLoader;
 using TGC.Core.Shaders;
 using TGC.Core.SkeletalAnimation;
@@ -15,25 +14,25 @@ namespace TGC.Group.Model.Utiles.Efectos
     {
         #region Atributos
 
-        private Effect efectoShader;
-        private String tecnica;
-        private List<ElementoIluminacion> elementosIluminacion;
+        private readonly Effect efectoShader;
+        private string tecnica;
+        private readonly List<ElementoIluminacion> elementosIluminacion;
 
         #endregion Atributos
 
         #region Constructores
 
-        public Efecto(Effect efectoShader, String tecnica)
+        public Efecto(Effect efectoShader, string tecnica)
         {
             this.efectoShader = efectoShader;
             this.tecnica = tecnica;
-            this.elementosIluminacion = new List<ElementoIluminacion>();
+            elementosIluminacion = new List<ElementoIluminacion>();
         }
 
         public Efecto(Effect efectoShader)
         {
             this.efectoShader = efectoShader;
-            this.elementosIluminacion = new List<ElementoIluminacion>();
+            elementosIluminacion = new List<ElementoIluminacion>();
         }
 
         #endregion Constructores
@@ -42,13 +41,13 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public void AgregarElementoDeIluminacion(ElementoIluminacion elemento)
         {
-            this.elementosIluminacion.Add(elemento);
+            elementosIluminacion.Add(elemento);
         }
 
         public void EliminarElementoDeIluminacion(Elemento elemento)
         {
             ElementoIluminacion elementoABorrar = null;
-            foreach (ElementoIluminacion elemAux in this.elementosIluminacion)
+            foreach (var elemAux in elementosIluminacion)
             {
                 if (elemAux.Elemento == elemento)
                 {
@@ -57,18 +56,18 @@ namespace TGC.Group.Model.Utiles.Efectos
             }
             if (elementoABorrar != null)
             {
-                this.elementosIluminacion.Remove(elementoABorrar);
+                elementosIluminacion.Remove(elementoABorrar);
             }
         }
 
         public List<ElementoIluminacion> GetElementosIluminacion()
         {
-            return this.elementosIluminacion;
+            return elementosIluminacion;
         }
 
         public virtual ElementoIluminacion AlguienIluminaAElemento(Elemento elemento)
         {
-            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            foreach (var elem in elementosIluminacion)
             {
                 if (elem.IluminoAElemento(elemento))
                 {
@@ -80,7 +79,7 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public virtual ElementoIluminacion AlguienIluminaAElemento(Vector3 posicion)
         {
-            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            foreach (var elem in elementosIluminacion)
             {
                 if (elem.IluminoAElemento(posicion))
                 {
@@ -92,9 +91,9 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public virtual ElementoIluminacion IluminadorMasCercanoA(Vector3 posicion, SuvirvalCraft contexto)
         {
-            ElementoIluminacion elemIlumActual = this.elementosIluminacion[0];
-            List<ElementoIluminacion> aux = new List<ElementoIluminacion>();
-            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            var elemIlumActual = elementosIluminacion[0];
+            var aux = new List<ElementoIluminacion>();
+            foreach (var elem in elementosIluminacion)
             {
                 if (contexto.optimizador.ElementosRenderizacion.Contains(elem.Elemento))
                 {
@@ -104,7 +103,7 @@ namespace TGC.Group.Model.Utiles.Efectos
             if (aux.Count != 0)
             {
                 elemIlumActual = aux[0];
-                foreach (ElementoIluminacion elem in aux)
+                foreach (var elem in aux)
                 {
                     if (elem.Elemento.distanciaA(posicion) < elemIlumActual.Elemento.distanciaA(posicion))
                     {
@@ -115,9 +114,9 @@ namespace TGC.Group.Model.Utiles.Efectos
             return elemIlumActual;
         }
 
-        public virtual bool ContieneElementoDeTipo(String tipo)
+        public virtual bool ContieneElementoDeTipo(string tipo)
         {
-            foreach (ElementoIluminacion elem in this.elementosIluminacion)
+            foreach (var elem in elementosIluminacion)
             {
                 if (elem.Elemento.EsDeTipo(tipo))
                 {
@@ -129,48 +128,48 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public virtual Effect GetEfectoShader()
         {
-            return this.efectoShader;
+            return efectoShader;
         }
 
-        public virtual String Tecnica()
+        public virtual string Tecnica()
         {
-            return this.tecnica;
+            return tecnica;
         }
 
-        public virtual void Tecnica(String tecnica)
+        public virtual void Tecnica(string tecnica)
         {
             this.tecnica = tecnica;
         }
 
         /// <summary>
-        /// Para el caso que el mesh haya cambiado de efecto, debemos aplicar todo de nuevo
+        ///     Para el caso que el mesh haya cambiado de efecto, debemos aplicar todo de nuevo
         /// </summary>
         /// <param name="mesh"></param>
         public void Aplicar(TgcMesh mesh, SuvirvalCraft contexto)
         {
-            mesh.Effect = this.efectoShader;
-            mesh.Technique = this.tecnica;
-            this.Actualizar(contexto);
+            mesh.Effect = efectoShader;
+            mesh.Technique = tecnica;
+            Actualizar(contexto);
         }
 
         public void Aplicar(TgcMesh mesh)
         {
-            mesh.Effect = this.efectoShader;
-            if (this.tecnica == null)
+            mesh.Effect = efectoShader;
+            if (tecnica == null)
             {
-                this.tecnica = TgcShaders.Instance.getTgcMeshTechnique(mesh.RenderType);
+                tecnica = TgcShaders.Instance.getTgcMeshTechnique(mesh.RenderType);
             }
-            mesh.Technique = this.tecnica;
+            mesh.Technique = tecnica;
         }
 
         public void Aplicar(TgcSkeletalMesh mesh)
         {
-            mesh.Effect = this.efectoShader;
-            if (this.tecnica == null)
+            mesh.Effect = efectoShader;
+            if (tecnica == null)
             {
-                this.tecnica = TgcShaders.Instance.getTgcSkeletalMeshTechnique(mesh.RenderType);
+                tecnica = TgcShaders.Instance.getTgcSkeletalMeshTechnique(mesh.RenderType);
             }
-            mesh.Technique = this.tecnica;
+            mesh.Technique = tecnica;
         }
 
         public virtual void Actualizar(SuvirvalCraft contexto)
@@ -194,7 +193,7 @@ namespace TGC.Group.Model.Utiles.Efectos
         }
 
         /// <summary>
-        /// TODO. Este método no tiene que estar más cuando las armas sean elementos en si mismos
+        ///     TODO. Este método no tiene que estar más cuando las armas sean elementos en si mismos
         /// </summary>
         /// <param name="contexto"></param>
         /// <param name="arma"></param>
@@ -204,7 +203,7 @@ namespace TGC.Group.Model.Utiles.Efectos
 
         public virtual bool HayQueIluminarConElementos(SuvirvalCraft contexto)
         {
-            return ((!contexto.dia.EsDeDia()) && this.GetElementosIluminacion().Count > 0);
+            return !contexto.dia.EsDeDia() && GetElementosIluminacion().Count > 0;
         }
 
         #endregion Comportamientos

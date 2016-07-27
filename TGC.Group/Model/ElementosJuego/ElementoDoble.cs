@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.DirectX;
+﻿using Microsoft.DirectX;
+using System;
 using TGC.Core.SceneLoader;
 using TGC.Group.Model.Administracion;
 using TGC.Group.Model.Utiles;
@@ -9,13 +9,31 @@ namespace TGC.Group.Model.ElementosJuego
 {
     public class ElementoDoble : Elemento
     {
+        #region constructores
+
+        public ElementoDoble(float peso, float resistencia, TgcMesh mesh1, TgcMesh mesh2, Efecto efecto)
+            : base(peso, resistencia, mesh1, efecto)
+        {
+            //Por defecto comienza mostrando el primer mesh
+            Mesh1 = mesh1;
+            Mesh2 = mesh2;
+            estaCreando = false;
+            tieneQueCrear = false;
+            progresoCreacion = null;
+            tiempoCreacion = 0;
+            CompletarSetEfecto(efecto);
+            mensajeInformativo = "";
+        }
+
+        #endregion constructores
+
         #region Atributos
 
         private bool estaCreando;
         private bool tieneQueCrear;
         private BarraEstado progresoCreacion;
         private float tiempoCreacion;
-        private String mensajeInformativo;
+        private string mensajeInformativo;
 
         #endregion Atributos
 
@@ -26,41 +44,25 @@ namespace TGC.Group.Model.ElementosJuego
 
         #endregion Propiedades
 
-        #region constructores
-
-        public ElementoDoble(float peso, float resistencia, TgcMesh mesh1, TgcMesh mesh2, Efecto efecto) : base(peso, resistencia, mesh1, efecto)
-        {
-            //Por defecto comienza mostrando el primer mesh
-            this.Mesh1 = mesh1;
-            this.Mesh2 = mesh2;
-            this.estaCreando = false;
-            this.tieneQueCrear = false;
-            this.progresoCreacion = null;
-            this.tiempoCreacion = 0;
-            this.CompletarSetEfecto(efecto);
-            mensajeInformativo = "";
-        }
-
-        #endregion constructores
-
         #region Comportamientos
 
-        public override void procesarInteraccion(String accion, SuvirvalCraft contexto, float elapsedTime)
+        public override void procesarInteraccion(string accion, SuvirvalCraft contexto, float elapsedTime)
         {
             mensajeInformativo = "Juntar (J), Consumir (C)";
             base.procesarInteraccion(accion, contexto, elapsedTime);
 
             if (accion.Equals("Juntar"))
             {
-                if ((this.elementosQueContiene().Count > 0) && !(this.estaCreando))
+                if ((elementosQueContiene().Count > 0) && !estaCreando)
                 {
                     try
-                    {   //Si tiene elementos para dar
-                        Elemento elem = this.elementosQueContiene()[0];
+                    {
+                        //Si tiene elementos para dar
+                        var elem = elementosQueContiene()[0];
                         contexto.personaje.juntar(elem);
-                        this.EliminarElemento(elem);
-                        this.Mesh = this.Mesh2;
-                        this.tieneQueCrear = true;
+                        EliminarElemento(elem);
+                        Mesh = Mesh2;
+                        tieneQueCrear = true;
                     }
                     catch (Exception ex)
                     {
@@ -70,17 +72,17 @@ namespace TGC.Group.Model.ElementosJuego
             }
             if (accion.Equals("Consumir"))
             {
-                if ((this.elementosQueContiene().Count > 0) && !(this.estaCreando))
+                if ((elementosQueContiene().Count > 0) && !estaCreando)
                 {
                     //Si tiene elementos para dar
-                    Elemento elem = this.elementosQueContiene()[0];
+                    var elem = elementosQueContiene()[0];
                     if (elem.EsDeTipo(Alimento))
                     {
-                        Alimento ali = (Alimento)elem;
+                        var ali = (Alimento)elem;
                         contexto.personaje.ConsumirAlimento(ali.GetNutricion());
-                        this.EliminarElemento(elem);
-                        this.Mesh = this.Mesh2;
-                        this.tieneQueCrear = true;
+                        EliminarElemento(elem);
+                        Mesh = Mesh2;
+                        tieneQueCrear = true;
                     }
                 }
             }
@@ -89,69 +91,64 @@ namespace TGC.Group.Model.ElementosJuego
         public override void Actualizar(SuvirvalCraft contexto, float elapsedTime)
         {
             base.Actualizar(contexto, elapsedTime);
-            if (this.estaCreando)
+            if (estaCreando)
             {
-                this.tiempoCreacion += elapsedTime;
-                if (this.tiempoCreacion > this.TiempoTotalCreacion())
+                tiempoCreacion += elapsedTime;
+                if (tiempoCreacion > TiempoTotalCreacion())
                 {
-                    this.progresoCreacion.Liberar();
-                    this.progresoCreacion = null;
-                    this.tiempoCreacion = 0;
-                    this.estaCreando = false;
-                    this.tieneQueCrear = false;
-                    this.Mesh = this.Mesh1;
+                    progresoCreacion.Liberar();
+                    progresoCreacion = null;
+                    tiempoCreacion = 0;
+                    estaCreando = false;
+                    tieneQueCrear = false;
+                    Mesh = Mesh1;
                 }
                 else
                 {
-                    this.progresoCreacion.ActualizarEstado(this.tiempoCreacion);
+                    progresoCreacion.ActualizarEstado(tiempoCreacion);
                 }
             }
             else
             {
-                if (this.tieneQueCrear && this.elementosQueContiene().Count > 0)
+                if (tieneQueCrear && elementosQueContiene().Count > 0)
                 {
-                    this.progresoCreacion = new BarraEstado(new Vector3(this.BoundingBox().PMin.X, this.BoundingBox().PMax.Y, this.BoundingBox().PMax.Z),
-                                this.BoundingBox().PMax, this.TiempoTotalCreacion());
-                    this.estaCreando = true;
-                    this.tieneQueCrear = false;
+                    progresoCreacion =
+                        new BarraEstado(new Vector3(BoundingBox().PMin.X, BoundingBox().PMax.Y, BoundingBox().PMax.Z),
+                            BoundingBox().PMax, TiempoTotalCreacion());
+                    estaCreando = true;
+                    tieneQueCrear = false;
                 }
             }
         }
 
         /// <summary>
-        /// Renderiza el objeto
+        ///     Renderiza el objeto
         /// </summary>
         public override void renderizar(SuvirvalCraft contexto)
         {
             base.renderizar(contexto);
-            if (this.estaCreando)
+            if (estaCreando)
             {
-                this.progresoCreacion.Render();
+                progresoCreacion.Render();
             }
         }
 
-        public override String getAcciones()
+        public override string getAcciones()
         {
             //TODO. Mejorar esta lógica
             if (estaCreando)
             {
                 return "Creación de nuevos elementos";
             }
-            else
+            if (elementosQueContiene().Count > 0)
             {
-                if (this.elementosQueContiene().Count > 0)
-                {
-                    //Si aun tiene elementos para entregar sigue procesando
-                    return mensajeInformativo;
-                }
-                else
-                {
-                    return "Sin elementos";
-                }
+                //Si aun tiene elementos para entregar sigue procesando
+                return mensajeInformativo;
             }
+            return "Sin elementos";
         }
 
-        public override String GetTipo()
+        public override string GetTipo()
         {
             return ElementoDoble;
         }
@@ -163,8 +160,8 @@ namespace TGC.Group.Model.ElementosJuego
 
         public void CompletarSetEfecto(Efecto efecto)
         {
-            efecto.Aplicar(this.Mesh1);
-            efecto.Aplicar(this.Mesh2);
+            efecto.Aplicar(Mesh1);
+            efecto.Aplicar(Mesh2);
         }
 
         #endregion Comportamientos
