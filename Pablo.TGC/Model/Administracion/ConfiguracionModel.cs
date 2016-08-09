@@ -1031,6 +1031,12 @@ namespace TGC.Group.Model.Administracion
                 d3dDevice.CreateDepthStencilSurface(d3dDevice.PresentationParameters.BackBufferWidth,
                     d3dDevice.PresentationParameters.BackBufferHeight, DepthFormat.D24S8, MultiSampleType.None, 0, true);
             ;
+            //Creamos un DepthStencil que debe ser compatible con nuestra definicion de renderTarget2D.
+            var depthStencil =
+                d3dDevice.CreateDepthStencilSurface(
+                    d3dDevice.PresentationParameters.BackBufferWidth,
+                    d3dDevice.PresentationParameters.BackBufferHeight,
+                    DepthFormat.D24S8, MultiSampleType.None, 0, true);
 
             //Cargar shader con efectos de Post-Procesado
             var effect = TgcShaders.loadEffect(recursos + "Shaders\\PostProcess.fx");
@@ -1040,6 +1046,7 @@ namespace TGC.Group.Model.Administracion
 
             contexto.screenQuadVB = screenQuadVB;
             contexto.renderTarget2D = renderTarget2D;
+            contexto.depthStencil = depthStencil;
             contexto.efectoLluvia = effect;
         }
 

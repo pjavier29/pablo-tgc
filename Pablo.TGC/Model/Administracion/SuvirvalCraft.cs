@@ -90,11 +90,14 @@ namespace TGC.Group.Model.Administracion
         public Efecto pisoEfecto;
 
         private Surface pOldRT;
+        private Surface pOldStencil;
         private Surface pSurf;
+
 
         public Elemento puebaFisica;
         public TgcText2D referenciaMiniMapa;
         public Texture renderTarget2D;
+        public Surface depthStencil;
 
         public CustomSprite salud;
         public CustomSprite saludIcono;
@@ -186,11 +189,13 @@ namespace TGC.Group.Model.Administracion
             if (dia.GetLluvia().EstaLloviendo())
             {
                 pOldRT = d3dDevice.GetRenderTarget(0);
+                pOldStencil = d3dDevice.DepthStencilSurface;
                 pSurf = renderTarget2D.GetSurfaceLevel(0);
                 d3dDevice.SetRenderTarget(0, pSurf);
-                d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+                d3dDevice.DepthStencilSurface = pOldStencil;
             }
 
+            d3dDevice.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
             d3dDevice.BeginScene();
 
             //TgcD3dInput d3dInput = GuiController.Instance.D3dInput;
@@ -270,13 +275,14 @@ namespace TGC.Group.Model.Administracion
             //dia.GetSol().Mesh.render();
 
             d3dDevice.EndScene();
-
+            
             if (dia.GetLluvia().EstaLloviendo())
             {
                 //Liberar memoria de surface de Render Target
                 pSurf.Dispose();
                 //Ahora volvemos a restaurar el Render Target original (osea dibujar a la pantalla)
                 d3dDevice.SetRenderTarget(0, pOldRT);
+                d3dDevice.DepthStencilSurface = pOldStencil;
 
                 //Arrancamos la escena
                 d3dDevice.BeginScene();
@@ -302,6 +308,8 @@ namespace TGC.Group.Model.Administracion
                 //Terminamos el renderizado de la escena
                 d3dDevice.EndScene();
             }
+
+            d3dDevice.BeginScene();            
 
             //Personaje muerto
             if (personaje.estaMuerto())
@@ -435,7 +443,7 @@ namespace TGC.Group.Model.Administracion
             }
 
             RenderFPS();
-            D3DDevice.Instance.Device.Present();
+            EndRenderScene();
         }
 
         /// <summary>
@@ -488,6 +496,9 @@ namespace TGC.Group.Model.Administracion
             efectoLluvia.Dispose();
             screenQuadVB.Dispose();
             renderTarget2D.Dispose();
+            depthStencil.Dispose();
+            if (pOldStencil!= null) pOldStencil.Dispose();
+            if (pOldRT != null) pOldRT.Dispose();
             estadoDiaLluviaIcono.Dispose();
             sonidoGolpe.dispose();
             sonidoGolpePatada.dispose();
